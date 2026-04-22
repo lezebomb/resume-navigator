@@ -69,6 +69,61 @@
 
       <section class="results-layout">
         <div class="results-main">
+          <section class="grid-3 user-summary-grid no-top-gap">
+            <section class="list-card">
+              <h2 class="section-title">
+                {% if current_lang == 'zh' %}先看结论{% else %}Conclusion first{% endif %}
+              </h2>
+              <div class="notice">
+                {% if current_lang == 'zh' %}
+                这份简历当前对目标岗位的整体状态是
+                <strong>{{ translate_dynamic(result.match.score_label, current_lang) }}</strong>。
+                {% else %}
+                The current overall state of this resume for the target role is
+                <strong>{{ translate_dynamic(result.match.score_label, current_lang) }}</strong>.
+                {% endif %}
+              </div>
+              <p class="section-subtitle" style="margin-top: 14px;">
+                {{ translate_dynamic(result.match.summary, current_lang) }}
+              </p>
+            </section>
+
+            <section class="list-card">
+              <h2 class="section-title">
+                {% if current_lang == 'zh' %}当前最大缺口{% else %}Biggest gap right now{% endif %}
+              </h2>
+              <div class="tag-list">
+                {% if result.match.missing_hard_skills %}
+                  {% for item in result.match.missing_hard_skills[:3] %}
+                  <span class="chip chip-miss">{{ item }}</span>
+                  {% endfor %}
+                {% else %}
+                  <span class="chip chip-good">
+                    {% if current_lang == 'zh' %}没有明显硬技能缺口{% else %}No obvious hard-skill gap{% endif %}
+                  </span>
+                {% endif %}
+              </div>
+              <p class="section-subtitle" style="margin-top: 14px;">
+                {% if current_lang == 'zh' %}
+                如果这里出现的是 JD 里的核心技能或要求，通常应该优先补证据，再优化措辞。
+                {% else %}
+                If the missing items are core JD requirements, fix the evidence first and polish the wording after that.
+                {% endif %}
+              </p>
+            </section>
+
+            <section class="list-card">
+              <h2 class="section-title">
+                {% if current_lang == 'zh' %}下一步先做什么{% else %}What to do next{% endif %}
+              </h2>
+              <ul class="action-list compact-list">
+                {% for action in result.match.priority_actions[:3] %}
+                <li>{{ translate_dynamic(action, current_lang) }}</li>
+                {% endfor %}
+              </ul>
+            </section>
+          </section>
+
           <section class="list-card">
             <div class="section-head">
               <div>

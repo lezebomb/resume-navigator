@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from time import perf_counter
+from typing import Callable
 
 from backend.api.schemas.domain import AnalysisResult, AnalysisStage
 from backend.services.analysis.deep_review import run_deep_review
@@ -18,47 +19,56 @@ def analyze_resume_against_jd(
     jd_text: str,
     persist: bool = False,
     analysis_mode: str = "standard",
+    stage_callback: Callable[[AnalysisStage], None] | None = None,
 ) -> AnalysisResult:
     stages: list[AnalysisStage] = []
 
     started = perf_counter()
     resume = parse_resume_bytes(filename=filename, file_bytes=file_bytes)
-    stages.append(
+    _record_stage(
+        stages,
         AnalysisStage(
             name="resume_parse",
             detail="Parsed the uploaded resume, extracted text, and segmented sections.",
             duration_ms=_duration_ms(started),
-        )
+        ),
+        stage_callback,
     )
 
     started = perf_counter()
     jd = parse_job_description(jd_text)
-    stages.append(
+    _record_stage(
+        stages,
         AnalysisStage(
             name="jd_parse",
             detail="Structured the JD into role, skills, requirements, and keywords.",
             duration_ms=_duration_ms(started),
-        )
+        ),
+        stage_callback,
     )
 
     started = perf_counter()
     ats = evaluate_ats_readiness(resume)
-    stages.append(
+    _record_stage(
+        stages,
         AnalysisStage(
             name="ats_audit",
             detail="Checked layout safety, extractability, timeline cues, and contact completeness.",
             duration_ms=_duration_ms(started),
-        )
+        ),
+        stage_callback,
     )
 
     started = perf_counter()
     match = evaluate_resume_match(resume=resume, jd=jd, ats=ats)
-    stages.append(
+    _record_stage(
+        stages,
         AnalysisStage(
             name="match_audit",
             detail="Cross-checked hard skills, must-have lines, quantified outcomes, and experience signals.",
             duration_ms=_duration_ms(started),
-        )
+        ),
+        stage_callback,
     )
 
     if analysis_mode == "deep":
@@ -73,12 +83,14 @@ def analyze_resume_against_jd(
         if deep_review.confidence_delta:
             match.confidence_score = max(0, min(100, match.confidence_score + deep_review.confidence_delta))
             match.confidence_label = label_confidence(match.confidence_score)
-        stages.append(
+        _record_stage(
+            stages,
             AnalysisStage(
                 name="deep_review",
                 detail=deep_review.summary,
                 duration_ms=_duration_ms(started),
-            )
+            ),
+            stage_callback,
         )
 
     result = AnalysisResult(
@@ -108,3 +120,13 @@ def _dedupe_strings(items: list[str]) -> list[str]:
         seen.add(item)
         ordered.append(item)
     return ordered
+
+
+def _record_stage(
+    stages: list[AnalysisStage],
+    stage: AnalysisStage,
+    stage_callback: Callable[[AnalysisStage], None] | None,
+) -> None:
+    stages.append(stage)
+    if stage_callback:
+        stage_callback(stage)

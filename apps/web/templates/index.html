@@ -190,55 +190,21 @@
         </section>
       </section>
 
-      <div class="loading-overlay" id="loadingOverlay" hidden>
-        <div class="loading-card">
-          <div class="panel-kicker">
-            {% if current_lang == 'zh' %}正在分析{% else %}Analyzing{% endif %}
-          </div>
-          <h2 id="loadingTitle">
-            {% if current_lang == 'zh' %}正在启动诊断链路{% else %}Starting the review pipeline{% endif %}
-          </h2>
-          <p class="section-subtitle" id="loadingCopy">
-            {% if current_lang == 'zh' %}
-            页面不会立刻跳结果，是因为系统会依次做简历解析、JD 拆解、ATS 审核、匹配复核和面试承接。
-            {% else %}
-            The result is not shown instantly because the system walks through parsing, JD structuring, ATS review, match review, and interview handoff.
-            {% endif %}
-          </p>
-          <ol class="loading-steps">
-            <li>{% if current_lang == 'zh' %}读取并解析简历文本{% else %}Read and parse the resume{% endif %}</li>
-            <li>{% if current_lang == 'zh' %}提取 JD 的岗位、要求与关键词{% else %}Extract role, requirements, and keywords from the JD{% endif %}</li>
-            <li>{% if current_lang == 'zh' %}审核 ATS 风险与结构问题{% else %}Audit ATS risks and structure{% endif %}</li>
-            <li>{% if current_lang == 'zh' %}逐条复核 JD 证据和技能深度{% else %}Review JD evidence and skill depth{% endif %}</li>
-            <li>{% if current_lang == 'zh' %}生成优先动作与面试问题{% else %}Generate actions and interview questions{% endif %}</li>
-          </ol>
-        </div>
-      </div>
-
       <p class="footer-note">{{ ui.footer_note }}</p>
     </div>
 
     <script>
       (function () {
         const form = document.querySelector(".js-analysis-form");
-        const overlay = document.getElementById("loadingOverlay");
         const submitButton = document.querySelector(".js-submit-button");
-        const loadingTitle = document.getElementById("loadingTitle");
 
-        if (!form || !overlay || !submitButton || !loadingTitle) {
+        if (!form || !submitButton) {
           return;
         }
 
         form.addEventListener("submit", function () {
-          const mode = document.getElementById("analysis_mode").value;
-          overlay.hidden = false;
-          document.body.classList.add("is-loading");
           submitButton.disabled = true;
-          submitButton.textContent = "{{ '分析中，请稍候' if current_lang == 'zh' else 'Analyzing...' }}";
-          loadingTitle.textContent =
-            mode === "deep"
-              ? "{{ '正在进行深度诊断' if current_lang == 'zh' else 'Running deep audit' }}"
-              : "{{ '正在进行快速诊断' if current_lang == 'zh' else 'Running quick audit' }}";
+          submitButton.textContent = "{{ '正在进入分析任务页...' if current_lang == 'zh' else 'Opening analysis job...' }}";
         });
       })();
     </script>

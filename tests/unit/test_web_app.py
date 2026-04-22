@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from apps.web.i18n import translate_dynamic, translate_stage_name
 from apps.web.main import app
-from backend.api.schemas.domain import AnalysisResult, AnalysisStage, AtsReport, JobDescriptionDocument, MatchReport, ResumeDocument, ResumeMetrics
 
 
 class WebAppTests(unittest.TestCase):
@@ -30,39 +29,53 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(translate_dynamic("Strong", "zh"), "强匹配")
         self.assertEqual(translate_stage_name("deep_review", "zh"), "深度复核")
 
-    @patch("apps.web.main.analyze_resume_against_jd")
-    def test_browser_analysis_renders_result_with_language_links(self, analyze_mock) -> None:
-        analyze_mock.return_value = AnalysisResult(
-            analysis_id="demo-123",
-            analysis_mode="deep",
-            stages=[AnalysisStage(name="deep_review", detail="Deep review checked whether matched skills are backed by experience-context evidence and whether JD evidence comes from real experience instead of only skill lists. Found 1 skills with experience evidence and 1 skills that still look list-only.", duration_ms=12)],
-            resume=ResumeDocument(
-                filename="resume.pdf",
-                file_type="pdf",
-                raw_text="demo",
-                metrics=ResumeMetrics(page_count=1, section_count=4),
-            ),
-            jd=JobDescriptionDocument(raw_text="Role: Analyst", role_title="Analyst"),
-            ats=AtsReport(score=88),
-            match=MatchReport(
-                overall_score=72,
-                summary="Overall match is Promising. ATS readiness is 88/100, 2 hard skills were matched, 1 remain uncovered, and 1/2 must-have JD lines were covered.",
-                score_label="Promising",
-                confidence_score=79,
-                confidence_label="Medium confidence",
-                confidence_reasons=["Deep review found enough experience-context evidence behind the matched skills to support a more confident judgment."],
-            ),
-        )
+    @patch("apps.web.main.create_analysis_job")
+    def test_browser_analysis_redirects_to_job_page(self, create_job_mock) -> None:
+        create_job_mock.return_value = type("FakeJob", (), {"job_id": "job-123"})()
 
         response = self.client.post(
             "/analyze/browser",
             data={"jd_text": "Role: Analyst", "analysis_mode": "deep", "lang": "en"},
             files={"file": ("resume.pdf", b"%PDF-1.4 fake", "application/pdf")},
+            follow_redirects=False,
         )
 
+        self.assertEqual(response.status_code, 303)
+        self.assertEqual(response.headers["location"], "/analyze/jobs/job-123?lang=en")
+
+    @patch("apps.web.main.get_analysis_job")
+    def test_job_status_can_return_translated_stage_copy(self, get_job_mock) -> None:
+        get_job_mock.return_value = type(
+            "FakeJob",
+            (),
+            {
+                "to_dict": lambda self: {
+                    "job_id": "job-123",
+                    "filename": "resume.pdf",
+                    "analysis_mode": "deep",
+                    "status": "running",
+                    "created_at": "2026-04-22T00:00:00+00:00",
+                    "updated_at": "2026-04-22T00:00:01+00:00",
+                    "current_stage_name": "deep_review",
+                    "current_stage_detail": "Deep review checked whether matched skills are backed by experience-context evidence and whether JD evidence comes from real experience instead of only skill lists. Found 1 skills with experience evidence and 1 skills that still look list-only.",
+                    "stages": [
+                        {
+                            "name": "deep_review",
+                            "detail": "Deep review checked whether matched skills are backed by experience-context evidence and whether JD evidence comes from real experience instead of only skill lists. Found 1 skills with experience evidence and 1 skills that still look list-only.",
+                            "duration_ms": 12,
+                        }
+                    ],
+                    "result_analysis_id": None,
+                    "error_message": None,
+                }
+            },
+        )()
+
+        response = self.client.get("/analyze/jobs/job-123/status?lang=zh")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("/analysis/demo-123?lang=en", response.text)
-        self.assertIn("Why this result is more trustworthy", response.text)
+        payload = response.json()
+        self.assertEqual(payload["stages"][0]["display_name"], "深度复核")
+        self.assertIn("深度复核检查了已匹配技能", payload["stages"][0]["display_detail"])
 
 
 if __name__ == "__main__":

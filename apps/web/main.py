@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -11,7 +11,7 @@ from apps.web.i18n import get_ui, resolve_lang, translate_dynamic, translate_sta
 from backend.api.routes.analysis import router as analysis_router
 from backend.core.config import settings
 from backend.core.logging import configure_logging
-from backend.services.analysis.pipeline import analyze_resume_against_jd
+from backend.services.analysis.jobs import create_analysis_job, get_analysis_job
 from backend.services.feedback.store import list_feedback_records, save_feedback
 from backend.services.history.store import get_analysis_record, list_analysis_history
 
@@ -72,25 +72,42 @@ async def analyze_browser(
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-    result = analyze_resume_against_jd(
+    job = create_analysis_job(
         filename=file.filename or f"resume{extension}",
         file_bytes=file_bytes,
         jd_text=jd_text,
-        persist=True,
         analysis_mode=analysis_mode,
     )
+    return RedirectResponse(url=f"/analyze/jobs/{job.job_id}?lang={resolve_lang(lang)}", status_code=303)
 
+
+@app.get("/analyze/jobs/{job_id}", response_class=HTMLResponse)
+async def analysis_job_page(request: Request, job_id: str) -> HTMLResponse:
+    job = get_analysis_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Analysis job not found.")
     context = _shared_context(request)
-    context.update(
+    context.update({"job": job.to_dict()})
+    return templates.TemplateResponse(request, "analysis_job.html", context)
+
+
+@app.get("/analyze/jobs/{job_id}/status", response_class=JSONResponse)
+async def analysis_job_status(job_id: str, lang: str = "zh") -> JSONResponse:
+    job = get_analysis_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Analysis job not found.")
+    resolved_lang = resolve_lang(lang)
+    payload = job.to_dict()
+    payload["current_stage_detail"] = translate_dynamic(payload.get("current_stage_detail") or "", resolved_lang)
+    payload["stages"] = [
         {
-            "result": result.model_dump(),
-            "analysis_mode": "deep" if analysis_mode == "deep" else "standard",
-            "result_view_path": f"/analysis/{result.analysis_id}" if result.analysis_id else "/",
-            "current_lang": resolve_lang(lang),
-            "ui": get_ui(resolve_lang(lang)),
+            **stage,
+            "display_name": translate_stage_name(stage["name"], resolved_lang),
+            "display_detail": translate_dynamic(stage["detail"], resolved_lang),
         }
-    )
-    return templates.TemplateResponse(request, "result.html", context)
+        for stage in payload["stages"]
+    ]
+    return JSONResponse(content=payload)
 
 
 @app.get("/history", response_class=HTMLResponse)

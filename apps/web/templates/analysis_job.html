@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} - {% if current_lang == 'zh' %}分析进行中{% else %}Analysis in progress{% endif %}</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar topbar-links">
+        <div class="brand-mark">{{ ui.brand }}</div>
+        <div class="topbar-actions">
+          <a class="topbar-link" href="/?lang={{ current_lang }}">{{ ui.back_to_upload }}</a>
+          <div class="lang-switch">
+            <span>{{ ui.lang_switch_label }}</span>
+            <a class="{% if current_lang == 'zh' %}active{% endif %}" href="/analyze/jobs/{{ job.job_id }}?lang=zh">{{ ui.lang_switch_zh }}</a>
+            <a class="{% if current_lang == 'en' %}active{% endif %}" href="/analyze/jobs/{{ job.job_id }}?lang=en">{{ ui.lang_switch_en }}</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="result-card job-card">
+        <div class="panel-kicker">{% if current_lang == 'zh' %}分析任务{% else %}Analysis job{% endif %}</div>
+        <h1 class="result-headline">
+          {% if current_lang == 'zh' %}系统正在处理你的简历{% else %}Your resume is being processed{% endif %}
+        </h1>
+        <p class="section-subtitle" id="jobSummary">
+          {% if current_lang == 'zh' %}
+          页面现在不会卡在首页遮罩层。系统会在后台继续分析，完成后自动跳到结果页。
+          {% else %}
+          The app now runs analysis in the background and will automatically jump to the result page when it finishes.
+          {% endif %}
+        </p>
+
+        <div class="job-status-band">
+          <div>
+            <div class="summary-label">{% if current_lang == 'zh' %}当前状态{% else %}Current status{% endif %}</div>
+            <div class="summary-title job-status-text" id="jobStatusText">
+              {% if current_lang == 'zh' %}排队中{% else %}Queued{% endif %}
+            </div>
+          </div>
+          <div class="summary-meta">
+            <span>{{ job.filename }}</span>
+            <span>{% if job.analysis_mode == 'deep' %}{{ ui.analysis_mode_deep }}{% else %}{{ ui.analysis_mode_standard }}{% endif %}</span>
+            <span id="jobIdLabel">{{ job.job_id }}</span>
+          </div>
+        </div>
+
+        <div class="grid-2 no-top-gap">
+          <section class="list-card soft-panel">
+            <h2 class="section-title">
+              {% if current_lang == 'zh' %}正在执行的步骤{% else %}Current step{% endif %}
+            </h2>
+            <div class="notice" id="jobCurrentDetail">
+              {% if current_lang == 'zh' %}
+              系统正在准备分析任务。
+              {% else %}
+              The analysis job is getting ready.
+              {% endif %}
+            </div>
+            <ul class="loading-steps compact-list" id="jobGuidance">
+              <li>{% if current_lang == 'zh' %}如果 20 秒后还没跳转，页面会自动给出排查提示。{% else %}If the page does not redirect after 20 seconds, troubleshooting guidance will appear automatically.{% endif %}</li>
+              <li>{% if current_lang == 'zh' %}请保持当前页面打开，不要重复提交。{% else %}Keep this page open and avoid resubmitting the form.{% endif %}</li>
+            </ul>
+          </section>
+
+          <section class="list-card soft-panel">
+            <h2 class="section-title">
+              {% if current_lang == 'zh' %}已完成的阶段{% else %}Completed stages{% endif %}
+            </h2>
+            <div class="stage-grid stage-grid-single" id="jobStageList">
+              <article class="stage-card">
+                <div class="stage-name">{% if current_lang == 'zh' %}等待开始{% else %}Waiting to start{% endif %}</div>
+                <div class="stage-copy">
+                  {% if current_lang == 'zh' %}
+                  任务一旦开始，就会按阶段把解析进度展示在这里。
+                  {% else %}
+                  Stage progress will appear here as soon as the worker starts.
+                  {% endif %}
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div class="notice warning-notice" id="jobHelpBox" hidden>
+          {% if current_lang == 'zh' %}
+          如果这个页面停留过久，常见原因包括：简历文件过大、PDF 文本提取较慢，或当前服务实例正在忙。你可以先检查是否上传了扫描版 PDF，或稍后重试。
+          {% else %}
+          If this page stays here for too long, common causes include a large resume file, slow PDF extraction, or a busy local service instance. Check whether the file is a scanned PDF and try again if needed.
+          {% endif %}
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        const jobId = "{{ job.job_id }}";
+        const currentLang = "{{ current_lang }}";
+        const statusText = document.getElementById("jobStatusText");
+        const currentDetail = document.getElementById("jobCurrentDetail");
+        const stageList = document.getElementById("jobStageList");
+        const helpBox = document.getElementById("jobHelpBox");
+        const labels = {
+          queued: currentLang === "zh" ? "排队中" : "Queued",
+          running: currentLang === "zh" ? "分析中" : "Running",
+          completed: currentLang === "zh" ? "已完成，正在跳转" : "Completed, redirecting",
+          failed: currentLang === "zh" ? "分析失败" : "Failed"
+        };
+        const stageLabels = {
+          resume_parse: currentLang === "zh" ? "简历解析" : "Resume parsing",
+          jd_parse: currentLang === "zh" ? "JD 解析" : "JD parsing",
+          ats_audit: currentLang === "zh" ? "ATS 审核" : "ATS audit",
+          match_audit: currentLang === "zh" ? "匹配审核" : "Match audit",
+          deep_review: currentLang === "zh" ? "深度复核" : "Deep review"
+        };
+
+        function renderStages(stages) {
+          if (!stages || !stages.length) {
+            return;
+          }
+          stageList.innerHTML = stages
+            .map(function (stage) {
+              return `
+                <article class="stage-card">
+                  <div class="stage-name">${stage.display_name || stageLabels[stage.name] || stage.name}</div>
+                  <div class="stage-copy">${stage.display_detail || stage.detail}</div>
+                  <div class="stage-time">${stage.duration_ms} ms</div>
+                </article>
+              `;
+            })
+            .join("");
+        }
+
+        function poll() {
+          fetch(`/analyze/jobs/${jobId}/status?lang=${currentLang}`, { cache: "no-store" })
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (data) {
+              statusText.textContent = labels[data.status] || data.status;
+              if (data.current_stage_detail) {
+                currentDetail.textContent = data.current_stage_detail;
+              }
+              renderStages(data.stages);
+
+              if (data.status === "completed" && data.result_analysis_id) {
+                window.location.href = `/analysis/${data.result_analysis_id}?lang=${currentLang}`;
+                return;
+              }
+
+              if (data.status === "failed") {
+                currentDetail.textContent = data.error_message || (currentLang === "zh" ? "分析任务失败。" : "The job failed.");
+                helpBox.hidden = false;
+                return;
+              }
+
+              window.setTimeout(poll, 1000);
+            })
+            .catch(function () {
+              helpBox.hidden = false;
+              window.setTimeout(poll, 2000);
+            });
+        }
+
+        window.setTimeout(function () {
+          helpBox.hidden = false;
+        }, 20000);
+
+        poll();
+      })();
+    </script>
+  </body>
+</html>
