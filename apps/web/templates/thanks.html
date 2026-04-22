@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} - 感谢反馈</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="result-card">
+        <div class="panel-kicker">Thank You</div>
+        <h1 class="result-headline">反馈已收到</h1>
+        <p class="section-subtitle">
+          这条反馈已经记录下来，后续我会优先根据“哪里不准、哪里最需要补”来继续迭代这个产品。
+        </p>
+        <div class="notice">
+          <strong>反馈编号：</strong>{{ feedback.feedback_id }}<br />
+          <strong>提交时间：</strong>{{ feedback.created_at }}
+        </div>
+        <div class="button-row">
+          <a class="button button-primary" href="/">继续分析</a>
+          <a class="button button-secondary" href="/feedback">查看反馈列表</a>
+          {% if feedback.analysis_id %}
+          <a class="button button-secondary" href="/analysis/{{ feedback.analysis_id }}">返回本次结果</a>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

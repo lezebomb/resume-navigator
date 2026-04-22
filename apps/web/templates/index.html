@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="hero">
+        <div class="hero-card">
+          <div class="hero-eyebrow">Resume Navigator</div>
+          <h1>把简历诊断，从“AI 打分器”升级成真正能帮求职者投递和面试的产品。</h1>
+          <p>
+            这一版优先解决三个最实际的问题：ATS 是否读得懂、你的经历是否真的对齐目标 JD、下一步应该先改哪里。
+            我们先把确定性规则和可解释证据做扎实，再把大模型放到它真正擅长的位置。
+          </p>
+          <div class="hero-metrics">
+            <div class="hero-metric">
+              <strong>{{ analysis_count }}</strong>
+              <span>本地分析记录</span>
+            </div>
+            <div class="hero-metric">
+              <strong>{{ recent_feedback_count }}</strong>
+              <span>已收集反馈</span>
+            </div>
+            <div class="hero-metric">
+              <strong>Chinese-first</strong>
+              <span>优先服务中文求职场景</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="glass-panel">
+          <div class="panel-kicker">Current Build</div>
+          <h2 class="panel-title">现在这版可以做什么</h2>
+          <p class="panel-copy">
+            这不是最终版页面，而是给开发验证和早期用户试用准备的产品入口。
+            它已经支持上传真实简历、粘贴真实 JD、查看分数组成、记录历史结果，并收集用户反馈。
+          </p>
+          <ul class="guide-list">
+            <li>
+              <strong>结构化简历解析</strong>
+              自动识别教育、经历、项目、技能、奖项等 section，并提取联系信息、时间线、量化信号。
+            </li>
+            <li>
+              <strong>可解释 ATS 体检</strong>
+              检查表格、图片、提取质量、时间线、联系方式和结构完整性。
+            </li>
+            <li>
+              <strong>更成熟的 JD 对齐判断</strong>
+              不只看关键词，还看 must-have 要求覆盖、成果量化、经历信号和技能证据。
+            </li>
+            <li>
+              <strong>早期用户反馈闭环</strong>
+              结果页可直接提交“哪里不准”“哪里最有用”“下一步想要什么”。
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="intake-grid">
+        <section class="form-card">
+          <h2>立即试用诊断链路</h2>
+          <p class="section-subtitle">
+            上传一份 PDF 或 DOCX 简历，再粘贴目标岗位的 JD 文本。提交后会进入新的分析流程，而不是旧版单体逻辑。
+          </p>
+
+          <form action="/analyze/browser" method="post" enctype="multipart/form-data" class="stack">
+            <div>
+              <label for="file">上传简历文件</label>
+              <input id="file" name="file" type="file" accept=".pdf,.docx" required />
+              <div class="field-note">建议优先使用文本型 PDF 或 DOCX，不要上传纯扫描件。</div>
+            </div>
+
+            <div>
+              <label for="jd_text">粘贴目标 JD</label>
+              <textarea
+                id="jd_text"
+                name="jd_text"
+                placeholder="例如：岗位：供应链分析师&#10;公司：某制造业公司&#10;任职要求：熟悉 Excel、SQL、跨部门协作、采购或供应链经验..."
+                required
+              ></textarea>
+              <div class="field-note">尽量保留“岗位、职责、要求、优先条件”等原始信息，便于后续做更准的岗位画像。</div>
+            </div>
+
+            <div class="button-row">
+              <button class="button button-primary" type="submit">开始分析</button>
+              <a class="button button-secondary" href="/history">查看历史记录</a>
+              <a class="button button-secondary" href="/feedback">查看试用反馈</a>
+              <a class="button button-secondary" href="/docs">查看 API 文档</a>
+            </div>
+          </form>
+        </section>
+
+        <aside class="guide-card">
+          <h2>开发阶段就该怎么推广</h2>
+          <p class="section-subtitle">
+            现在最重要的不是一次性做完所有功能，而是尽快找到真实求职者，拿到“它哪里不准、哪里有帮助”的反馈，再反哺产品。
+          </p>
+          <ol class="roadmap-list">
+            <li>
+              <strong>先招募 3 到 5 位真实求职者</strong>
+              比起泛泛宣传，更重要的是拿到带 JD 的真实简历案例。
+            </li>
+            <li>
+              <strong>每周发一条开发日志</strong>
+              固定输出“这周改了什么、为什么这么改、下周准备验证什么”。
+            </li>
+            <li>
+              <strong>用案例而不是口号</strong>
+              真实前后对比、真实错判修复记录，比“AI 简历神器”更容易获得信任。
+            </li>
+            <li>
+              <strong>优先收集负反馈</strong>
+              “这里不准”“这里没帮助”往往就是产品该优先解决的问题。
+            </li>
+          </ol>
+        </aside>
+      </section>
+
+      <p class="footer-note">
+        当前页面用于演示新的产品骨架。旧版 Streamlit 原型仍然保留，后续能力会继续迁移到新架构。
+      </p>
+    </div>
+  </body>
+</html>

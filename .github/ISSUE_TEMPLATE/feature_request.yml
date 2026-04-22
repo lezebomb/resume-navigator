@@ -1,0 +1,33 @@
+name: Feature Request
+description: Suggest a product or engineering improvement.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for new product ideas, algorithm improvements, UI changes, and developer experience improvements.
+  - type: input
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      placeholder: What is currently painful or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+      placeholder: Describe the behavior or workflow you want.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: user_value
+    attributes:
+      label: Why this matters
+      placeholder: How would this help job seekers or contributors?

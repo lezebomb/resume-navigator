@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+
+streamlit
+requests
+duckduckgo-search
+
+openai
+google-genai
+
+python-docx
+pdfplumber
+fpdf2

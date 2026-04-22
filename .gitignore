@@ -1,0 +1,65 @@
+# Secrets
+.env
+.env.*
+!.env.example
+.streamlit/
+.streamlit/secrets.toml
+
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE and OS files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Local runtime data
+data/*.json
+data/*.jsonl
+data/*.db
+data/_tmp*
+data/uploads/
+data/exports/
+data/runtime/
+!data/samples/
+!data/samples/**
+
+# Temporary research and browser state
+.tmp/
+scraper/browser_profile/
+scraper/dp_profile/
+scraper/chrome_debug_profile/
+scraper/cookies/
+scraper/data/
+scraper/raw_jd_data.json
+scraper/*.log
+
+# Local databases and task queues
+*.db
+*.sqlite
+*.sqlite3
+*.rdb
+
+# User-provided assets that should not be tracked by default
+*.pdf
+*.docx
+*.doc

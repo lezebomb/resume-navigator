@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} - 分析结果</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="result-card">
+        <div class="result-head">
+          <div>
+            <div class="panel-kicker">Analysis Result</div>
+            <h1 class="result-headline">{{ result.resume.filename }}</h1>
+            <p class="section-subtitle">{{ result.match.summary }}</p>
+          </div>
+          <div class="button-row">
+            {% if result.analysis_id %}
+            <a class="button button-secondary" href="/analysis/{{ result.analysis_id }}/json">导出 JSON</a>
+            {% endif %}
+            <a class="button button-secondary" href="/history">查看历史</a>
+            <a class="button button-secondary" href="/feedback">试用反馈</a>
+            <a class="button button-secondary" href="/">继续分析</a>
+          </div>
+        </div>
+
+        <div class="summary-band">
+          <div>
+            <div class="summary-label">当前判断</div>
+            <div class="summary-title">{{ result.match.score_label }}</div>
+          </div>
+          <div class="summary-meta">
+            <span>目标岗位：{{ result.jd.role_title or "未识别" }}</span>
+            {% if result.jd.company_name %}<span>{{ result.jd.company_name }}</span>{% endif %}
+            {% if result.jd.location %}<span>{{ result.jd.location }}</span>{% endif %}
+          </div>
+        </div>
+
+        <div class="score-grid">
+          <div class="score-tile">
+            <div class="score-label">ATS Readiness</div>
+            <div class="score-number">{{ result.ats.score }}<small> / 100</small></div>
+          </div>
+          <div class="score-tile">
+            <div class="score-label">Role Match</div>
+            <div class="score-number">{{ result.match.overall_score }}<small> / 100</small></div>
+          </div>
+        </div>
+
+        <div class="notice">
+          <strong>分析编号：</strong>{{ result.analysis_id or "未持久化" }}
+          {% if result.created_at %} ｜ <strong>生成时间：</strong>{{ result.created_at }}{% endif %}
+          <br />
+          <strong>解析信息：</strong>
+          {{ result.resume.inferred_name or "未识别姓名" }}
+          {% if result.resume.inferred_email %} ｜ {{ result.resume.inferred_email }}{% endif %}
+          {% if result.resume.inferred_phone %} ｜ {{ result.resume.inferred_phone }}{% endif %}
+        </div>
+      </section>
+
+      <section class="grid-3">
+        <section class="list-card">
+          <h2 class="section-title">优势信号</h2>
+          <ul class="action-list">
+            {% for item in result.match.strength_signals %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="list-card">
+          <h2 class="section-title">风险信号</h2>
+          <ul class="action-list">
+            {% for item in result.match.risk_signals %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="list-card">
+          <h2 class="section-title">证据高亮</h2>
+          <ul class="action-list">
+            {% for item in result.match.evidence_highlights %}
+            <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      </section>
+
+      <section class="grid-2">
+        <section class="list-card">
+          <h2 class="section-title">ATS 发现项</h2>
+          <ul class="finding-list">
+            {% for finding in result.ats.findings %}
+            <li>
+              <span class="severity severity-{{ finding.severity }}">{{ finding.severity }}</span>
+              <div>{{ finding.message }}</div>
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="list-card">
+          <h2 class="section-title">优先动作</h2>
+          <ul class="action-list">
+            {% for action in result.match.priority_actions %}
+            <li>{{ action }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      </section>
+
+      <section class="grid-2">
+        <section class="list-card">
+          <h2 class="section-title">技能覆盖</h2>
+
+          <h3 class="subheading">已覆盖硬技能</h3>
+          <div class="tag-list">
+            {% if result.match.matched_hard_skills %}
+              {% for item in result.match.matched_hard_skills %}
+              <span class="chip chip-good">{{ item }}</span>
+              {% endfor %}
+            {% else %}
+              <span class="chip chip-neutral">暂无</span>
+            {% endif %}
+          </div>
+
+          <h3 class="subheading">缺失硬技能</h3>
+          <div class="tag-list">
+            {% if result.match.missing_hard_skills %}
+              {% for item in result.match.missing_hard_skills %}
+              <span class="chip chip-miss">{{ item }}</span>
+              {% endfor %}
+            {% else %}
+              <span class="chip chip-good">无明显缺失</span>
+            {% endif %}
+          </div>
+
+          <h3 class="subheading">JD 缺失关键词</h3>
+          <div class="tag-list">
+            {% if result.match.missing_keywords %}
+              {% for item in result.match.missing_keywords %}
+              <span class="chip chip-neutral">{{ item }}</span>
+              {% endfor %}
+            {% else %}
+              <span class="chip chip-good">关键词对齐良好</span>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="list-card">
+          <h2 class="section-title">结构与画像</h2>
+          <div class="tag-list">
+            {% for section in result.resume.sections %}
+            <span class="chip chip-neutral">{{ section.section_type }}</span>
+            {% endfor %}
+          </div>
+
+          <div class="mini-grid">
+            <div class="mini-stat">
+              <span>页数</span>
+              <strong>{{ result.resume.metrics.page_count }}</strong>
+            </div>
+            <div class="mini-stat">
+              <span>要点数</span>
+              <strong>{{ result.resume.metrics.bullet_count }}</strong>
+            </div>
+            <div class="mini-stat">
+              <span>数字信号</span>
+              <strong>{{ result.resume.metrics.numeric_token_count }}</strong>
+            </div>
+            <div class="mini-stat">
+              <span>时间线</span>
+              <strong>{{ result.resume.metrics.date_range_count }}</strong>
+            </div>
+            <div class="mini-stat">
+              <span>动作词</span>
+              <strong>{{ result.resume.metrics.action_verb_count }}</strong>
+            </div>
+            <div class="mini-stat">
+              <span>文本提取率</span>
+              <strong>{{ result.resume.metrics.text_page_ratio }}</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">评分构成</h2>
+        <div class="component-stack">
+          {% for component in result.match.components %}
+          <div class="component-row">
+            <div class="component-head">
+              <div>
+                <strong>{{ component.name }}</strong>
+                <div class="score-label">{{ component.reason }}</div>
+              </div>
+              <div class="score-badge">{{ component.score }}</div>
+            </div>
+            <div class="component-meter">
+              <span style="width: {{ component.score }}%;"></span>
+            </div>
+            <div class="component-meta">权重 {{ component.weight }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">提交试用反馈</h2>
+        <p class="section-subtitle">
+          如果你觉得哪里判断不准、哪里最有帮助、你下一步最想要什么功能，直接在这里提交。
+          这会直接帮助我们决定下一轮迭代优先级。
+        </p>
+        <form action="/feedback/browser" method="post" class="stack feedback-form">
+          <input type="hidden" name="analysis_id" value="{{ result.analysis_id or '' }}" />
+
+          <div class="mini-grid">
+            <div>
+              <label for="overall_rating">整体体验（1-5）</label>
+              <select id="overall_rating" name="overall_rating" required>
+                <option value="5">5 - 很有帮助</option>
+                <option value="4">4 - 基本有帮助</option>
+                <option value="3">3 - 一般</option>
+                <option value="2">2 - 帮助有限</option>
+                <option value="1">1 - 几乎没帮助</option>
+              </select>
+            </div>
+            <div>
+              <label for="accuracy_rating">判断准确度（1-5）</label>
+              <select id="accuracy_rating" name="accuracy_rating" required>
+                <option value="5">5 - 很准</option>
+                <option value="4">4 - 大体准确</option>
+                <option value="3">3 - 一半一半</option>
+                <option value="2">2 - 偏差较多</option>
+                <option value="1">1 - 很不准</option>
+              </select>
+            </div>
+            <div>
+              <label for="usefulness_rating">可执行性（1-5）</label>
+              <select id="usefulness_rating" name="usefulness_rating" required>
+                <option value="5">5 - 直接能改</option>
+                <option value="4">4 - 大部分能用</option>
+                <option value="3">3 - 需要自己再理解</option>
+                <option value="2">2 - 不够具体</option>
+                <option value="1">1 - 几乎没法用</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="main_problem">最不准或最不满意的地方</label>
+            <textarea id="main_problem" name="main_problem" placeholder="例如：把我的采购经历识别得太弱，或者 SQL 缺失判断不合理。"></textarea>
+          </div>
+
+          <div>
+            <label for="wanted_next">你下一步最想要的功能</label>
+            <textarea id="wanted_next" name="wanted_next" placeholder="例如：按 JD 改写简历、生成项目 bullet、模拟面试问题、导出优化版 PDF。"></textarea>
+          </div>
+
+          <div>
+            <label for="contact">联系方式（可选）</label>
+            <input id="contact" name="contact" type="text" placeholder="微信 / 邮箱，方便回访" />
+          </div>
+
+          <div class="button-row">
+            <button class="button button-primary" type="submit">提交反馈</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} - 试用反馈</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <section class="result-card">
+        <div class="result-head">
+          <div>
+            <div class="panel-kicker">Beta Feedback</div>
+            <h1 class="result-headline">试用反馈看板</h1>
+            <p class="section-subtitle">
+              这里会沉淀所有通过结果页提交的反馈。它不是最终后台，但足够支持你在冷启动阶段做产品访谈和优先级判断。
+            </p>
+          </div>
+          <div class="button-row">
+            <a class="button button-secondary" href="/">回到上传页</a>
+            <a class="button button-secondary" href="/history">查看分析历史</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">最新反馈</h2>
+        {% if records %}
+        <div class="feedback-list">
+          {% for record in records %}
+          <article class="feedback-card">
+            <div class="feedback-head">
+              <strong>{{ record.feedback_id }}</strong>
+              <span class="score-label">{{ record.created_at }}</span>
+            </div>
+            <div class="feedback-ratings">
+              <span class="chip chip-good">整体 {{ record.overall_rating }}/5</span>
+              <span class="chip chip-neutral">准确 {{ record.accuracy_rating }}/5</span>
+              <span class="chip chip-neutral">可执行 {{ record.usefulness_rating }}/5</span>
+            </div>
+            {% if record.analysis_id %}
+            <p><strong>关联分析：</strong><a href="/analysis/{{ record.analysis_id }}">{{ record.analysis_id }}</a></p>
+            {% endif %}
+            {% if record.main_problem %}
+            <p><strong>主要问题：</strong>{{ record.main_problem }}</p>
+            {% endif %}
+            {% if record.wanted_next %}
+            <p><strong>下一步诉求：</strong>{{ record.wanted_next }}</p>
+            {% endif %}
+            {% if record.contact %}
+            <p><strong>联系方式：</strong>{{ record.contact }}</p>
+            {% endif %}
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="notice">还没有收到反馈。先跑一次分析并在结果页提交反馈，这里就会出现数据。</div>
+        {% endif %}
+      </section>
+    </div>
+  </body>
+</html>

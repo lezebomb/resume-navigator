@@ -1,0 +1,141 @@
+{
+    "Sourcing_SupplyChain": {
+        "direction": "战略采购 / 供应链管理方向",
+        "hard_skills": [
+            "ERP",
+            "SAP",
+            "Oracle",
+            "用友",
+            "金蝶",
+            "SRM",
+            "WMS",
+            "MRP",
+            "Excel",
+            "VLOOKUP",
+            "VBA",
+            "Tableau",
+            "Power BI",
+            "SQL"
+        ],
+        "terms": [
+            "BOM",
+            "TCO",
+            "Lead Time",
+            "SOP",
+            "RFQ",
+            "PPV"
+        ],
+        "soft_skills": [
+            "成本核算",
+            "降本增效",
+            "供应商寻源",
+            "招投标管理",
+            "库存周转分析",
+            "交付跟踪",
+            "跨部门协同",
+            "全生命周期管理",
+            "精益生产",
+            "风险控制",
+            "合规性审查"
+        ]
+    },
+    "B_End_Product_SaaS": {
+        "direction": "AI To B 产品 / SaaS 商业化方向",
+        "hard_skills": [
+            "Axure",
+            "墨刀",
+            "Figma",
+            "Visio",
+            "XMind",
+            "Jira",
+            "Confluence",
+            "SQL",
+            "Python",
+            "神策数据",
+            "GA"
+        ],
+        "terms": [
+            "PRD",
+            "MRD",
+            "BRD",
+            "MVP",
+            "GTM",
+            "API接口",
+            "SaaS架构",
+            "A/B测试"
+        ],
+        "soft_skills": [
+            "竞品拆解",
+            "需求调研",
+            "行业研报输出",
+            "用户访谈",
+            "灰度发布",
+            "产品宣发",
+            "业财融合",
+            "商业模式分析",
+            "痛点挖掘",
+            "解决方案设计",
+            "数字化转型"
+        ]
+    },
+    "Operations_Implementation": {
+        "direction": "业务运营 / ERP 系统实施方向",
+        "hard_skills": [
+            "PMP",
+            "Gantt Chart",
+            "Teambition",
+            "PingCode",
+            "Trello",
+            "CRM",
+            "ERP实施方法论"
+        ],
+        "terms": [
+            "UAT",
+            "SLA",
+            "交付文档",
+            "SOP制定",
+            "ROI"
+        ],
+        "soft_skills": [
+            "项目排期",
+            "进度追踪",
+            "系统跑通",
+            "客户培训",
+            "问题工单处理",
+            "需求解答",
+            "闭环管理",
+            "敏捷开发落地",
+            "实施交付标准建立"
+        ]
+    },
+    "BA_Strategy": {
+        "direction": "商业分析 / 战略发展方向",
+        "hard_skills": [
+            "Python",
+            "Pandas",
+            "NumPy",
+            "R语言",
+            "SQL",
+            "BI看板搭建"
+        ],
+        "terms": [
+            "市场规模测算",
+            "漏斗分析",
+            "留存分析",
+            "杜邦分析",
+            "LTV",
+            "CAC"
+        ],
+        "soft_skills": [
+            "建立分析模型",
+            "输出数据周报",
+            "行业洞察",
+            "撰写战略报告",
+            "投融资复盘",
+            "业务赋能",
+            "指标体系搭建",
+            "驱动业务增长",
+            "宏观趋势研判"
+        ]
+    }
+}
