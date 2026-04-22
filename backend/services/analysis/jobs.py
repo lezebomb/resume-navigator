@@ -19,6 +19,7 @@ class AnalysisJob:
     job_id: str
     filename: str
     analysis_mode: str
+    enable_public_research: bool
     status: JobStatus
     created_at: str
     updated_at: str
@@ -33,6 +34,7 @@ class AnalysisJob:
             "job_id": self.job_id,
             "filename": self.filename,
             "analysis_mode": self.analysis_mode,
+            "enable_public_research": self.enable_public_research,
             "status": self.status,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
@@ -49,12 +51,20 @@ _jobs: dict[str, AnalysisJob] = {}
 _lock = Lock()
 
 
-def create_analysis_job(*, filename: str, file_bytes: bytes, jd_text: str, analysis_mode: str) -> AnalysisJob:
+def create_analysis_job(
+    *,
+    filename: str,
+    file_bytes: bytes,
+    jd_text: str,
+    analysis_mode: str,
+    enable_public_research: bool,
+) -> AnalysisJob:
     now = _utc_now()
     job = AnalysisJob(
         job_id=uuid4().hex[:12],
         filename=filename,
         analysis_mode="deep" if analysis_mode == "deep" else "standard",
+        enable_public_research=enable_public_research,
         status="queued",
         created_at=now,
         updated_at=now,
@@ -62,7 +72,15 @@ def create_analysis_job(*, filename: str, file_bytes: bytes, jd_text: str, analy
     with _lock:
         _jobs[job.job_id] = job
 
-    _executor.submit(_run_job, job.job_id, filename, file_bytes, jd_text, job.analysis_mode)
+    _executor.submit(
+        _run_job,
+        job.job_id,
+        filename,
+        file_bytes,
+        jd_text,
+        job.analysis_mode,
+        enable_public_research,
+    )
     return job
 
 
@@ -74,7 +92,14 @@ def get_analysis_job(job_id: str) -> AnalysisJob | None:
         return AnalysisJob(**job.to_dict())
 
 
-def _run_job(job_id: str, filename: str, file_bytes: bytes, jd_text: str, analysis_mode: str) -> None:
+def _run_job(
+    job_id: str,
+    filename: str,
+    file_bytes: bytes,
+    jd_text: str,
+    analysis_mode: str,
+    enable_public_research: bool,
+) -> None:
     _set_job_status(job_id, "running")
     try:
         result = analyze_resume_against_jd(
@@ -83,6 +108,7 @@ def _run_job(job_id: str, filename: str, file_bytes: bytes, jd_text: str, analys
             jd_text=jd_text,
             persist=True,
             analysis_mode=analysis_mode,
+            enable_public_research=enable_public_research,
             stage_callback=lambda stage: _append_stage(job_id, stage),
         )
         _mark_job_completed(job_id, result.analysis_id)

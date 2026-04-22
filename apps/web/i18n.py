@@ -346,6 +346,7 @@ STAGE_TRANSLATIONS = {
     "ats_audit": {"zh": "ATS 审核", "en": "ATS audit"},
     "match_audit": {"zh": "匹配审核", "en": "Match audit"},
     "deep_review": {"zh": "深度复核", "en": "Deep review"},
+    "public_research": {"zh": "公开资料补充", "en": "Public research"},
 }
 
 _DYNAMIC_EXACT = {
@@ -356,6 +357,54 @@ _DYNAMIC_EXACT = {
     "High confidence": {"zh": "高可信", "en": "High confidence"},
     "Medium confidence": {"zh": "中等可信", "en": "Medium confidence"},
     "Needs manual review": {"zh": "需人工复核", "en": "Needs manual review"},
+    "Public interview write-ups for similar roles often focus on one end-to-end planning or procurement decision. Which decision are you most prepared to defend in detail?": {
+        "zh": "类似岗位的公开面经经常会追问一次完整的计划或采购决策。你最能详细讲清楚、也最经得起追问的是哪一次？",
+        "en": "Public interview write-ups for similar roles often focus on one end-to-end planning or procurement decision. Which decision are you most prepared to defend in detail?",
+    },
+    "Public interview write-ups for similar roles repeatedly emphasize ownership, judgment, and trade-off clarity.": {
+        "zh": "类似岗位的公开面经经常会重点考察候选人的真实 ownership、判断力和取舍清晰度。",
+        "en": "Public interview write-ups for similar roles repeatedly emphasize ownership, judgment, and trade-off clarity.",
+    },
+    "What triggered the decision": {"zh": "当时是什么触发了这个决策", "en": "What triggered the decision"},
+    "What options you compared": {"zh": "你当时比较了哪些可选方案", "en": "What options you compared"},
+    "What business result followed": {"zh": "这个决策最终带来了什么业务结果", "en": "What business result followed"},
+    "Public interview write-ups for similar roles often test how you move from vague business goals to a structured analysis plan. What example from your experience best proves that ability?": {
+        "zh": "类似岗位的公开面经经常会考察你能否把模糊业务目标拆成结构化分析计划。你哪段经历最能证明这一点？",
+        "en": "Public interview write-ups for similar roles often test how you move from vague business goals to a structured analysis plan. What example from your experience best proves that ability?",
+    },
+    "Public interview write-ups for similar roles repeatedly emphasize structured thinking, not just tool familiarity.": {
+        "zh": "类似岗位的公开面经经常更看重结构化思考，而不只是工具熟练度。",
+        "en": "Public interview write-ups for similar roles repeatedly emphasize structured thinking, not just tool familiarity.",
+    },
+    "What the ambiguous goal was": {"zh": "当时那个模糊目标到底是什么", "en": "What the ambiguous goal was"},
+    "How you turned it into a measurable analysis plan": {
+        "zh": "你是怎么把它拆成可衡量的分析计划的",
+        "en": "How you turned it into a measurable analysis plan",
+    },
+    "What recommendation or decision came out of it": {
+        "zh": "最后产出了什么建议或决策",
+        "en": "What recommendation or decision came out of it",
+    },
+    "Public research is supplemental context only and does not directly change the deterministic score.": {
+        "zh": "公开资料补充只作为辅助背景，不会直接改写确定性分数。",
+        "en": "Public research is supplemental context only and does not directly change the deterministic score.",
+    },
+    "Treat public interview write-ups as qualitative signals, not as guaranteed truths about one specific company.": {
+        "zh": "公开面经更适合作为定性参考，而不是某一家公司的绝对真相。",
+        "en": "Treat public interview write-ups as qualitative signals, not as guaranteed truths about one specific company.",
+    },
+    "Public research is optional and should not block the deterministic analysis flow.": {
+        "zh": "公开资料补充是可选层，不应该阻塞确定性分析主流程。",
+        "en": "Public research is optional and should not block the deterministic analysis flow.",
+    },
+    "The deterministic report still works without public-web enrichment.": {
+        "zh": "即使没有公开资料补充，确定性分析报告也可以单独成立。",
+        "en": "The deterministic report still works without public-web enrichment.",
+    },
+    "This layer is supplemental context only and should not replace the JD itself.": {
+        "zh": "这一层只补充上下文，不应该替代 JD 本身。",
+        "en": "This layer is supplemental context only and should not replace the JD itself.",
+    },
     "ATS readiness": {"zh": "ATS 兼容度", "en": "ATS readiness"},
     "Hard skill coverage": {"zh": "硬技能覆盖", "en": "Hard skill coverage"},
     "Soft skill coverage": {"zh": "软技能覆盖", "en": "Soft skill coverage"},
@@ -706,6 +755,70 @@ _DYNAMIC_EXACT = {
 }
 
 _DYNAMIC_PATTERNS = [
+    (
+        re.compile(r"Collected (\d+) public sources about role expectations, interview experience, and skill requirements\."),
+        lambda match, lang: (
+            f"补充收集了 {match.group(1)} 个公开来源，用来辅助理解岗位预期、面经风格和技能要求。"
+            if lang == "zh"
+            else f"Collected {match.group(1)} public sources about role expectations, interview experience, and skill requirements."
+        ),
+    ),
+    (
+        re.compile(r"Public research looked at open web sources around the target role: (.+)\."),
+        lambda match, lang: (
+            f"公开资料补充围绕目标岗位 {match.group(1)} 搜集了相关开放网页来源。"
+            if lang == "zh"
+            else f"Public research looked at open web sources around the target role: {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"(\d+) public sources look like interview-experience or interview-question references\."),
+        lambda match, lang: (
+            f"其中有 {match.group(1)} 个公开来源更像面经或面试题参考。"
+            if lang == "zh"
+            else f"{match.group(1)} public sources look like interview-experience or interview-question references."
+        ),
+    ),
+    (
+        re.compile(r"(\d+) public sources come from community discussions, which are useful for patterns but still need judgment\."),
+        lambda match, lang: (
+            f"其中有 {match.group(1)} 个来源来自社区讨论，适合看模式，但仍需要你自己判断。"
+            if lang == "zh"
+            else f"{match.group(1)} public sources come from community discussions, which are useful for patterns but still need judgment."
+        ),
+    ),
+    (
+        re.compile(r"Repeated public signals mention: (.+)\."),
+        lambda match, lang: (
+            f"多份公开资料里重复出现的技能或主题包括：{match.group(1)}。"
+            if lang == "zh"
+            else f"Repeated public signals mention: {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"Public research was enabled, but web search is unavailable in the current environment\."),
+        lambda _match, lang: (
+            "已开启公开资料补充，但当前环境暂时无法执行网页搜索。"
+            if lang == "zh"
+            else "Public research was enabled, but web search is unavailable in the current environment."
+        ),
+    ),
+    (
+        re.compile(r"Public research was enabled, but the current environment could not fetch public results\."),
+        lambda _match, lang: (
+            "已开启公开资料补充，但当前环境暂时无法拉取公开搜索结果。"
+            if lang == "zh"
+            else "Public research was enabled, but the current environment could not fetch public results."
+        ),
+    ),
+    (
+        re.compile(r"Public research was enabled, but no usable public sources were returned\."),
+        lambda _match, lang: (
+            "已开启公开资料补充，但这次没有拿到可用的公开来源。"
+            if lang == "zh"
+            else "Public research was enabled, but no usable public sources were returned."
+        ),
+    ),
     (
         re.compile(r"Hard-skill evidence was detected for (.+)\."),
         lambda match, lang: (

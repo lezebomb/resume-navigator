@@ -10,6 +10,7 @@ from backend.services.history.store import save_analysis_result
 from backend.services.interview.generator import build_interview_prep
 from backend.services.jd.parser import parse_job_description
 from backend.services.matching.engine import evaluate_resume_match, label_confidence
+from backend.services.research.public_web_search import run_public_web_research
 from backend.services.resume.parser import parse_resume_bytes
 
 
@@ -19,6 +20,7 @@ def analyze_resume_against_jd(
     jd_text: str,
     persist: bool = False,
     analysis_mode: str = "standard",
+    enable_public_research: bool = False,
     stage_callback: Callable[[AnalysisStage], None] | None = None,
 ) -> AnalysisResult:
     stages: list[AnalysisStage] = []
@@ -93,6 +95,20 @@ def analyze_resume_against_jd(
             stage_callback,
         )
 
+    research = None
+    if enable_public_research:
+        started = perf_counter()
+        research = run_public_web_research(jd=jd, enabled=True)
+        _record_stage(
+            stages,
+            AnalysisStage(
+                name="public_research",
+                detail=research.summary,
+                duration_ms=_duration_ms(started),
+            ),
+            stage_callback,
+        )
+
     result = AnalysisResult(
         analysis_mode="deep" if analysis_mode == "deep" else "standard",
         stages=stages,
@@ -100,7 +116,8 @@ def analyze_resume_against_jd(
         jd=jd,
         ats=ats,
         match=match,
-        interview=build_interview_prep(resume=resume, jd=jd, match=match),
+        research=research,
+        interview=build_interview_prep(resume=resume, jd=jd, match=match, research=research),
     )
     if persist:
         return save_analysis_result(result)

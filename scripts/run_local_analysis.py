@@ -23,6 +23,11 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default="deep",
         help="Analysis depth. Defaults to deep for stronger evidence output.",
     )
+    parser.add_argument(
+        "--enable-public-research",
+        action="store_true",
+        help="Try public-web research enrichment. This is optional and may depend on the local network.",
+    )
     parser.add_argument("--output", help="Optional path to write the JSON result.")
     return parser
 
@@ -48,6 +53,7 @@ def main() -> None:
         file_bytes=resume_path.read_bytes(),
         jd_text=jd_text,
         analysis_mode=args.analysis_mode,
+        enable_public_research=args.enable_public_research,
     )
     payload = result.model_dump()
     rendered = json.dumps(payload, ensure_ascii=False, indent=2)

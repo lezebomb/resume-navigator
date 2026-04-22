@@ -43,6 +43,25 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 303)
         self.assertEqual(response.headers["location"], "/analyze/jobs/job-123?lang=en")
 
+    @patch("apps.web.main.create_analysis_job")
+    def test_browser_analysis_can_enable_public_research(self, create_job_mock) -> None:
+        create_job_mock.return_value = type("FakeJob", (), {"job_id": "job-456"})()
+
+        response = self.client.post(
+            "/analyze/browser",
+            data={
+                "jd_text": "Role: Analyst",
+                "analysis_mode": "deep",
+                "lang": "zh",
+                "enable_public_research": "on",
+            },
+            files={"file": ("resume.pdf", b"%PDF-1.4 fake", "application/pdf")},
+            follow_redirects=False,
+        )
+
+        self.assertEqual(response.status_code, 303)
+        self.assertTrue(create_job_mock.call_args.kwargs["enable_public_research"])
+
     @patch("apps.web.main.get_analysis_job")
     def test_job_status_can_return_translated_stage_copy(self, get_job_mock) -> None:
         get_job_mock.return_value = type(

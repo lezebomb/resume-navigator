@@ -1,0 +1,46 @@
+name: Beta Feedback
+description: 提交一次真实试用反馈，帮助 Resume Navigator 改进判断质量和用户体验。
+title: "[Beta] "
+labels:
+  - beta-feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你参与试用。
+        这份表单更关注“哪里不准、哪里有帮助、下一步最该补什么”。
+  - type: input
+    id: target_role
+    attributes:
+      label: 目标岗位
+      placeholder: 例如：数据分析师 / 供应链分析师
+    validations:
+      required: true
+  - type: textarea
+    id: what_helped
+    attributes:
+      label: 哪些地方最有帮助
+      placeholder: 例如：ATS 风险提示、要求级证据卡片、面试追问
+    validations:
+      required: true
+  - type: textarea
+    id: what_wrong
+    attributes:
+      label: 哪些地方明显不准
+      placeholder: 请尽量写具体一点，方便复现
+    validations:
+      required: true
+  - type: textarea
+    id: wanted_next
+    attributes:
+      label: 你下一步最想要的功能
+      placeholder: 例如：按 JD 改写简历 / 导出 PDF / 更专业的面试模拟
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我已经去掉了不希望公开展示的个人隐私信息
+          required: true

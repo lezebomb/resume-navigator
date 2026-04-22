@@ -38,7 +38,11 @@ Write-Host "[4] GitHub CLI" -ForegroundColor Yellow
 $gh = Get-Command gh -ErrorAction SilentlyContinue
 if ($gh) {
     Write-Host "gh found at $($gh.Source)" -ForegroundColor Green
-    gh auth status
+    try {
+        gh auth status 2>$null
+    } catch {
+        Write-Host "gh is installed, but auth status could not be read in the current environment." -ForegroundColor Yellow
+    }
 } else {
     Write-Host "gh is not installed." -ForegroundColor Red
     Write-Host "Install from: https://cli.github.com/"
@@ -47,6 +51,15 @@ if ($gh) {
 Write-Host ""
 Write-Host "[5] Working tree status" -ForegroundColor Yellow
 git status --short
+
+Write-Host ""
+Write-Host "[6] Privacy safety" -ForegroundColor Yellow
+$privacyScript = Join-Path $PSScriptRoot "check_privacy_safety.ps1"
+if (Test-Path $privacyScript) {
+    & $privacyScript
+} else {
+    Write-Host "Privacy safety script not found." -ForegroundColor Red
+}
 
 Write-Host ""
 Write-Host "Check complete." -ForegroundColor Cyan

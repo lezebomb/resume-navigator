@@ -103,6 +103,24 @@ class InterviewPrepReport(BaseModel):
     questions: list[InterviewQuestionCard] = Field(default_factory=list)
 
 
+class ResearchSourceCard(BaseModel):
+    title: str
+    url: str
+    source_name: str
+    snippet: str = ""
+    query: str = ""
+    source_type: Literal["interview", "career", "community", "official", "general"] = "general"
+
+
+class PublicResearchReport(BaseModel):
+    enabled: bool = False
+    summary: str = ""
+    queries: list[str] = Field(default_factory=list)
+    insights: list[str] = Field(default_factory=list)
+    caveats: list[str] = Field(default_factory=list)
+    source_cards: list[ResearchSourceCard] = Field(default_factory=list)
+
+
 class MatchReport(BaseModel):
     overall_score: int
     summary: str
@@ -137,4 +155,5 @@ class AnalysisResult(BaseModel):
     jd: JobDescriptionDocument
     ats: AtsReport
     match: MatchReport
+    research: PublicResearchReport | None = None
     interview: InterviewPrepReport | None = None

@@ -21,7 +21,11 @@ class Settings:
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    llm_access_mode: str = os.getenv("LLM_ACCESS_MODE", "byok")
+    enable_optional_llm: bool = os.getenv("ENABLE_OPTIONAL_LLM", "false").lower() == "true"
     enable_external_enrichment: bool = os.getenv("ENABLE_EXTERNAL_ENRICHMENT", "false").lower() == "true"
+    enable_public_research: bool = os.getenv("ENABLE_PUBLIC_RESEARCH", "false").lower() == "true"
+    public_research_max_results: int = int(os.getenv("PUBLIC_RESEARCH_MAX_RESULTS", "5"))
     enable_private_research_connectors: bool = (
         os.getenv("ENABLE_PRIVATE_RESEARCH_CONNECTORS", "false").lower() == "true"
     )

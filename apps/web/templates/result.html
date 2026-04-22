@@ -165,6 +165,77 @@
             </div>
           </section>
 
+          {% if result.research and result.research.enabled %}
+          <section class="list-card" style="margin-top: 24px;">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title">
+                  {% if current_lang == 'zh' %}公开资料补充{% else %}Public research add-on{% endif %}
+                </h2>
+                <p class="section-subtitle">
+                  {% if current_lang == 'zh' %}
+                  这部分只用来补充岗位背景、技能信号和面经风格，不会直接覆盖 ATS 与匹配分数。
+                  {% else %}
+                  This layer supplements role context, skill signals, and interview patterns without overwriting the ATS or match score.
+                  {% endif %}
+                </p>
+              </div>
+              <span class="subtle-badge">
+                {{ result.research.source_cards|length }} {% if current_lang == 'zh' %}个公开来源{% else %}public sources{% endif %}
+              </span>
+            </div>
+
+            <div class="notice">{{ translate_dynamic(result.research.summary, current_lang) }}</div>
+
+            {% if result.research.insights %}
+            <div class="grid-2">
+              <section class="soft-panel">
+                <h3 class="subheading">{% if current_lang == 'zh' %}读完公开资料后的补充判断{% else %}Supplemental takeaways{% endif %}</h3>
+                <ul class="action-list compact-list">
+                  {% for item in result.research.insights %}
+                  <li>{{ translate_dynamic(item, current_lang) }}</li>
+                  {% endfor %}
+                </ul>
+              </section>
+
+              <section class="soft-panel">
+                <h3 class="subheading">{% if current_lang == 'zh' %}使用边界{% else %}How to use this{% endif %}</h3>
+                <ul class="action-list compact-list">
+                  {% for item in result.research.caveats %}
+                  <li>{{ translate_dynamic(item, current_lang) }}</li>
+                  {% endfor %}
+                </ul>
+              </section>
+            </div>
+            {% endif %}
+
+            {% if result.research.source_cards %}
+            <div class="source-grid">
+              {% for source in result.research.source_cards %}
+              <article class="source-card">
+                <div class="requirement-head">
+                  <strong>{{ source.title }}</strong>
+                  <span class="chip chip-neutral">{{ source.source_name }}</span>
+                </div>
+                <p class="source-snippet">{{ source.snippet }}</p>
+                <div class="source-meta">
+                  <span class="chip {% if source.source_type == 'interview' %}chip-good{% elif source.source_type == 'community' %}chip-neutral{% else %}chip-neutral{% endif %}">
+                    {% if current_lang == 'zh' %}
+                      {% if source.source_type == 'interview' %}面经/题型{% elif source.source_type == 'community' %}社区讨论{% elif source.source_type == 'career' %}求职内容{% elif source.source_type == 'official' %}官方/文档{% else %}公开来源{% endif %}
+                    {% else %}
+                      {{ source.source_type }}
+                    {% endif %}
+                  </span>
+                  <span class="score-label">{{ source.query }}</span>
+                </div>
+                <a class="source-link" href="{{ source.url }}" target="_blank" rel="noreferrer noopener">{{ source.url }}</a>
+              </article>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </section>
+          {% endif %}
+
           <section class="grid-3">
             <section class="list-card">
               <h2 class="section-title">{{ ui.strength_signals }}</h2>

@@ -2,7 +2,8 @@ param(
     [string]$PythonPath = "C:\Users\24981\AppData\Local\Programs\Python\Python312\python.exe",
     [string]$ResumePath = "",
     [string]$JdFile = "",
-    [string]$OutputPath = "data\runtime\validation_result.json"
+    [string]$OutputPath = "data\runtime\validation_result.json",
+    [switch]$EnablePublicResearch
 )
 
 Write-Host "== Step 1: Running unit tests ==" -ForegroundColor Cyan
@@ -21,7 +22,11 @@ if ($LASTEXITCODE -ne 0) {
 if ($ResumePath -and $JdFile) {
     Write-Host ""
     Write-Host "== Step 3: Running local deterministic analysis ==" -ForegroundColor Cyan
-    & $PythonPath scripts\run_local_analysis.py --resume $ResumePath --jd-file $JdFile --analysis-mode deep --output $OutputPath
+    $analysisArgs = @("scripts\\run_local_analysis.py", "--resume", $ResumePath, "--jd-file", $JdFile, "--analysis-mode", "deep", "--output", $OutputPath)
+    if ($EnablePublicResearch) {
+        $analysisArgs += "--enable-public-research"
+    }
+    & $PythonPath @analysisArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Local analysis run failed."
     }

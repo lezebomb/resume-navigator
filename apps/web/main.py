@@ -60,6 +60,7 @@ async def analyze_browser(
     file: UploadFile = File(...),
     jd_text: str = Form(...),
     analysis_mode: str = Form("standard"),
+    enable_public_research: str | None = Form(None),
     lang: str = Form("zh"),
 ) -> HTMLResponse:
     extension = Path(file.filename or "").suffix.lower()
@@ -77,6 +78,7 @@ async def analyze_browser(
         file_bytes=file_bytes,
         jd_text=jd_text,
         analysis_mode=analysis_mode,
+        enable_public_research=enable_public_research is not None,
     )
     return RedirectResponse(url=f"/analyze/jobs/{job.job_id}?lang={resolve_lang(lang)}", status_code=303)
 

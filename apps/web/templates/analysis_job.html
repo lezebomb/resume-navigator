@@ -43,6 +43,9 @@
           <div class="summary-meta">
             <span>{{ job.filename }}</span>
             <span>{% if job.analysis_mode == 'deep' %}{{ ui.analysis_mode_deep }}{% else %}{{ ui.analysis_mode_standard }}{% endif %}</span>
+            {% if job.enable_public_research %}
+            <span>{% if current_lang == 'zh' %}公开资料补充已开启{% else %}Public research enabled{% endif %}</span>
+            {% endif %}
             <span id="jobIdLabel">{{ job.job_id }}</span>
           </div>
         </div>
@@ -113,7 +116,8 @@
           jd_parse: currentLang === "zh" ? "JD 解析" : "JD parsing",
           ats_audit: currentLang === "zh" ? "ATS 审核" : "ATS audit",
           match_audit: currentLang === "zh" ? "匹配审核" : "Match audit",
-          deep_review: currentLang === "zh" ? "深度复核" : "Deep review"
+          deep_review: currentLang === "zh" ? "深度复核" : "Deep review",
+          public_research: currentLang === "zh" ? "公开资料补充" : "Public research"
         };
 
         function renderStages(stages) {

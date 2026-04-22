@@ -130,6 +130,30 @@
               </div>
             </div>
 
+            <div class="toggle-card">
+              <label class="checkbox-row" for="enable_public_research">
+                <input id="enable_public_research" name="enable_public_research" type="checkbox" checked />
+                <span>
+                  {% if current_lang == 'zh' %}补充公开资料搜索{% else %}Add public-web research{% endif %}
+                </span>
+              </label>
+              <div class="field-note">
+                {% if current_lang == 'zh' %}
+                会尝试搜索公开的岗位要求、面经和技能要求资料，用来丰富报告和面试承接；它只作为补充证据，不会直接改写确定性分数。
+                {% else %}
+                The app will try to gather public interview, skill, and role-expectation sources to enrich the report. This layer is supplemental and does not directly overwrite the deterministic score.
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="field-note">
+              {% if current_lang == 'zh' %}
+              大模型能力后续默认采用用户自带密钥的本地接入方式，不会要求把你的私钥或隐私简历上传到公开仓库。
+              {% else %}
+              Optional LLM features are planned as bring-your-own-key local integrations, so private keys and resumes do not need to enter the public repo.
+              {% endif %}
+            </div>
+
             <div class="button-row">
               <button class="button button-primary js-submit-button" type="submit">{{ ui.start_analysis }}</button>
               <a class="button button-secondary" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>

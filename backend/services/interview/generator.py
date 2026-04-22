@@ -2,7 +2,15 @@ from __future__ import annotations
 
 import re
 
-from backend.api.schemas.domain import EvidenceCard, InterviewPrepReport, InterviewQuestionCard, JobDescriptionDocument, MatchReport, ResumeDocument
+from backend.api.schemas.domain import (
+    EvidenceCard,
+    InterviewPrepReport,
+    InterviewQuestionCard,
+    JobDescriptionDocument,
+    MatchReport,
+    PublicResearchReport,
+    ResumeDocument,
+)
 
 
 def build_interview_prep(
@@ -10,6 +18,7 @@ def build_interview_prep(
     resume: ResumeDocument,
     jd: JobDescriptionDocument,
     match: MatchReport,
+    research: PublicResearchReport | None = None,
 ) -> InterviewPrepReport:
     role_name = jd.role_title or "this role"
     questions: list[InterviewQuestionCard] = [
@@ -89,6 +98,19 @@ def build_interview_prep(
                 ],
             )
         )
+        questions.append(
+            InterviewQuestionCard(
+                category="analysis",
+                priority="medium",
+                question="If a core business metric suddenly dropped this week, how would you structure the analysis and narrow down the cause?",
+                why_asked="Data and analytical roles are frequently tested on structured problem decomposition under ambiguity.",
+                answer_focus=[
+                    "How you define and segment the metric",
+                    "How you separate data quality from real business change",
+                    "What hypotheses you would test first",
+                ],
+            )
+        )
 
     if "communication" in match.matched_soft_skills or match.missing_requirement_count > 0:
         questions.append(
@@ -104,6 +126,24 @@ def build_interview_prep(
                 ],
             )
         )
+
+    if role_flags["supply_chain"]:
+        questions.append(
+            InterviewQuestionCard(
+                category="domain",
+                priority="medium",
+                question="Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.",
+                why_asked="Supply chain interviews often test whether you can reason through trade-offs instead of optimizing only one metric.",
+                answer_focus=[
+                    "The competing goals or constraints",
+                    "How you prioritized and aligned stakeholders",
+                    "What result you achieved and what you would improve next time",
+                ],
+            )
+        )
+
+    if research and research.source_cards:
+        questions.append(_build_public_research_question(role_flags))
 
     questions.append(
         InterviewQuestionCard(
@@ -176,6 +216,32 @@ def _build_requirement_question(requirement: str) -> InterviewQuestionCard:
             "What the task or business goal actually was",
             "What you personally owned and executed",
             "What outcome, metric, or learning came out of it",
+        ],
+    )
+
+
+def _build_public_research_question(role_flags: dict[str, bool]) -> InterviewQuestionCard:
+    if role_flags["supply_chain"]:
+        return InterviewQuestionCard(
+            category="research",
+            priority="medium",
+            question="Public interview write-ups for similar roles often focus on one end-to-end planning or procurement decision. Which decision are you most prepared to defend in detail?",
+            why_asked="Public interview write-ups for similar roles repeatedly emphasize ownership, judgment, and trade-off clarity.",
+            answer_focus=[
+                "What triggered the decision",
+                "What options you compared",
+                "What business result followed",
+            ],
+        )
+    return InterviewQuestionCard(
+        category="research",
+        priority="medium",
+        question="Public interview write-ups for similar roles often test how you move from vague business goals to a structured analysis plan. What example from your experience best proves that ability?",
+        why_asked="Public interview write-ups for similar roles repeatedly emphasize structured thinking, not just tool familiarity.",
+        answer_focus=[
+            "What the ambiguous goal was",
+            "How you turned it into a measurable analysis plan",
+            "What recommendation or decision came out of it",
         ],
     )
 
