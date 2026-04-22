@@ -789,8 +789,8 @@ textarea {
 .dev-disclosure {
   margin-top: 22px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(248, 243, 234, 0.96);
+  border: 1px solid rgba(15, 23, 36, 0.08);
   overflow: hidden;
 }
 
@@ -799,6 +799,7 @@ textarea {
   padding: 16px 18px;
   font-weight: 700;
   list-style: none;
+  color: var(--ink);
 }
 
 .dev-disclosure summary::-webkit-details-marker {
@@ -807,6 +808,21 @@ textarea {
 
 .dev-disclosure-body {
   padding: 0 18px 18px;
+}
+
+.dev-disclosure-body .panel-title,
+.dev-disclosure-body .panel-copy,
+.dev-disclosure-body strong,
+.dev-disclosure-body li {
+  color: var(--ink);
+}
+
+.dev-disclosure-body .panel-copy {
+  opacity: 0.92;
+}
+
+.dev-disclosure-body .guide-list li {
+  border-top-color: rgba(15, 23, 36, 0.08);
 }
 
 .compact-lines li {
@@ -913,8 +929,8 @@ textarea {
 }
 
 .sticky-card {
-  position: sticky;
-  top: 24px;
+  position: static;
+  top: auto;
 }
 
 .job-card {
