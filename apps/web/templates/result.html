@@ -292,6 +292,34 @@
         </div>
       </section>
 
+      {% if result.interview %}
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">{{ ui.interview_handoff }}</h2>
+        <p class="section-subtitle">{{ ui.interview_copy }}</p>
+        <div class="notice">{{ translate_dynamic(result.interview.summary, current_lang) }}</div>
+        <p class="section-subtitle" style="margin-top: 16px;">{{ translate_dynamic(result.interview.intro_prompt, current_lang) }}</p>
+        <div class="interview-grid">
+          {% for item in result.interview.questions %}
+          <article class="interview-card">
+            <div class="requirement-head">
+              <strong>{{ loop.index }}. {{ translate_dynamic(item.question, current_lang) }}</strong>
+              <span class="chip {% if item.priority == 'high' %}chip-good{% else %}chip-neutral{% endif %}">
+                {% if item.priority == 'high' %}{{ ui.priority_high }}{% else %}{{ ui.priority_medium }}{% endif %}
+              </span>
+            </div>
+            <p><strong>{{ ui.why_asked }}:</strong> {{ translate_dynamic(item.why_asked, current_lang) }}</p>
+            <p><strong>{{ ui.answer_focus }}:</strong></p>
+            <ul class="action-list compact-list">
+              {% for focus in item.answer_focus %}
+              <li>{{ translate_dynamic(focus, current_lang) }}</li>
+              {% endfor %}
+            </ul>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
       <section class="list-card" style="margin-top: 24px;">
         <h2 class="section-title">{{ ui.submit_feedback }}</h2>
         <p class="section-subtitle">{{ ui.feedback_copy }}</p>

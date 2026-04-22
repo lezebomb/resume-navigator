@@ -89,6 +89,20 @@ class AnalysisStage(BaseModel):
     duration_ms: int
 
 
+class InterviewQuestionCard(BaseModel):
+    category: str
+    priority: Literal["high", "medium"]
+    question: str
+    why_asked: str
+    answer_focus: list[str] = Field(default_factory=list)
+
+
+class InterviewPrepReport(BaseModel):
+    summary: str
+    intro_prompt: str
+    questions: list[InterviewQuestionCard] = Field(default_factory=list)
+
+
 class MatchReport(BaseModel):
     overall_score: int
     summary: str
@@ -123,3 +137,4 @@ class AnalysisResult(BaseModel):
     jd: JobDescriptionDocument
     ats: AtsReport
     match: MatchReport
+    interview: InterviewPrepReport | None = None

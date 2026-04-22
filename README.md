@@ -118,6 +118,7 @@ These files are there on purpose so we can start collecting structured feedback 
 - `docs/LOCAL_VALIDATION_GUIDE_ZH.md`
 - `docs/COMMUNITY_PUBLISHING_GUIDE_ZH.md`
 - `docs/LLM_INTEGRATION_DECISION_ZH.md`
+- `docs/INTERVIEW_SOURCE_STRATEGY_ZH.md`
 - `docs/SEARCH_INTERVIEW_GTM_STRATEGY_ZH.md`
 - `docs/BETA_TESTER_OPERATIONS_ZH.md`
 

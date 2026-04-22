@@ -5,6 +5,7 @@ from time import perf_counter
 from backend.api.schemas.domain import AnalysisResult, AnalysisStage
 from backend.services.ats.engine import evaluate_ats_readiness
 from backend.services.history.store import save_analysis_result
+from backend.services.interview.generator import build_interview_prep
 from backend.services.jd.parser import parse_job_description
 from backend.services.matching.engine import evaluate_resume_match
 from backend.services.resume.parser import parse_resume_bytes
@@ -81,6 +82,7 @@ def analyze_resume_against_jd(
         jd=jd,
         ats=ats,
         match=match,
+        interview=build_interview_prep(resume=resume, jd=jd, match=match),
     )
     if persist:
         return save_analysis_result(result)

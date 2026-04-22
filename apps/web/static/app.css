@@ -530,7 +530,8 @@ textarea {
 }
 
 .stage-grid,
-.requirement-grid {
+.requirement-grid,
+.interview-grid {
   display: grid;
   gap: 18px;
 }
@@ -571,6 +572,11 @@ textarea {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.interview-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
 .requirement-card.requirement-covered {
   border-color: rgba(22, 101, 52, 0.18);
 }
@@ -581,6 +587,13 @@ textarea {
 
 .requirement-card.requirement-missing {
   border-color: rgba(169, 31, 45, 0.18);
+}
+
+.interview-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(15, 23, 36, 0.06);
 }
 
 .requirement-head {
@@ -705,6 +718,7 @@ textarea {
   .mini-grid,
   .stage-grid,
   .requirement-grid,
+  .interview-grid,
   .score-grid-3 {
     grid-template-columns: 1fr;
   }

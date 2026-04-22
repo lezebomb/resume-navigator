@@ -100,6 +100,12 @@ UI_TRANSLATIONS = {
         "requirement_label": "要求",
         "evidence_lines": "命中的简历证据",
         "next_step": "下一步",
+        "interview_handoff": "面试承接",
+        "interview_copy": "这些问题不是通用题库，而是根据当前简历证据、缺口和 JD 要求生成的高概率追问。",
+        "why_asked": "为什么会被问",
+        "answer_focus": "回答重点",
+        "priority_high": "高优先级",
+        "priority_medium": "中优先级",
         "covered": "已覆盖",
         "partial": "部分覆盖",
         "missing": "未覆盖",
@@ -260,6 +266,12 @@ UI_TRANSLATIONS = {
         "requirement_label": "Requirement",
         "evidence_lines": "Matched resume evidence",
         "next_step": "Next step",
+        "interview_handoff": "Interview handoff",
+        "interview_copy": "These are not generic interview questions. They are prioritized from your current resume evidence, visible gaps, and JD requirements.",
+        "why_asked": "Why this gets asked",
+        "answer_focus": "Answer focus",
+        "priority_high": "High priority",
+        "priority_medium": "Medium priority",
         "covered": "Covered",
         "partial": "Partial",
         "missing": "Missing",
@@ -527,6 +539,113 @@ _DYNAMIC_EXACT = {
         "zh": "补上一条能直接证明该 JD 要求的简历 bullet，用真实项目、任务或结果来支撑。",
         "en": "Add a resume bullet that directly proves this JD requirement with a real project, task, or result.",
     },
+    "This interview pack prioritizes the questions most likely to surface based on your current resume evidence, visible gaps, and JD requirements.": {
+        "zh": "这组面试问题优先覆盖最可能出现的追问，依据是你当前的简历证据、显性缺口和 JD 要求。",
+        "en": "This interview pack prioritizes the questions most likely to surface based on your current resume evidence, visible gaps, and JD requirements.",
+    },
+    "Practice answering these in spoken language, not written language. Keep each answer concrete, role-specific, and outcome-oriented.": {
+        "zh": "练习时请按口语表达来回答，而不是书面腔。每个回答都要具体、贴岗，并且落到结果。",
+        "en": "Practice answering these in spoken language, not written language. Keep each answer concrete, role-specific, and outcome-oriented.",
+    },
+    "Give me a 60-second introduction tailored to this role.": {
+        "zh": "请用 60 秒做一个贴合这个岗位的自我介绍。",
+        "en": "Give me a 60-second introduction tailored to this role.",
+    },
+    "Interviewers use this to judge role fit, communication clarity, and whether your story matches the JD from the first minute.": {
+        "zh": "面试官会用这个问题快速判断你的岗位匹配度、表达清晰度，以及你的经历故事是否从一开始就对齐 JD。",
+        "en": "Interviewers use this to judge role fit, communication clarity, and whether your story matches the JD from the first minute.",
+    },
+    "Who you are right now": {"zh": "你现在是谁、在找什么方向", "en": "Who you are right now"},
+    "Which past experiences map most directly to the target role": {"zh": "过去哪些经历最直接对应这个岗位", "en": "Which past experiences map most directly to the target role"},
+    "One concrete result with numbers or business impact": {"zh": "至少给出一个带数字或业务结果的例子", "en": "One concrete result with numbers or business impact"},
+    "Pick the project or experience on your resume that best matches this JD and walk me through it end to end.": {
+        "zh": "从你的简历里挑一个最贴合这个 JD 的项目或经历，从头到尾讲一遍。",
+        "en": "Pick the project or experience on your resume that best matches this JD and walk me through it end to end.",
+    },
+    "This checks whether the strongest line on the resume is real, well understood, and relevant to the hiring need.": {
+        "zh": "这题用来验证你简历上最强的一条经历是否真实、是否讲得清、是否真的贴合招聘需求。",
+        "en": "This checks whether the strongest line on the resume is real, well understood, and relevant to the hiring need.",
+    },
+    "Situation and business context": {"zh": "背景和业务场景", "en": "Situation and business context"},
+    "Your exact role and ownership": {"zh": "你的具体职责和负责边界", "en": "Your exact role and ownership"},
+    "Actions, trade-offs, and final outcome": {"zh": "你的动作、取舍和最终结果", "en": "Actions, trade-offs, and final outcome"},
+    "Your resume does not show strong SQL evidence yet. Tell me about the most complex SQL analysis you have actually done.": {
+        "zh": "你的简历里还没有体现出足够强的 SQL 证据。讲讲你实际做过的最复杂的一次 SQL 分析。",
+        "en": "Your resume does not show strong SQL evidence yet. Tell me about the most complex SQL analysis you have actually done.",
+    },
+    "A visible skill gap on the resume often turns into a direct verification question in the interview.": {
+        "zh": "简历里显眼的技能缺口，往往会在面试里变成直接核验题。",
+        "en": "A visible skill gap on the resume often turns into a direct verification question in the interview.",
+    },
+    "Business problem behind the query": {"zh": "这条查询背后的业务问题是什么", "en": "Business problem behind the query"},
+    "Joins, aggregations, or window functions you used": {"zh": "你实际用了哪些连接、聚合或窗口函数", "en": "Joins, aggregations, or window functions you used"},
+    "What decision or result the analysis enabled": {"zh": "这次分析最后支撑了什么决策或结果", "en": "What decision or result the analysis enabled"},
+    "Tell me about a time you used Excel or analysis tooling to turn messy data into a clear decision.": {
+        "zh": "讲一个你用 Excel 或分析工具把脏乱数据变成清晰决策依据的例子。",
+        "en": "Tell me about a time you used Excel or analysis tooling to turn messy data into a clear decision.",
+    },
+    "Interviewers want proof that your tool usage connects to business judgment, not just mechanical操作.": {
+        "zh": "面试官想确认你会用工具，但更重要的是这些工具是否真的服务了业务判断，而不是机械操作。",
+        "en": "Interviewers want proof that your tool usage connects to business judgment, not just mechanical操作.",
+    },
+    "How the data was messy or incomplete": {"zh": "数据一开始为什么脏、乱或不完整", "en": "How the data was messy or incomplete"},
+    "What framework or analysis steps you used": {"zh": "你用了什么分析框架或步骤", "en": "What framework or analysis steps you used"},
+    "What recommendation or operational action followed": {"zh": "最后给出了什么建议或推动了什么动作", "en": "What recommendation or operational action followed"},
+    "Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.": {
+        "zh": "讲一个你在供应链或采购任务里同时平衡成本、时效和落地可行性的例子。",
+        "en": "Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.",
+    },
+    "Supply chain interviews often test whether you can reason through trade-offs instead of optimizing only one metric.": {
+        "zh": "供应链岗位很常考取舍能力，而不是只会把某一个指标做到最好。",
+        "en": "Supply chain interviews often test whether you can reason through trade-offs instead of optimizing only one metric.",
+    },
+    "The competing goals or constraints": {"zh": "当时互相冲突的目标或约束是什么", "en": "The competing goals or constraints"},
+    "How you prioritized and aligned stakeholders": {"zh": "你是怎么排序优先级并对齐相关方的", "en": "How you prioritized and aligned stakeholders"},
+    "What result you achieved and what you would improve next time": {"zh": "最后结果如何，以及下次你会怎么做得更好", "en": "What result you achieved and what you would improve next time"},
+    "If a core business metric suddenly dropped this week, how would you structure the analysis and narrow down the cause?": {
+        "zh": "如果一个核心业务指标这周突然下滑，你会怎么组织分析并逐步缩小原因范围？",
+        "en": "If a core business metric suddenly dropped this week, how would you structure the analysis and narrow down the cause?",
+    },
+    "Data and analytical roles are frequently tested on structured problem decomposition under ambiguity.": {
+        "zh": "数据和分析岗位经常会考你在信息不完整时，能不能有结构地拆解问题。",
+        "en": "Data and analytical roles are frequently tested on structured problem decomposition under ambiguity.",
+    },
+    "How you define and segment the metric": {"zh": "你会如何先定义并拆分这个指标", "en": "How you define and segment the metric"},
+    "How you separate data quality from real business change": {"zh": "你怎么区分是数据异常还是业务真的变了", "en": "How you separate data quality from real business change"},
+    "What hypotheses you would test first": {"zh": "你最先会验证哪些假设", "en": "What hypotheses you would test first"},
+    "Describe a cross-functional disagreement and how you got alignment without losing execution speed.": {
+        "zh": "讲一个跨部门分歧的例子，以及你如何在不拖慢执行的情况下把大家拉到一致。",
+        "en": "Describe a cross-functional disagreement and how you got alignment without losing execution speed.",
+    },
+    "Hiring teams use this to test collaboration maturity, stakeholder handling, and execution discipline.": {
+        "zh": "这题用来判断你的协作成熟度、相关方处理能力和执行纪律。",
+        "en": "Hiring teams use this to test collaboration maturity, stakeholder handling, and execution discipline.",
+    },
+    "What each side cared about": {"zh": "各方分别在意什么", "en": "What each side cared about"},
+    "How you reframed the problem with evidence": {"zh": "你如何用证据重构问题定义", "en": "How you reframed the problem with evidence"},
+    "What agreement or next step you secured": {"zh": "你最后拿到了什么共识或下一步动作", "en": "What agreement or next step you secured"},
+    "Tell me about a time you had incomplete information but still needed to make a recommendation.": {
+        "zh": "讲一个信息不完整但你仍然需要给出建议或决策的例子。",
+        "en": "Tell me about a time you had incomplete information but still needed to make a recommendation.",
+    },
+    "Real jobs rarely provide perfect data, so interviewers look for judgment under uncertainty.": {
+        "zh": "真实工作里很少有完美数据，所以面试官会专门看你在不确定性下的判断力。",
+        "en": "Real jobs rarely provide perfect data, so interviewers look for judgment under uncertainty.",
+    },
+    "What was unknown or ambiguous": {"zh": "当时有哪些信息是未知或模糊的", "en": "What was unknown or ambiguous"},
+    "What assumptions you made and how you managed risk": {"zh": "你做了哪些假设，以及怎么控制风险", "en": "What assumptions you made and how you managed risk"},
+    "What happened after your recommendation": {"zh": "你的建议之后发生了什么", "en": "What happened after your recommendation"},
+    "Why this role, and why are you a better fit for this role now than six months ago?": {
+        "zh": "为什么是这个岗位？为什么你现在比半年前更适合这个岗位？",
+        "en": "Why this role, and why are you a better fit for this role now than six months ago?",
+    },
+    "This helps interviewers see self-awareness, motivation, and whether your trajectory is becoming more aligned with the role.": {
+        "zh": "这题帮助面试官看你的自我认知、动机是否真实，以及你的经历轨迹是否正在变得更贴岗。",
+        "en": "This helps interviewers see self-awareness, motivation, and whether your trajectory is becoming more aligned with the role.",
+    },
+    "Why this role fits your current direction": {"zh": "为什么这个岗位符合你当前方向", "en": "Why this role fits your current direction"},
+    "What has changed in your experience recently": {"zh": "最近哪些经历让你变得更匹配", "en": "What has changed in your experience recently"},
+    "What specific value you can create early": {"zh": "你入职后最早能创造什么具体价值", "en": "What specific value you can create early"},
 }
 
 _DYNAMIC_PATTERNS = [
@@ -640,6 +759,14 @@ _DYNAMIC_PATTERNS = [
             f"在 {match.group(2)} 条 JD 必选要求中，有 {match.group(1)} 条找到了要求级证据。"
             if lang == "zh"
             else f"Requirement-level evidence was found for {match.group(1)} of {match.group(2)} must-have JD lines."
+        ),
+    ),
+    (
+        re.compile(r"Why this role, and why are you a better fit for (.+) now than six months ago\?"),
+        lambda match, lang: (
+            f"为什么是这个岗位？为什么你现在比半年前更适合 {match.group(1)}？"
+            if lang == "zh"
+            else f"Why this role, and why are you a better fit for {match.group(1)} now than six months ago?"
         ),
     ),
     (
