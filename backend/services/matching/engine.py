@@ -392,6 +392,10 @@ def _confidence_label(score: int) -> str:
     return "Needs manual review"
 
 
+def label_confidence(score: int) -> str:
+    return _confidence_label(score)
+
+
 def _extract_requirement_tokens(line: str) -> list[str]:
     stopwords = {
         "负责",

@@ -3,11 +3,12 @@ from __future__ import annotations
 from time import perf_counter
 
 from backend.api.schemas.domain import AnalysisResult, AnalysisStage
+from backend.services.analysis.deep_review import run_deep_review
 from backend.services.ats.engine import evaluate_ats_readiness
 from backend.services.history.store import save_analysis_result
 from backend.services.interview.generator import build_interview_prep
 from backend.services.jd.parser import parse_job_description
-from backend.services.matching.engine import evaluate_resume_match
+from backend.services.matching.engine import evaluate_resume_match, label_confidence
 from backend.services.resume.parser import parse_resume_bytes
 
 
@@ -62,15 +63,20 @@ def analyze_resume_against_jd(
 
     if analysis_mode == "deep":
         started = perf_counter()
+        deep_review = run_deep_review(resume=resume, jd=jd, match=match)
+        if deep_review.confidence_reasons:
+            match.confidence_reasons = _dedupe_strings(match.confidence_reasons + deep_review.confidence_reasons)
+        if deep_review.risk_signals:
+            match.risk_signals = _dedupe_strings(match.risk_signals + deep_review.risk_signals)
+        if deep_review.priority_actions:
+            match.priority_actions = _dedupe_strings(match.priority_actions + deep_review.priority_actions)
+        if deep_review.confidence_delta:
+            match.confidence_score = max(0, min(100, match.confidence_score + deep_review.confidence_delta))
+            match.confidence_label = label_confidence(match.confidence_score)
         stages.append(
             AnalysisStage(
                 name="deep_review",
-                detail=(
-                    f"Built requirement-level evidence cards so the result can be reviewed against specific JD lines. "
-                    f"Reviewed {match.total_requirement_count} must-have lines and found evidence for "
-                    f"{match.covered_requirement_count + match.partial_requirement_count}. "
-                    f"Current confidence is {match.confidence_label}."
-                ),
+                detail=deep_review.summary,
                 duration_ms=_duration_ms(started),
             )
         )
@@ -91,3 +97,14 @@ def analyze_resume_against_jd(
 
 def _duration_ms(started: float) -> int:
     return max(1, round((perf_counter() - started) * 1000))
+
+
+def _dedupe_strings(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in items:
+        if item in seen:
+            continue
+        seen.add(item)
+        ordered.append(item)
+    return ordered

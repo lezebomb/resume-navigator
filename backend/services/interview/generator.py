@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from backend.api.schemas.domain import InterviewPrepReport, InterviewQuestionCard, JobDescriptionDocument, MatchReport, ResumeDocument
+import re
+
+from backend.api.schemas.domain import EvidenceCard, InterviewPrepReport, InterviewQuestionCard, JobDescriptionDocument, MatchReport, ResumeDocument
 
 
 def build_interview_prep(
@@ -9,15 +11,8 @@ def build_interview_prep(
     jd: JobDescriptionDocument,
     match: MatchReport,
 ) -> InterviewPrepReport:
-    questions: list[InterviewQuestionCard] = []
     role_name = jd.role_title or "this role"
-    matched_skills = set(match.matched_hard_skills)
-    missing_skills = set(match.missing_hard_skills)
-    lower_role = (jd.role_title or "").lower()
-    is_supply_chain = "supply" in lower_role or "采购" in jd.raw_text or "供应链" in jd.raw_text or "procurement" in jd.raw_text.lower()
-    is_data_role = "data" in lower_role or "分析" in jd.raw_text or "sql" in jd.raw_text.lower()
-
-    questions.append(
+    questions: list[InterviewQuestionCard] = [
         InterviewQuestionCard(
             category="pitch",
             priority="high",
@@ -28,10 +23,7 @@ def build_interview_prep(
                 "Which past experiences map most directly to the target role",
                 "One concrete result with numbers or business impact",
             ],
-        )
-    )
-
-    questions.append(
+        ),
         InterviewQuestionCard(
             category="project",
             priority="high",
@@ -42,8 +34,16 @@ def build_interview_prep(
                 "Your exact role and ownership",
                 "Actions, trade-offs, and final outcome",
             ],
-        )
-    )
+        ),
+    ]
+
+    targeted_requirement = _pick_target_requirement(match.requirement_evidence)
+    if targeted_requirement:
+        questions.append(_build_requirement_question(targeted_requirement))
+
+    role_flags = _detect_role_flags(jd)
+    matched_skills = {skill.lower() for skill in match.matched_hard_skills}
+    missing_skills = {skill.lower() for skill in match.missing_hard_skills}
 
     if "sql" in missing_skills:
         questions.append(
@@ -60,52 +60,37 @@ def build_interview_prep(
             )
         )
 
-    if "excel" in matched_skills or "data_analysis" in matched_skills:
-        questions.append(
-            InterviewQuestionCard(
-                category="tooling",
-                priority="high",
-                question="Tell me about a time you used Excel or analysis tooling to turn messy data into a clear decision.",
-                why_asked="Interviewers want proof that your tool usage connects to business judgment, not just mechanical操作.",
-                answer_focus=[
-                    "How the data was messy or incomplete",
-                    "What framework or analysis steps you used",
-                    "What recommendation or operational action followed",
-                ],
-            )
-        )
-
-    if is_supply_chain:
+    if role_flags["supply_chain"]:
         questions.append(
             InterviewQuestionCard(
                 category="domain",
                 priority="high",
-                question="Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.",
-                why_asked="Supply chain interviews often test whether you can reason through trade-offs instead of optimizing only one metric.",
+                question="Walk me through a supplier delay, shortage, or planning exception you handled. How did you diagnose it and protect delivery?",
+                why_asked="Operations and supply chain interviews frequently test whether you can stabilize execution under pressure, not just describe routine work.",
                 answer_focus=[
-                    "The competing goals or constraints",
-                    "How you prioritized and aligned stakeholders",
-                    "What result you achieved and what you would improve next time",
+                    "What signal told you the plan was breaking",
+                    "How you coordinated suppliers, internal teams, or data inputs",
+                    "What trade-off you made on cost, service level, or lead time",
                 ],
             )
         )
 
-    if is_data_role:
+    if role_flags["analysis"] or "excel" in matched_skills or "data_analysis" in matched_skills:
         questions.append(
             InterviewQuestionCard(
                 category="analysis",
                 priority="high",
-                question="If a core business metric suddenly dropped this week, how would you structure the analysis and narrow down the cause?",
-                why_asked="Data and analytical roles are frequently tested on structured problem decomposition under ambiguity.",
+                question="Pick one metric or dashboard you used regularly. How was it defined, where did the data come from, and what decision did it support?",
+                why_asked="Analyst interviews often check whether you understand the business meaning and trust boundaries behind the numbers, not just the final chart.",
                 answer_focus=[
-                    "How you define and segment the metric",
-                    "How you separate data quality from real business change",
-                    "What hypotheses you would test first",
+                    "How the metric was defined",
+                    "What source tables, files, or systems fed it",
+                    "How the metric changed a business decision",
                 ],
             )
         )
 
-    if "communication" in match.matched_soft_skills or "execution" in match.missing_keywords or match.missing_requirement_count > 0:
+    if "communication" in match.matched_soft_skills or match.missing_requirement_count > 0:
         questions.append(
             InterviewQuestionCard(
                 category="collaboration",
@@ -122,20 +107,6 @@ def build_interview_prep(
 
     questions.append(
         InterviewQuestionCard(
-            category="uncertainty",
-            priority="medium",
-            question="Tell me about a time you had incomplete information but still needed to make a recommendation.",
-            why_asked="Real jobs rarely provide perfect data, so interviewers look for judgment under uncertainty.",
-            answer_focus=[
-                "What was unknown or ambiguous",
-                "What assumptions you made and how you managed risk",
-                "What happened after your recommendation",
-            ],
-        )
-    )
-
-    questions.append(
-        InterviewQuestionCard(
             category="motivation",
             priority="medium",
             question=f"Why this role, and why are you a better fit for {role_name} now than six months ago?",
@@ -148,8 +119,74 @@ def build_interview_prep(
         )
     )
 
+    questions = _dedupe_questions(questions)[:7]
     return InterviewPrepReport(
         summary="This interview pack prioritizes the questions most likely to surface based on your current resume evidence, visible gaps, and JD requirements.",
         intro_prompt="Practice answering these in spoken language, not written language. Keep each answer concrete, role-specific, and outcome-oriented.",
-        questions=questions[:7],
+        questions=questions,
     )
+
+
+def _detect_role_flags(jd: JobDescriptionDocument) -> dict[str, bool]:
+    haystack = " ".join(
+        filter(
+            None,
+            [
+                jd.role_title or "",
+                jd.industry_hint or "",
+                jd.raw_text or "",
+                " ".join(jd.keywords),
+                " ".join(jd.must_have_items),
+            ],
+        )
+    ).lower()
+    return {
+        "supply_chain": any(token in haystack for token in ("supply", "procurement", "inventory", "logistics", "采购", "供应链", "库存", "物流", "计划")),
+        "analysis": any(token in haystack for token in ("analysis", "analyst", "data", "sql", "dashboard", "metrics", "分析", "数据", "指标", "报表")),
+    }
+
+
+def _pick_target_requirement(cards: list[EvidenceCard]) -> str | None:
+    for preferred_status in ("missing", "partial"):
+        for card in cards:
+            if card.status == preferred_status:
+                return _compress_requirement(card.requirement)
+    return None
+
+
+def _compress_requirement(requirement: str) -> str:
+    compact = requirement.strip().replace("\n", " ")
+    compact = re.sub(r"\s+", " ", compact)
+    compact = re.sub(r"^(?:任职要求|requirements?)\s*[:：]?\s*", "", compact, flags=re.IGNORECASE)
+    compact = re.sub(r"^[\-\*\u2022\u25cf\u25a0]+\s*", "", compact)
+    compact = re.sub(r"^\d+\s*[\.\)\]:：、-]+\s*", "", compact)
+    compact = compact.rstrip("；;。.")
+    if len(compact) <= 40:
+        return compact
+    return compact[:40].rstrip(",.;:；。") + "..."
+
+
+def _build_requirement_question(requirement: str) -> InterviewQuestionCard:
+    return InterviewQuestionCard(
+        category="proof",
+        priority="high",
+        question=f"The JD emphasizes {requirement}. Tell me about the strongest example in your experience that proves it.",
+        why_asked="Interviewers often convert a visible requirement gap into a direct proof question.",
+        answer_focus=[
+            "What the task or business goal actually was",
+            "What you personally owned and executed",
+            "What outcome, metric, or learning came out of it",
+        ],
+    )
+
+
+def _dedupe_questions(questions: list[InterviewQuestionCard]) -> list[InterviewQuestionCard]:
+    seen: set[str] = set()
+    ordered: list[InterviewQuestionCard] = []
+    for item in questions:
+        normalized = re.sub(r"\s+", " ", item.question.strip().lower())
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        ordered.append(item)
+    return ordered

@@ -519,6 +519,34 @@ _DYNAMIC_EXACT = {
         "zh": "JD 含有足够多的结构化要求，能支持较有意义的对比。",
         "en": "JD contains enough structured requirements to support a meaningful comparison.",
     },
+    "Several matched hard skills only appear in skills or certification sections, not in experience or project evidence.": {
+        "zh": "有几项已匹配的硬技能只出现在技能或证书区，还没有在经历或项目证据里真正立住。",
+        "en": "Several matched hard skills only appear in skills or certification sections, not in experience or project evidence.",
+    },
+    "Several matched hard skills are also backed by experience or project context, but some still rely on shallow skill-list evidence.": {
+        "zh": "有些已匹配硬技能已经有经历或项目场景支撑，但仍有一部分主要停留在技能清单层面，证据深度还不够。",
+        "en": "Several matched hard skills are also backed by experience or project context, but some still rely on shallow skill-list evidence.",
+    },
+    "Some matched skills are currently easy to question in interviews because they are listed, but not strongly proven in dated experience.": {
+        "zh": "有些技能现在更像是“列出来了”，但还没有在带时间线的真实经历里被强力证明，面试里很容易被追问。",
+        "en": "Some matched skills are currently easy to question in interviews because they are listed, but not strongly proven in dated experience.",
+    },
+    "Move at least one matched hard skill from the skills list into a dated experience or project bullet with scope and outcome context.": {
+        "zh": "至少把一项已匹配硬技能从技能清单迁移到带日期的经历或项目 bullet 中，并补上范围与结果语境。",
+        "en": "Move at least one matched hard skill from the skills list into a dated experience or project bullet with scope and outcome context.",
+    },
+    "Deep review found enough experience-context evidence behind the matched skills to support a more confident judgment.": {
+        "zh": "深度复核发现，这些已匹配技能背后已经有足够多的经历场景证据，可以支撑更高可信度的判断。",
+        "en": "Deep review found enough experience-context evidence behind the matched skills to support a more confident judgment.",
+    },
+    "Some JD evidence currently comes from skills-list mentions instead of experience bullets, which weakens credibility in interviews.": {
+        "zh": "有些 JD 证据目前主要来自技能清单，而不是经历 bullet，这会削弱面试里的可信度。",
+        "en": "Some JD evidence currently comes from skills-list mentions instead of experience bullets, which weakens credibility in interviews.",
+    },
+    "For high-priority JD requirements, add bullets that show action, context, and business outcome instead of tool names alone.": {
+        "zh": "针对高优先级 JD 要求，补上能够体现动作、场景和业务结果的 bullet，而不是只列工具名。",
+        "en": "For high-priority JD requirements, add bullets that show action, context, and business outcome instead of tool names alone.",
+    },
     "Some ATS extraction or layout risks reduce the confidence of automated judgment.": {
         "zh": "存在 ATS 提取或排版风险，会降低自动判断的可信度。",
         "en": "Some ATS extraction or layout risks reduce the confidence of automated judgment.",
@@ -580,6 +608,13 @@ _DYNAMIC_EXACT = {
     "Business problem behind the query": {"zh": "这条查询背后的业务问题是什么", "en": "Business problem behind the query"},
     "Joins, aggregations, or window functions you used": {"zh": "你实际用了哪些连接、聚合或窗口函数", "en": "Joins, aggregations, or window functions you used"},
     "What decision or result the analysis enabled": {"zh": "这次分析最后支撑了什么决策或结果", "en": "What decision or result the analysis enabled"},
+    "Interviewers often convert a visible requirement gap into a direct proof question.": {
+        "zh": "面试官经常会把简历里可见的要求缺口，直接变成一条现场核验题。",
+        "en": "Interviewers often convert a visible requirement gap into a direct proof question.",
+    },
+    "What the task or business goal actually was": {"zh": "当时真实的任务或业务目标是什么", "en": "What the task or business goal actually was"},
+    "What you personally owned and executed": {"zh": "你个人具体负责并执行了什么", "en": "What you personally owned and executed"},
+    "What outcome, metric, or learning came out of it": {"zh": "最后产出了什么结果、指标变化或关键复盘", "en": "What outcome, metric, or learning came out of it"},
     "Tell me about a time you used Excel or analysis tooling to turn messy data into a clear decision.": {
         "zh": "讲一个你用 Excel 或分析工具把脏乱数据变成清晰决策依据的例子。",
         "en": "Tell me about a time you used Excel or analysis tooling to turn messy data into a clear decision.",
@@ -591,6 +626,28 @@ _DYNAMIC_EXACT = {
     "How the data was messy or incomplete": {"zh": "数据一开始为什么脏、乱或不完整", "en": "How the data was messy or incomplete"},
     "What framework or analysis steps you used": {"zh": "你用了什么分析框架或步骤", "en": "What framework or analysis steps you used"},
     "What recommendation or operational action followed": {"zh": "最后给出了什么建议或推动了什么动作", "en": "What recommendation or operational action followed"},
+    "Walk me through a supplier delay, shortage, or planning exception you handled. How did you diagnose it and protect delivery?": {
+        "zh": "讲一个你处理供应商延期、缺料或计划异常的例子。你是怎么定位问题并保住交付的？",
+        "en": "Walk me through a supplier delay, shortage, or planning exception you handled. How did you diagnose it and protect delivery?",
+    },
+    "Operations and supply chain interviews frequently test whether you can stabilize execution under pressure, not just describe routine work.": {
+        "zh": "运营和供应链岗位经常会考你能不能在压力下稳住执行，而不只是复述日常工作流程。",
+        "en": "Operations and supply chain interviews frequently test whether you can stabilize execution under pressure, not just describe routine work.",
+    },
+    "What signal told you the plan was breaking": {"zh": "最先让你意识到计划开始失控的信号是什么", "en": "What signal told you the plan was breaking"},
+    "How you coordinated suppliers, internal teams, or data inputs": {"zh": "你是怎么协调供应商、内部团队或相关数据输入的", "en": "How you coordinated suppliers, internal teams, or data inputs"},
+    "What trade-off you made on cost, service level, or lead time": {"zh": "你在成本、服务水平或交期之间做了什么取舍", "en": "What trade-off you made on cost, service level, or lead time"},
+    "Pick one metric or dashboard you used regularly. How was it defined, where did the data come from, and what decision did it support?": {
+        "zh": "挑一个你经常使用的指标或看板。它是怎么定义的、数据从哪里来、最后支撑了什么决策？",
+        "en": "Pick one metric or dashboard you used regularly. How was it defined, where did the data come from, and what decision did it support?",
+    },
+    "Analyst interviews often check whether you understand the business meaning and trust boundaries behind the numbers, not just the final chart.": {
+        "zh": "分析岗面试常常会追问你是否真的理解数字背后的业务含义和可信边界，而不只是会展示最后那张图。",
+        "en": "Analyst interviews often check whether you understand the business meaning and trust boundaries behind the numbers, not just the final chart.",
+    },
+    "How the metric was defined": {"zh": "这个指标当时是怎么定义的", "en": "How the metric was defined"},
+    "What source tables, files, or systems fed it": {"zh": "它依赖了哪些表、文件或业务系统", "en": "What source tables, files, or systems fed it"},
+    "How the metric changed a business decision": {"zh": "这个指标最终是怎么影响业务决策的", "en": "How the metric changed a business decision"},
     "Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.": {
         "zh": "讲一个你在供应链或采购任务里同时平衡成本、时效和落地可行性的例子。",
         "en": "Tell me about a time you had to balance cost, timeliness, and operational feasibility in a supply chain or procurement task.",
@@ -762,11 +819,36 @@ _DYNAMIC_PATTERNS = [
         ),
     ),
     (
+        re.compile(r"The JD emphasizes (.+)\. Tell me about the strongest example in your experience that proves it\."),
+        lambda match, lang: (
+            f"JD 特别强调 {match.group(1)}。请讲一个你经历里最能证明这项要求的例子。"
+            if lang == "zh"
+            else f"The JD emphasizes {match.group(1)}. Tell me about the strongest example in your experience that proves it."
+        ),
+    ),
+    (
         re.compile(r"Why this role, and why are you a better fit for (.+) now than six months ago\?"),
         lambda match, lang: (
             f"为什么是这个岗位？为什么你现在比半年前更适合 {match.group(1)}？"
             if lang == "zh"
             else f"Why this role, and why are you a better fit for {match.group(1)} now than six months ago?"
+        ),
+    ),
+    (
+        re.compile(
+            r"Deep review checked whether matched skills are backed by experience-context evidence and whether "
+            r"JD evidence comes from real experience instead of only skill lists\. "
+            r"Found (\d+) skills with experience evidence and (\d+) skills that still look list-only\."
+        ),
+        lambda match, lang: (
+            f"深度复核检查了已匹配技能是否真的落在经历场景里，而不是只停留在技能清单。"
+            f"本次发现有 {match.group(1)} 项技能具备经历证据，另有 {match.group(2)} 项技能目前仍更像清单式陈列。"
+            if lang == "zh"
+            else (
+                "Deep review checked whether matched skills are backed by experience-context evidence and whether "
+                "JD evidence comes from real experience instead of only skill lists. "
+                f"Found {match.group(1)} skills with experience evidence and {match.group(2)} skills that still look list-only."
+            )
         ),
     ),
     (

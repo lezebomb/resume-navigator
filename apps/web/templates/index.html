@@ -8,21 +8,42 @@
   </head>
   <body>
     <div class="page-shell">
-      <div class="topbar">
+      <header class="topbar topbar-links">
         <div class="brand-mark">{{ ui.brand }}</div>
-        <div class="lang-switch">
-          <span>{{ ui.lang_switch_label }}</span>
-          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
-          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+        <div class="topbar-actions">
+          <a class="topbar-link" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
+          <a class="topbar-link" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
+          <a class="topbar-link" href="/docs">{{ ui.view_api_docs }}</a>
+          <div class="lang-switch">
+            <span>{{ ui.lang_switch_label }}</span>
+            <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
+            <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <section class="hero">
-        <div class="hero-card">
+      <section class="landing-grid">
+        <section class="hero-card hero-card-clean">
           <div class="hero-eyebrow">{{ ui.brand }}</div>
           <h1>{{ ui.home_title }}</h1>
           <p>{{ ui.home_subtitle }}</p>
-          <div class="hero-metrics">
+
+          <div class="trust-strip">
+            <article class="trust-pill">
+              <strong>{{ ui.feature_resume_parse_title }}</strong>
+              <span>{{ ui.feature_resume_parse_copy }}</span>
+            </article>
+            <article class="trust-pill">
+              <strong>{{ ui.feature_ats_title }}</strong>
+              <span>{{ ui.feature_ats_copy }}</span>
+            </article>
+            <article class="trust-pill">
+              <strong>{{ ui.feature_match_title }}</strong>
+              <span>{{ ui.feature_match_copy }}</span>
+            </article>
+          </div>
+
+          <div class="hero-metrics hero-metrics-tight">
             <div class="hero-metric">
               <strong>{{ analysis_count }}</strong>
               <span>{{ ui.home_metric_analysis_count }}</span>
@@ -32,43 +53,54 @@
               <span>{{ ui.home_metric_feedback_count }}</span>
             </div>
             <div class="hero-metric">
-              <strong>Chinese-first</strong>
+              <strong>{% if current_lang == 'zh' %}证据优先{% else %}Evidence first{% endif %}</strong>
               <span>{{ ui.home_metric_chinese_first }}</span>
             </div>
           </div>
-        </div>
 
-        <aside class="glass-panel">
-          <div class="panel-kicker">{{ ui.current_build }}</div>
-          <h2 class="panel-title">{{ ui.current_build_title }}</h2>
-          <p class="panel-copy">{{ ui.current_build_copy }}</p>
-          <ul class="guide-list">
-            <li>
-              <strong>{{ ui.feature_resume_parse_title }}</strong>
-              {{ ui.feature_resume_parse_copy }}
-            </li>
-            <li>
-              <strong>{{ ui.feature_ats_title }}</strong>
-              {{ ui.feature_ats_copy }}
-            </li>
-            <li>
-              <strong>{{ ui.feature_match_title }}</strong>
-              {{ ui.feature_match_copy }}
-            </li>
-            <li>
-              <strong>{{ ui.feature_feedback_title }}</strong>
-              {{ ui.feature_feedback_copy }}
-            </li>
-          </ul>
-        </aside>
-      </section>
+          <details class="dev-disclosure">
+            <summary>
+              {% if current_lang == 'zh' %}开发说明{% else %}Build note{% endif %}
+            </summary>
+            <div class="dev-disclosure-body">
+              <div class="panel-kicker">{{ ui.current_build }}</div>
+              <h2 class="panel-title">{{ ui.current_build_title }}</h2>
+              <p class="panel-copy">{{ ui.current_build_copy }}</p>
+              <ul class="guide-list compact-lines">
+                <li>
+                  <strong>{{ ui.feature_resume_parse_title }}</strong>
+                  {{ ui.feature_resume_parse_copy }}
+                </li>
+                <li>
+                  <strong>{{ ui.feature_ats_title }}</strong>
+                  {{ ui.feature_ats_copy }}
+                </li>
+                <li>
+                  <strong>{{ ui.feature_match_title }}</strong>
+                  {{ ui.feature_match_copy }}
+                </li>
+                <li>
+                  <strong>{{ ui.feature_feedback_title }}</strong>
+                  {{ ui.feature_feedback_copy }}
+                </li>
+              </ul>
+            </div>
+          </details>
+        </section>
 
-      <section class="intake-grid">
-        <section class="form-card">
-          <h2>{{ ui.intake_title }}</h2>
+        <section class="form-card intake-card">
+          <div class="intake-head">
+            <div>
+              <div class="panel-kicker">{{ ui.intake_title }}</div>
+              <h2>{{ ui.intake_title }}</h2>
+            </div>
+            <span class="subtle-badge">
+              {% if current_lang == 'zh' %}默认深度诊断{% else %}Deep audit by default{% endif %}
+            </span>
+          </div>
           <p class="section-subtitle">{{ ui.intake_subtitle }}</p>
 
-          <form action="/analyze/browser" method="post" enctype="multipart/form-data" class="stack">
+          <form action="/analyze/browser" method="post" enctype="multipart/form-data" class="stack js-analysis-form">
             <input type="hidden" name="lang" value="{{ current_lang }}" />
 
             <div>
@@ -89,21 +121,59 @@
                 <option value="deep" selected>{{ ui.analysis_mode_deep }} - {{ ui.analysis_mode_deep_note }}</option>
                 <option value="standard">{{ ui.analysis_mode_standard }} - {{ ui.analysis_mode_standard_note }}</option>
               </select>
+              <div class="field-note">
+                {% if current_lang == 'zh' %}
+                深度诊断会额外做要求级证据复核与技能证据深度检查，适合正式投递前再跑一遍。
+                {% else %}
+                Deep audit adds requirement-level evidence review and skill-proof checks, which is better before real applications.
+                {% endif %}
+              </div>
             </div>
 
             <div class="button-row">
-              <button class="button button-primary" type="submit">{{ ui.start_analysis }}</button>
+              <button class="button button-primary js-submit-button" type="submit">{{ ui.start_analysis }}</button>
               <a class="button button-secondary" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
-              <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
-              <a class="button button-secondary" href="/docs">{{ ui.view_api_docs }}</a>
             </div>
           </form>
         </section>
+      </section>
 
-        <aside class="guide-card">
-          <h2>{{ ui.growth_title }}</h2>
-          <p class="section-subtitle">{{ ui.growth_copy }}</p>
-          <ol class="roadmap-list">
+      <section class="support-grid">
+        <section class="list-card compact-card">
+          <h2 class="section-title">
+            {% if current_lang == 'zh' %}这次会给你什么{% else %}What you get{% endif %}
+          </h2>
+          <ul class="guide-list compact-lines">
+            <li>
+              <strong>{% if current_lang == 'zh' %}先说结论{% else %}Conclusion first{% endif %}</strong>
+              {% if current_lang == 'zh' %}
+              先看到 ATS、岗位匹配度和判断可信度，再下钻证据。
+              {% else %}
+              See ATS, role match, and judgment confidence before drilling into evidence.
+              {% endif %}
+            </li>
+            <li>
+              <strong>{% if current_lang == 'zh' %}再看证据{% else %}Evidence next{% endif %}</strong>
+              {% if current_lang == 'zh' %}
+              每条关键要求都会尽量落到具体证据、缺口和下一步动作。
+              {% else %}
+              Key requirements are mapped to evidence, gaps, and next-step actions.
+              {% endif %}
+            </li>
+            <li>
+              <strong>{% if current_lang == 'zh' %}最后承接面试{% else %}Interview handoff{% endif %}</strong>
+              {% if current_lang == 'zh' %}
+              根据当前简历和 JD 生成更像真实一面的追问，而不是泛泛题库。
+              {% else %}
+              The interview pack is tailored to the current resume and JD, not a generic question bank.
+              {% endif %}
+            </li>
+          </ul>
+        </section>
+
+        <section class="list-card compact-card">
+          <h2 class="section-title">{{ ui.growth_title }}</h2>
+          <ol class="roadmap-list compact-lines">
             <li>
               <strong>{{ ui.growth_step_1_title }}</strong>
               {{ ui.growth_step_1_copy }}
@@ -116,15 +186,61 @@
               <strong>{{ ui.growth_step_3_title }}</strong>
               {{ ui.growth_step_3_copy }}
             </li>
-            <li>
-              <strong>{{ ui.growth_step_4_title }}</strong>
-              {{ ui.growth_step_4_copy }}
-            </li>
           </ol>
-        </aside>
+        </section>
       </section>
+
+      <div class="loading-overlay" id="loadingOverlay" hidden>
+        <div class="loading-card">
+          <div class="panel-kicker">
+            {% if current_lang == 'zh' %}正在分析{% else %}Analyzing{% endif %}
+          </div>
+          <h2 id="loadingTitle">
+            {% if current_lang == 'zh' %}正在启动诊断链路{% else %}Starting the review pipeline{% endif %}
+          </h2>
+          <p class="section-subtitle" id="loadingCopy">
+            {% if current_lang == 'zh' %}
+            页面不会立刻跳结果，是因为系统会依次做简历解析、JD 拆解、ATS 审核、匹配复核和面试承接。
+            {% else %}
+            The result is not shown instantly because the system walks through parsing, JD structuring, ATS review, match review, and interview handoff.
+            {% endif %}
+          </p>
+          <ol class="loading-steps">
+            <li>{% if current_lang == 'zh' %}读取并解析简历文本{% else %}Read and parse the resume{% endif %}</li>
+            <li>{% if current_lang == 'zh' %}提取 JD 的岗位、要求与关键词{% else %}Extract role, requirements, and keywords from the JD{% endif %}</li>
+            <li>{% if current_lang == 'zh' %}审核 ATS 风险与结构问题{% else %}Audit ATS risks and structure{% endif %}</li>
+            <li>{% if current_lang == 'zh' %}逐条复核 JD 证据和技能深度{% else %}Review JD evidence and skill depth{% endif %}</li>
+            <li>{% if current_lang == 'zh' %}生成优先动作与面试问题{% else %}Generate actions and interview questions{% endif %}</li>
+          </ol>
+        </div>
+      </div>
 
       <p class="footer-note">{{ ui.footer_note }}</p>
     </div>
+
+    <script>
+      (function () {
+        const form = document.querySelector(".js-analysis-form");
+        const overlay = document.getElementById("loadingOverlay");
+        const submitButton = document.querySelector(".js-submit-button");
+        const loadingTitle = document.getElementById("loadingTitle");
+
+        if (!form || !overlay || !submitButton || !loadingTitle) {
+          return;
+        }
+
+        form.addEventListener("submit", function () {
+          const mode = document.getElementById("analysis_mode").value;
+          overlay.hidden = false;
+          document.body.classList.add("is-loading");
+          submitButton.disabled = true;
+          submitButton.textContent = "{{ '分析中，请稍候' if current_lang == 'zh' else 'Analyzing...' }}";
+          loadingTitle.textContent =
+            mode === "deep"
+              ? "{{ '正在进行深度诊断' if current_lang == 'zh' else 'Running deep audit' }}"
+              : "{{ '正在进行快速诊断' if current_lang == 'zh' else 'Running quick audit' }}";
+        });
+      })();
+    </script>
   </body>
 </html>

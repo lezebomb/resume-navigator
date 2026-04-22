@@ -85,6 +85,7 @@ async def analyze_browser(
         {
             "result": result.model_dump(),
             "analysis_mode": "deep" if analysis_mode == "deep" else "standard",
+            "result_view_path": f"/analysis/{result.analysis_id}" if result.analysis_id else "/",
             "current_lang": resolve_lang(lang),
             "ui": get_ui(resolve_lang(lang)),
         }
@@ -150,6 +151,7 @@ async def analysis_detail(request: Request, analysis_id: str) -> HTMLResponse:
         {
             "result": result.model_dump(),
             "analysis_mode": result.analysis_mode,
+            "result_view_path": f"/analysis/{analysis_id}",
         }
     )
     return templates.TemplateResponse(request, "result.html", context)

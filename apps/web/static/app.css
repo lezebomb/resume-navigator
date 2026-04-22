@@ -703,6 +703,235 @@ textarea {
   margin: 12px 0;
 }
 
+.topbar-links {
+  gap: 20px;
+}
+
+.topbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.topbar-link {
+  color: rgba(248, 241, 229, 0.84);
+  text-decoration: none;
+  font-size: 0.96rem;
+}
+
+.topbar-link:hover {
+  color: #fff8ef;
+}
+
+.landing-grid,
+.support-grid,
+.results-layout {
+  display: grid;
+  gap: 24px;
+}
+
+.landing-grid {
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: start;
+  margin-bottom: 24px;
+}
+
+.support-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hero-card-clean {
+  min-height: 100%;
+}
+
+.hero-metrics-tight {
+  margin-top: 24px;
+}
+
+.trust-strip {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.trust-pill {
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.soft-panel {
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(15, 23, 36, 0.06);
+}
+
+.trust-pill strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.trust-pill span {
+  display: block;
+  color: rgba(246, 251, 250, 0.84);
+  line-height: 1.7;
+}
+
+.dev-disclosure {
+  margin-top: 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.dev-disclosure summary {
+  cursor: pointer;
+  padding: 16px 18px;
+  font-weight: 700;
+  list-style: none;
+}
+
+.dev-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.dev-disclosure-body {
+  padding: 0 18px 18px;
+}
+
+.compact-lines li {
+  padding: 12px 0;
+}
+
+.intake-card {
+  position: relative;
+}
+
+.intake-head,
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.subtle-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 36, 0.06);
+  border: 1px solid rgba(15, 23, 36, 0.08);
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.compact-card {
+  min-height: 100%;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 11, 21, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.loading-card {
+  width: min(620px, calc(100% - 32px));
+  padding: 30px;
+  border-radius: 28px;
+  background: rgba(251, 247, 240, 0.98);
+  box-shadow: var(--shadow);
+}
+
+.loading-steps {
+  margin: 18px 0 0;
+  padding-left: 22px;
+  color: var(--ink);
+  line-height: 1.8;
+}
+
+.button:disabled {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.result-hero {
+  margin-bottom: 24px;
+}
+
+.result-title-block {
+  max-width: 70ch;
+}
+
+.action-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.score-label-strong {
+  margin-top: 12px;
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.results-layout {
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.9fr);
+  align-items: start;
+}
+
+.results-main {
+  min-width: 0;
+}
+
+.results-sidebar {
+  display: grid;
+  gap: 24px;
+}
+
+.sidebar-card {
+  position: relative;
+}
+
+.sticky-card {
+  position: sticky;
+  top: 24px;
+}
+
+.sidebar-disclosure {
+  margin-top: 0;
+  background: var(--surface);
+  border: 1px solid rgba(15, 23, 36, 0.06);
+  box-shadow: var(--shadow);
+}
+
+.sidebar-disclosure summary {
+  color: var(--ink);
+}
+
+.no-top-gap {
+  margin-top: 0;
+}
+
+.stage-grid-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .footer-note {
   margin-top: 28px;
   color: rgba(248, 241, 229, 0.76);
@@ -713,10 +942,14 @@ textarea {
 @media (max-width: 980px) {
   .hero,
   .intake-grid,
+  .landing-grid,
+  .support-grid,
+  .results-layout,
   .grid-2,
   .grid-3,
   .mini-grid,
   .stage-grid,
+  .stage-grid-compact,
   .requirement-grid,
   .interview-grid,
   .score-grid-3 {
@@ -733,6 +966,12 @@ textarea {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .topbar-actions,
+  .action-cluster {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .hero-card,
@@ -752,5 +991,10 @@ textarea {
 
   .button {
     width: 100%;
+  }
+
+  .subtle-badge {
+    width: 100%;
+    justify-content: center;
   }
 }
