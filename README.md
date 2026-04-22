@@ -27,9 +27,9 @@ The goal of the refactor is to move core logic out of the Streamlit monolith and
 - resume parsing service for PDF and DOCX
 - deterministic ATS rule engine
 - deterministic JD parser
-- deterministic matching engine with must-have coverage, impact signals, and experience signals
+- deterministic matching engine with must-have coverage, impact signals, experience signals, and confidence scoring
 - analysis orchestration pipeline
-- browser-based FastAPI demo entrypoint
+- browser-based FastAPI demo entrypoint with Simplified Chinese default and English switch
 - local history and beta feedback collection
 - unit-testable deterministic core
 
@@ -118,6 +118,7 @@ These files are there on purpose so we can start collecting structured feedback 
 - `docs/LOCAL_VALIDATION_GUIDE_ZH.md`
 - `docs/COMMUNITY_PUBLISHING_GUIDE_ZH.md`
 - `docs/LLM_INTEGRATION_DECISION_ZH.md`
+- `docs/SEARCH_INTERVIEW_GTM_STRATEGY_ZH.md`
 - `docs/BETA_TESTER_OPERATIONS_ZH.md`
 
 ## Validation

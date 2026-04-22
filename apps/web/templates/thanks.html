@@ -1,28 +1,35 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ current_lang }}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ app_name }} - 感谢反馈</title>
+    <title>{{ app_name }} - {{ ui.thanks_title }}</title>
     <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
   </head>
   <body>
     <div class="page-shell">
+      <div class="topbar">
+        <div class="brand-mark">{{ ui.brand }}</div>
+        <div class="lang-switch">
+          <span>{{ ui.lang_switch_label }}</span>
+          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
+          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+        </div>
+      </div>
+
       <section class="result-card">
-        <div class="panel-kicker">Thank You</div>
-        <h1 class="result-headline">反馈已收到</h1>
-        <p class="section-subtitle">
-          这条反馈已经记录下来，后续我会优先根据“哪里不准、哪里最需要补”来继续迭代这个产品。
-        </p>
+        <div class="panel-kicker">{{ ui.thanks_kicker }}</div>
+        <h1 class="result-headline">{{ ui.thanks_title }}</h1>
+        <p class="section-subtitle">{{ ui.thanks_copy }}</p>
         <div class="notice">
-          <strong>反馈编号：</strong>{{ feedback.feedback_id }}<br />
-          <strong>提交时间：</strong>{{ feedback.created_at }}
+          <strong>{{ ui.feedback_id }}:</strong> {{ feedback.feedback_id }}<br />
+          <strong>{{ ui.created_at }}:</strong> {{ feedback.created_at }}
         </div>
         <div class="button-row">
-          <a class="button button-primary" href="/">继续分析</a>
-          <a class="button button-secondary" href="/feedback">查看反馈列表</a>
+          <a class="button button-primary" href="/?lang={{ current_lang }}">{{ ui.continue_after_feedback }}</a>
+          <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback_list }}</a>
           {% if feedback.analysis_id %}
-          <a class="button button-secondary" href="/analysis/{{ feedback.analysis_id }}">返回本次结果</a>
+          <a class="button button-secondary" href="/analysis/{{ feedback.analysis_id }}?lang={{ current_lang }}">{{ ui.back_to_result }}</a>
           {% endif %}
         </div>
       </section>

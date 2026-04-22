@@ -17,6 +17,12 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--resume", required=True, help="Path to a PDF or DOCX resume file.")
     parser.add_argument("--jd-file", help="Path to a text file that contains the target JD.")
     parser.add_argument("--jd-text", help="Raw JD text passed directly on the command line.")
+    parser.add_argument(
+        "--analysis-mode",
+        choices=("standard", "deep"),
+        default="deep",
+        help="Analysis depth. Defaults to deep for stronger evidence output.",
+    )
     parser.add_argument("--output", help="Optional path to write the JSON result.")
     return parser
 
@@ -41,6 +47,7 @@ def main() -> None:
         filename=resume_path.name,
         file_bytes=resume_path.read_bytes(),
         jd_text=jd_text,
+        analysis_mode=args.analysis_mode,
     )
     payload = result.model_dump()
     rendered = json.dumps(payload, ensure_ascii=False, indent=2)

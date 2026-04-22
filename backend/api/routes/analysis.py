@@ -14,7 +14,11 @@ SUPPORTED_EXTENSIONS = {".pdf", ".docx"}
 
 
 @router.post("/analyze", response_model=AnalysisResult)
-async def analyze_resume(file: UploadFile = File(...), jd_text: str = Form(...)) -> AnalysisResult:
+async def analyze_resume(
+    file: UploadFile = File(...),
+    jd_text: str = Form(...),
+    analysis_mode: str = Form("standard"),
+) -> AnalysisResult:
     extension = Path(file.filename or "").suffix.lower()
     if extension not in SUPPORTED_EXTENSIONS:
         raise HTTPException(status_code=400, detail="Only PDF and DOCX resumes are supported.")
@@ -31,6 +35,7 @@ async def analyze_resume(file: UploadFile = File(...), jd_text: str = Form(...))
             file_bytes=file_bytes,
             jd_text=jd_text,
             persist=False,
+            analysis_mode=analysis_mode,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

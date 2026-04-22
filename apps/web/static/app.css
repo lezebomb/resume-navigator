@@ -42,6 +42,48 @@ a {
   padding: 32px 0 56px;
 }
 
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  color: rgba(248, 241, 229, 0.92);
+}
+
+.brand-mark {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lang-switch span {
+  color: rgba(248, 241, 229, 0.72);
+  font-size: 0.92rem;
+}
+
+.lang-switch a {
+  color: rgba(248, 241, 229, 0.88);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.lang-switch a.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff8ef;
+}
+
 .hero {
   display: grid;
   grid-template-columns: 1.18fr 0.82fr;
@@ -366,6 +408,10 @@ textarea {
   gap: 18px;
 }
 
+.score-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .score-tile {
   padding: 18px 20px;
   border-radius: 22px;
@@ -483,6 +529,71 @@ textarea {
   margin-top: 18px;
 }
 
+.stage-grid,
+.requirement-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.stage-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stage-card,
+.requirement-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(15, 23, 36, 0.06);
+}
+
+.stage-name {
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.stage-copy {
+  margin-top: 10px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.stage-time {
+  margin-top: 14px;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.requirement-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.requirement-card.requirement-covered {
+  border-color: rgba(22, 101, 52, 0.18);
+}
+
+.requirement-card.requirement-partial {
+  border-color: rgba(15, 23, 36, 0.12);
+}
+
+.requirement-card.requirement-missing {
+  border-color: rgba(169, 31, 45, 0.18);
+}
+
+.requirement-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.compact-list li {
+  padding: 10px 0;
+}
+
 .mini-stat {
   padding: 14px;
   border-radius: 18px;
@@ -591,7 +702,10 @@ textarea {
   .intake-grid,
   .grid-2,
   .grid-3,
-  .mini-grid {
+  .mini-grid,
+  .stage-grid,
+  .requirement-grid,
+  .score-grid-3 {
     grid-template-columns: 1fr;
   }
 
@@ -602,6 +716,11 @@ textarea {
 }
 
 @media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .hero-card,
   .glass-panel,
   .form-card,

@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from apps.web.i18n import get_ui, resolve_lang, translate_dynamic, translate_stage_name
 from backend.api.routes.analysis import router as analysis_router
 from backend.core.config import settings
 from backend.core.logging import configure_logging
@@ -20,27 +21,37 @@ settings.ensure_runtime_dirs()
 
 WEB_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(WEB_DIR / "templates"))
+templates.env.globals["translate_dynamic"] = translate_dynamic
+templates.env.globals["translate_stage_name"] = translate_stage_name
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.2.0",
+    version="0.3.0",
     summary="Deterministic resume diagnosis backend for Resume Navigator.",
 )
 app.include_router(analysis_router)
 app.mount("/static", StaticFiles(directory=str(WEB_DIR / "static")), name="static")
 
 
+def _shared_context(request: Request) -> dict:
+    current_lang = resolve_lang(request.query_params.get("lang"))
+    return {
+        "app_name": settings.app_name,
+        "current_lang": current_lang,
+        "ui": get_ui(current_lang),
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(
-        request,
-        "index.html",
+    context = _shared_context(request)
+    context.update(
         {
-            "app_name": settings.app_name,
             "recent_feedback_count": len(list_feedback_records()),
             "analysis_count": len(list_analysis_history()),
-        },
+        }
     )
+    return templates.TemplateResponse(request, "index.html", context)
 
 
 @app.post("/analyze/browser", response_class=HTMLResponse)
@@ -48,6 +59,8 @@ async def analyze_browser(
     request: Request,
     file: UploadFile = File(...),
     jd_text: str = Form(...),
+    analysis_mode: str = Form("standard"),
+    lang: str = Form("zh"),
 ) -> HTMLResponse:
     extension = Path(file.filename or "").suffix.lower()
     if extension not in {".pdf", ".docx"}:
@@ -64,39 +77,33 @@ async def analyze_browser(
         file_bytes=file_bytes,
         jd_text=jd_text,
         persist=True,
+        analysis_mode=analysis_mode,
     )
-    return templates.TemplateResponse(
-        request,
-        "result.html",
+
+    context = _shared_context(request)
+    context.update(
         {
-            "app_name": settings.app_name,
             "result": result.model_dump(),
-        },
+            "analysis_mode": "deep" if analysis_mode == "deep" else "standard",
+            "current_lang": resolve_lang(lang),
+            "ui": get_ui(resolve_lang(lang)),
+        }
     )
+    return templates.TemplateResponse(request, "result.html", context)
 
 
 @app.get("/history", response_class=HTMLResponse)
 async def history_page(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(
-        request,
-        "history.html",
-        {
-            "app_name": settings.app_name,
-            "records": list_analysis_history(),
-        },
-    )
+    context = _shared_context(request)
+    context.update({"records": list_analysis_history()})
+    return templates.TemplateResponse(request, "history.html", context)
 
 
 @app.get("/feedback", response_class=HTMLResponse)
 async def feedback_page(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(
-        request,
-        "feedback.html",
-        {
-            "app_name": settings.app_name,
-            "records": list_feedback_records(),
-        },
-    )
+    context = _shared_context(request)
+    context.update({"records": list_feedback_records()})
+    return templates.TemplateResponse(request, "feedback.html", context)
 
 
 @app.post("/feedback/browser", response_class=HTMLResponse)
@@ -109,6 +116,7 @@ async def submit_feedback(
     main_problem: str = Form(""),
     wanted_next: str = Form(""),
     contact: str = Form(""),
+    lang: str = Form("zh"),
 ) -> HTMLResponse:
     feedback = save_feedback(
         {
@@ -121,14 +129,15 @@ async def submit_feedback(
             "contact": contact.strip(),
         }
     )
-    return templates.TemplateResponse(
-        request,
-        "thanks.html",
+    context = _shared_context(request)
+    context.update(
         {
-            "app_name": settings.app_name,
             "feedback": feedback,
-        },
+            "current_lang": resolve_lang(lang),
+            "ui": get_ui(resolve_lang(lang)),
+        }
     )
+    return templates.TemplateResponse(request, "thanks.html", context)
 
 
 @app.get("/analysis/{analysis_id}", response_class=HTMLResponse)
@@ -136,14 +145,14 @@ async def analysis_detail(request: Request, analysis_id: str) -> HTMLResponse:
     result = get_analysis_record(analysis_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Analysis result not found.")
-    return templates.TemplateResponse(
-        request,
-        "result.html",
+    context = _shared_context(request)
+    context.update(
         {
-            "app_name": settings.app_name,
             "result": result.model_dump(),
-        },
+            "analysis_mode": result.analysis_mode,
+        }
     )
+    return templates.TemplateResponse(request, "result.html", context)
 
 
 @app.get("/analysis/{analysis_id}/json", response_class=JSONResponse)

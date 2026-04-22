@@ -1,41 +1,48 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ current_lang }}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ app_name }} - 历史记录</title>
+    <title>{{ app_name }} - {{ ui.history_title }}</title>
     <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
   </head>
   <body>
     <div class="page-shell">
+      <div class="topbar">
+        <div class="brand-mark">{{ ui.brand }}</div>
+        <div class="lang-switch">
+          <span>{{ ui.lang_switch_label }}</span>
+          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
+          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+        </div>
+      </div>
+
       <section class="result-card">
         <div class="result-head">
           <div>
-            <div class="panel-kicker">History</div>
-            <h1 class="result-headline">分析历史</h1>
-            <p class="section-subtitle">
-              这里展示通过新 Web 入口保存下来的分析结果，方便你回看分数变化、分享案例，以及做早期用户访谈。
-            </p>
+            <div class="panel-kicker">{{ ui.history_kicker }}</div>
+            <h1 class="result-headline">{{ ui.history_title }}</h1>
+            <p class="section-subtitle">{{ ui.history_copy }}</p>
           </div>
           <div class="button-row">
-            <a class="button button-secondary" href="/">回到上传页</a>
-            <a class="button button-secondary" href="/feedback">查看反馈</a>
+            <a class="button button-secondary" href="/?lang={{ current_lang }}">{{ ui.back_to_upload }}</a>
+            <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
           </div>
         </div>
       </section>
 
       <section class="list-card" style="margin-top: 24px;">
-        <h2 class="section-title">最近分析结果</h2>
+        <h2 class="section-title">{{ ui.recent_results }}</h2>
         {% if records %}
         <table class="component-table">
           <thead>
             <tr>
-              <th>时间</th>
-              <th>文件</th>
-              <th>目标岗位</th>
-              <th>ATS</th>
-              <th>Match</th>
-              <th>操作</th>
+              <th>{{ ui.time }}</th>
+              <th>{{ ui.file }}</th>
+              <th>{{ ui.target_position }}</th>
+              <th>{{ ui.ats_readiness }}</th>
+              <th>{{ ui.role_match }}</th>
+              <th>{{ ui.actions }}</th>
             </tr>
           </thead>
           <tbody>
@@ -44,21 +51,21 @@
               <td>{{ record.created_at }}</td>
               <td>{{ record.filename }}</td>
               <td>
-                {{ record.role_title or "未识别岗位" }}
+                {{ record.role_title or ui.unknown_role }}
                 {% if record.company_name %}<br /><span class="score-label">{{ record.company_name }}</span>{% endif %}
               </td>
               <td>{{ record.ats_score }}</td>
               <td>{{ record.match_score }}</td>
               <td>
-                <a href="/analysis/{{ record.analysis_id }}">查看结果</a><br />
-                <a href="/analysis/{{ record.analysis_id }}/json">查看 JSON</a>
+                <a href="/analysis/{{ record.analysis_id }}?lang={{ current_lang }}">{{ ui.view_result }}</a><br />
+                <a href="/analysis/{{ record.analysis_id }}/json">{{ ui.view_json }}</a>
               </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
         {% else %}
-        <div class="notice">还没有历史记录。先回上传页跑一次分析，这里就会自动出现内容。</div>
+        <div class="notice">{{ ui.no_history }}</div>
         {% endif %}
       </section>
     </div>

@@ -69,6 +69,7 @@ class MatchingEngineTests(unittest.TestCase):
         self.assertIn("power_bi", report.missing_hard_skills)
         self.assertGreaterEqual(report.overall_score, 0)
         self.assertLessEqual(report.overall_score, 100)
+        self.assertGreater(report.confidence_score, 0)
         self.assertTrue(report.strength_signals)
         self.assertTrue(report.priority_actions)
 

@@ -25,19 +25,20 @@ DOMAIN_HINTS = (
     "电话",
 )
 
-MOJIBAKE_MARKERS = (
+SUSPICIOUS_FRAGMENTS = (
     "锛",
     "銆",
     "鏈",
-    "閲",
-    "鐩",
-    "璇",
-    "鍏",
-    "娌",
-    "闆",
-    "缁",
+    "鍜",
+    "鍦",
+    "鎴",
+    "鐨",
+    "鏄",
     "浠",
-    "鐢",
+    "闈",
+    "閫",
+    "绠",
+    "鑳",
 )
 
 
@@ -45,22 +46,35 @@ def repair_mojibake(text: str) -> str:
     if not text:
         return text
 
-    try:
-        candidate = text.encode("gbk", errors="ignore").decode("utf-8", errors="ignore")
-    except Exception:
-        return text
+    current = text
+    for _ in range(2):
+        try:
+            candidate = current.encode("gbk", errors="ignore").decode("utf-8", errors="ignore")
+        except Exception:
+            return current
 
-    if not candidate:
-        return text
+        if not candidate or candidate == current:
+            return current
 
-    if any(marker in text for marker in MOJIBAKE_MARKERS) and any(hint in candidate for hint in DOMAIN_HINTS):
-        return candidate
+        original_score = _text_quality_score(current)
+        candidate_score = _text_quality_score(candidate)
 
-    original_score = _text_quality_score(text)
-    candidate_score = _text_quality_score(candidate)
-    if candidate_score >= original_score + 3:
-        return candidate
-    return text
+        if _looks_suspicious(current) and any(hint in candidate for hint in DOMAIN_HINTS):
+            current = candidate
+            continue
+        if _looks_suspicious(current) and candidate_score >= original_score:
+            current = candidate
+            continue
+        if candidate_score >= original_score + 3:
+            current = candidate
+            continue
+        return current
+
+    return current
+
+
+def _looks_suspicious(text: str) -> bool:
+    return sum(text.count(fragment) for fragment in SUSPICIOUS_FRAGMENTS) >= 2
 
 
 def _text_quality_score(text: str) -> int:
@@ -68,5 +82,5 @@ def _text_quality_score(text: str) -> int:
     score += sum(4 for hint in DOMAIN_HINTS if hint in text)
     score += text.count("：") + text.count("，") + text.count("。")
     score += len(re.findall(r"[A-Za-z0-9@._%+-]", text)) // 30
-    score -= sum(text.count(marker) * 2 for marker in MOJIBAKE_MARKERS)
+    score -= sum(text.count(fragment) for fragment in SUSPICIOUS_FRAGMENTS)
     return score

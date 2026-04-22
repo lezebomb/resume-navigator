@@ -1,88 +1,116 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ current_lang }}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ app_name }} - 分析结果</title>
+    <title>{{ app_name }} - {{ ui.result_title_suffix }}</title>
     <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
   </head>
   <body>
     <div class="page-shell">
+      <div class="topbar">
+        <div class="brand-mark">{{ ui.brand }}</div>
+        <div class="lang-switch">
+          <span>{{ ui.lang_switch_label }}</span>
+          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
+          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+        </div>
+      </div>
+
       <section class="result-card">
         <div class="result-head">
           <div>
-            <div class="panel-kicker">Analysis Result</div>
+            <div class="panel-kicker">{{ ui.result_panel }}</div>
             <h1 class="result-headline">{{ result.resume.filename }}</h1>
-            <p class="section-subtitle">{{ result.match.summary }}</p>
+            <p class="section-subtitle">{{ translate_dynamic(result.match.summary, current_lang) }}</p>
           </div>
           <div class="button-row">
             {% if result.analysis_id %}
-            <a class="button button-secondary" href="/analysis/{{ result.analysis_id }}/json">导出 JSON</a>
+            <a class="button button-secondary" href="/analysis/{{ result.analysis_id }}/json">{{ ui.export_json }}</a>
             {% endif %}
-            <a class="button button-secondary" href="/history">查看历史</a>
-            <a class="button button-secondary" href="/feedback">试用反馈</a>
-            <a class="button button-secondary" href="/">继续分析</a>
+            <a class="button button-secondary" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
+            <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
+            <a class="button button-secondary" href="/?lang={{ current_lang }}">{{ ui.continue_analysis }}</a>
           </div>
         </div>
 
         <div class="summary-band">
           <div>
-            <div class="summary-label">当前判断</div>
-            <div class="summary-title">{{ result.match.score_label }}</div>
+            <div class="summary-label">{{ ui.current_assessment }}</div>
+            <div class="summary-title">{{ ui[result.analysis_mode + '_mode_label'] }} | {{ translate_dynamic(result.match.score_label, current_lang) }}</div>
           </div>
           <div class="summary-meta">
-            <span>目标岗位：{{ result.jd.role_title or "未识别" }}</span>
+            <span>{{ ui.target_role }}: {{ result.jd.role_title or ui.unknown_role }}</span>
             {% if result.jd.company_name %}<span>{{ result.jd.company_name }}</span>{% endif %}
             {% if result.jd.location %}<span>{{ result.jd.location }}</span>{% endif %}
           </div>
         </div>
 
-        <div class="score-grid">
+        <div class="score-grid score-grid-3">
           <div class="score-tile">
-            <div class="score-label">ATS Readiness</div>
+            <div class="score-label">{{ ui.ats_readiness }}</div>
             <div class="score-number">{{ result.ats.score }}<small> / 100</small></div>
           </div>
           <div class="score-tile">
-            <div class="score-label">Role Match</div>
+            <div class="score-label">{{ ui.role_match }}</div>
             <div class="score-number">{{ result.match.overall_score }}<small> / 100</small></div>
+          </div>
+          <div class="score-tile">
+            <div class="score-label">{{ ui.judgment_confidence }}</div>
+            <div class="score-number">{{ result.match.confidence_score }}<small> / 100</small></div>
+            <div class="score-label" style="margin-top: 10px;">{{ translate_dynamic(result.match.confidence_label, current_lang) }}</div>
           </div>
         </div>
 
         <div class="notice">
-          <strong>分析编号：</strong>{{ result.analysis_id or "未持久化" }}
-          {% if result.created_at %} ｜ <strong>生成时间：</strong>{{ result.created_at }}{% endif %}
+          <strong>{{ ui.analysis_id }}:</strong> {{ result.analysis_id or "N/A" }}
+          {% if result.created_at %} | <strong>{{ ui.created_at }}:</strong> {{ result.created_at }}{% endif %}
           <br />
-          <strong>解析信息：</strong>
-          {{ result.resume.inferred_name or "未识别姓名" }}
-          {% if result.resume.inferred_email %} ｜ {{ result.resume.inferred_email }}{% endif %}
-          {% if result.resume.inferred_phone %} ｜ {{ result.resume.inferred_phone }}{% endif %}
+          <strong>{{ ui.parsed_info }}:</strong>
+          {{ result.resume.inferred_name or ui.unknown_name }}
+          {% if result.resume.inferred_email %} | {{ result.resume.inferred_email }}{% endif %}
+          {% if result.resume.inferred_phone %} | {{ result.resume.inferred_phone }}{% endif %}
+        </div>
+      </section>
+
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">{{ ui.process_trace }}</h2>
+        <p class="section-subtitle">{{ ui.process_copy }}</p>
+        <div class="stage-grid">
+          {% for stage in result.stages %}
+          <article class="stage-card">
+            <div class="stage-name">{{ translate_stage_name(stage.name, current_lang) }}</div>
+            <div class="stage-copy">{{ translate_dynamic(stage.detail, current_lang) }}</div>
+            <div class="stage-time">{{ stage.duration_ms }} ms</div>
+          </article>
+          {% endfor %}
         </div>
       </section>
 
       <section class="grid-3">
         <section class="list-card">
-          <h2 class="section-title">优势信号</h2>
+          <h2 class="section-title">{{ ui.strength_signals }}</h2>
           <ul class="action-list">
             {% for item in result.match.strength_signals %}
-            <li>{{ item }}</li>
+            <li>{{ translate_dynamic(item, current_lang) }}</li>
             {% endfor %}
           </ul>
         </section>
 
         <section class="list-card">
-          <h2 class="section-title">风险信号</h2>
+          <h2 class="section-title">{{ ui.risk_signals }}</h2>
           <ul class="action-list">
             {% for item in result.match.risk_signals %}
-            <li>{{ item }}</li>
+            <li>{{ translate_dynamic(item, current_lang) }}</li>
             {% endfor %}
           </ul>
         </section>
 
         <section class="list-card">
-          <h2 class="section-title">证据高亮</h2>
+          <h2 class="section-title">{{ ui.evidence_highlights }}</h2>
           <ul class="action-list">
             {% for item in result.match.evidence_highlights %}
-            <li>{{ item }}</li>
+            <li>{{ translate_dynamic(item, current_lang) }}</li>
             {% endfor %}
           </ul>
         </section>
@@ -90,67 +118,124 @@
 
       <section class="grid-2">
         <section class="list-card">
-          <h2 class="section-title">ATS 发现项</h2>
+          <h2 class="section-title">{{ ui.judgment_confidence }}</h2>
+          <div class="notice">
+            <strong>{{ translate_dynamic(result.match.confidence_label, current_lang) }}</strong>
+          </div>
+          <ul class="action-list">
+            {% for item in result.match.confidence_reasons %}
+            <li>{{ translate_dynamic(item, current_lang) }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+
+        <section class="list-card">
+          <h2 class="section-title">{{ ui.requirement_summary }}</h2>
+          <div class="tag-list">
+            <span class="chip chip-good">{{ ui.covered }} {{ result.match.covered_requirement_count }}</span>
+            <span class="chip chip-neutral">{{ ui.partial }} {{ result.match.partial_requirement_count }}</span>
+            <span class="chip chip-miss">{{ ui.missing }} {{ result.match.missing_requirement_count }}</span>
+            <span class="chip chip-neutral">{{ ui.requirement_label }} {{ result.match.total_requirement_count }}</span>
+          </div>
+        </section>
+      </section>
+
+      <section class="grid-2">
+        <section class="list-card">
+          <h2 class="section-title">{{ ui.ats_findings }}</h2>
           <ul class="finding-list">
             {% for finding in result.ats.findings %}
             <li>
-              <span class="severity severity-{{ finding.severity }}">{{ finding.severity }}</span>
-              <div>{{ finding.message }}</div>
+              <span class="severity severity-{{ finding.severity }}">
+                {% if finding.severity == 'error' %}{{ ui.status_error }}{% elif finding.severity == 'warning' %}{{ ui.status_warning }}{% else %}{{ ui.status_info }}{% endif %}
+              </span>
+              <div>{{ translate_dynamic(finding.message, current_lang) }}</div>
             </li>
             {% endfor %}
           </ul>
         </section>
 
         <section class="list-card">
-          <h2 class="section-title">优先动作</h2>
+          <h2 class="section-title">{{ ui.priority_actions }}</h2>
           <ul class="action-list">
             {% for action in result.match.priority_actions %}
-            <li>{{ action }}</li>
+            <li>{{ translate_dynamic(action, current_lang) }}</li>
             {% endfor %}
           </ul>
         </section>
       </section>
 
+      {% if result.match.requirement_evidence %}
+      <section class="list-card" style="margin-top: 24px;">
+        <h2 class="section-title">{{ ui.requirement_evidence }}</h2>
+        <p class="section-subtitle">{{ ui.requirement_copy }}</p>
+        <div class="requirement-grid">
+          {% for card in result.match.requirement_evidence %}
+          <article class="requirement-card requirement-{{ card.status }}">
+            <div class="requirement-head">
+              <strong>{{ ui.requirement_label }} {{ loop.index }}</strong>
+              <span class="chip {% if card.status == 'covered' %}chip-good{% elif card.status == 'partial' %}chip-neutral{% else %}chip-miss{% endif %}">
+                {% if card.status == 'covered' %}{{ ui.covered }}{% elif card.status == 'partial' %}{{ ui.partial }}{% else %}{{ ui.missing }}{% endif %}
+              </span>
+            </div>
+            <p>{{ card.requirement }}</p>
+            <p><strong>{{ ui.evidence_lines }}:</strong></p>
+            {% if card.evidence_lines %}
+            <ul class="action-list compact-list">
+              {% for line in card.evidence_lines %}
+              <li>{{ line }}</li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <div class="notice">{{ ui.none }}</div>
+            {% endif %}
+            <p><strong>{{ ui.next_step }}:</strong> {{ translate_dynamic(card.next_step, current_lang) }}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
       <section class="grid-2">
         <section class="list-card">
-          <h2 class="section-title">技能覆盖</h2>
+          <h2 class="section-title">{{ ui.skill_coverage }}</h2>
 
-          <h3 class="subheading">已覆盖硬技能</h3>
+          <h3 class="subheading">{{ ui.matched_hard_skills }}</h3>
           <div class="tag-list">
             {% if result.match.matched_hard_skills %}
               {% for item in result.match.matched_hard_skills %}
               <span class="chip chip-good">{{ item }}</span>
               {% endfor %}
             {% else %}
-              <span class="chip chip-neutral">暂无</span>
+              <span class="chip chip-neutral">{{ ui.none }}</span>
             {% endif %}
           </div>
 
-          <h3 class="subheading">缺失硬技能</h3>
+          <h3 class="subheading">{{ ui.missing_hard_skills }}</h3>
           <div class="tag-list">
             {% if result.match.missing_hard_skills %}
               {% for item in result.match.missing_hard_skills %}
               <span class="chip chip-miss">{{ item }}</span>
               {% endfor %}
             {% else %}
-              <span class="chip chip-good">无明显缺失</span>
+              <span class="chip chip-good">{{ ui.no_obvious_gap }}</span>
             {% endif %}
           </div>
 
-          <h3 class="subheading">JD 缺失关键词</h3>
+          <h3 class="subheading">{{ ui.missing_keywords }}</h3>
           <div class="tag-list">
             {% if result.match.missing_keywords %}
               {% for item in result.match.missing_keywords %}
               <span class="chip chip-neutral">{{ item }}</span>
               {% endfor %}
             {% else %}
-              <span class="chip chip-good">关键词对齐良好</span>
+              <span class="chip chip-good">{{ ui.keyword_alignment_good }}</span>
             {% endif %}
           </div>
         </section>
 
         <section class="list-card">
-          <h2 class="section-title">结构与画像</h2>
+          <h2 class="section-title">{{ ui.structure_profile }}</h2>
           <div class="tag-list">
             {% for section in result.resume.sections %}
             <span class="chip chip-neutral">{{ section.section_type }}</span>
@@ -159,27 +244,27 @@
 
           <div class="mini-grid">
             <div class="mini-stat">
-              <span>页数</span>
+              <span>{{ ui.pages }}</span>
               <strong>{{ result.resume.metrics.page_count }}</strong>
             </div>
             <div class="mini-stat">
-              <span>要点数</span>
+              <span>{{ ui.bullets }}</span>
               <strong>{{ result.resume.metrics.bullet_count }}</strong>
             </div>
             <div class="mini-stat">
-              <span>数字信号</span>
+              <span>{{ ui.numeric_signals }}</span>
               <strong>{{ result.resume.metrics.numeric_token_count }}</strong>
             </div>
             <div class="mini-stat">
-              <span>时间线</span>
+              <span>{{ ui.timeline_signals }}</span>
               <strong>{{ result.resume.metrics.date_range_count }}</strong>
             </div>
             <div class="mini-stat">
-              <span>动作词</span>
+              <span>{{ ui.action_verbs }}</span>
               <strong>{{ result.resume.metrics.action_verb_count }}</strong>
             </div>
             <div class="mini-stat">
-              <span>文本提取率</span>
+              <span>{{ ui.text_ratio }}</span>
               <strong>{{ result.resume.metrics.text_page_ratio }}</strong>
             </div>
           </div>
@@ -187,85 +272,83 @@
       </section>
 
       <section class="list-card" style="margin-top: 24px;">
-        <h2 class="section-title">评分构成</h2>
+        <h2 class="section-title">{{ ui.score_breakdown }}</h2>
         <div class="component-stack">
           {% for component in result.match.components %}
           <div class="component-row">
             <div class="component-head">
               <div>
-                <strong>{{ component.name }}</strong>
-                <div class="score-label">{{ component.reason }}</div>
+                <strong>{{ translate_dynamic(component.name, current_lang) }}</strong>
+                <div class="score-label">{{ translate_dynamic(component.reason, current_lang) }}</div>
               </div>
               <div class="score-badge">{{ component.score }}</div>
             </div>
             <div class="component-meter">
               <span style="width: {{ component.score }}%;"></span>
             </div>
-            <div class="component-meta">权重 {{ component.weight }}</div>
+            <div class="component-meta">{{ ui.weight }} {{ component.weight }}</div>
           </div>
           {% endfor %}
         </div>
       </section>
 
       <section class="list-card" style="margin-top: 24px;">
-        <h2 class="section-title">提交试用反馈</h2>
-        <p class="section-subtitle">
-          如果你觉得哪里判断不准、哪里最有帮助、你下一步最想要什么功能，直接在这里提交。
-          这会直接帮助我们决定下一轮迭代优先级。
-        </p>
+        <h2 class="section-title">{{ ui.submit_feedback }}</h2>
+        <p class="section-subtitle">{{ ui.feedback_copy }}</p>
         <form action="/feedback/browser" method="post" class="stack feedback-form">
           <input type="hidden" name="analysis_id" value="{{ result.analysis_id or '' }}" />
+          <input type="hidden" name="lang" value="{{ current_lang }}" />
 
           <div class="mini-grid">
             <div>
-              <label for="overall_rating">整体体验（1-5）</label>
+              <label for="overall_rating">{{ ui.overall_rating }}</label>
               <select id="overall_rating" name="overall_rating" required>
-                <option value="5">5 - 很有帮助</option>
-                <option value="4">4 - 基本有帮助</option>
-                <option value="3">3 - 一般</option>
-                <option value="2">2 - 帮助有限</option>
-                <option value="1">1 - 几乎没帮助</option>
+                <option value="5">{{ ui.rating_5 }}</option>
+                <option value="4">{{ ui.rating_4 }}</option>
+                <option value="3">{{ ui.rating_3 }}</option>
+                <option value="2">{{ ui.rating_2 }}</option>
+                <option value="1">{{ ui.rating_1 }}</option>
               </select>
             </div>
             <div>
-              <label for="accuracy_rating">判断准确度（1-5）</label>
+              <label for="accuracy_rating">{{ ui.accuracy_rating }}</label>
               <select id="accuracy_rating" name="accuracy_rating" required>
-                <option value="5">5 - 很准</option>
-                <option value="4">4 - 大体准确</option>
-                <option value="3">3 - 一半一半</option>
-                <option value="2">2 - 偏差较多</option>
-                <option value="1">1 - 很不准</option>
+                <option value="5">{{ ui.accuracy_5 }}</option>
+                <option value="4">{{ ui.accuracy_4 }}</option>
+                <option value="3">{{ ui.accuracy_3 }}</option>
+                <option value="2">{{ ui.accuracy_2 }}</option>
+                <option value="1">{{ ui.accuracy_1 }}</option>
               </select>
             </div>
             <div>
-              <label for="usefulness_rating">可执行性（1-5）</label>
+              <label for="usefulness_rating">{{ ui.usefulness_rating }}</label>
               <select id="usefulness_rating" name="usefulness_rating" required>
-                <option value="5">5 - 直接能改</option>
-                <option value="4">4 - 大部分能用</option>
-                <option value="3">3 - 需要自己再理解</option>
-                <option value="2">2 - 不够具体</option>
-                <option value="1">1 - 几乎没法用</option>
+                <option value="5">{{ ui.usefulness_5 }}</option>
+                <option value="4">{{ ui.usefulness_4 }}</option>
+                <option value="3">{{ ui.usefulness_3 }}</option>
+                <option value="2">{{ ui.usefulness_2 }}</option>
+                <option value="1">{{ ui.usefulness_1 }}</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label for="main_problem">最不准或最不满意的地方</label>
-            <textarea id="main_problem" name="main_problem" placeholder="例如：把我的采购经历识别得太弱，或者 SQL 缺失判断不合理。"></textarea>
+            <label for="main_problem">{{ ui.main_problem }}</label>
+            <textarea id="main_problem" name="main_problem" placeholder="{{ ui.main_problem_placeholder }}"></textarea>
           </div>
 
           <div>
-            <label for="wanted_next">你下一步最想要的功能</label>
-            <textarea id="wanted_next" name="wanted_next" placeholder="例如：按 JD 改写简历、生成项目 bullet、模拟面试问题、导出优化版 PDF。"></textarea>
+            <label for="wanted_next">{{ ui.wanted_next }}</label>
+            <textarea id="wanted_next" name="wanted_next" placeholder="{{ ui.wanted_next_placeholder }}"></textarea>
           </div>
 
           <div>
-            <label for="contact">联系方式（可选）</label>
-            <input id="contact" name="contact" type="text" placeholder="微信 / 邮箱，方便回访" />
+            <label for="contact">{{ ui.contact_optional }}</label>
+            <input id="contact" name="contact" type="text" placeholder="{{ ui.contact_placeholder }}" />
           </div>
 
           <div class="button-row">
-            <button class="button button-primary" type="submit">提交反馈</button>
+            <button class="button button-primary" type="submit">{{ ui.submit }}</button>
           </div>
         </form>
       </section>

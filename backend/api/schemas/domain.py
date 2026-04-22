@@ -75,10 +75,26 @@ class ScoreComponent(BaseModel):
     reason: str
 
 
+class EvidenceCard(BaseModel):
+    title: str
+    status: Literal["covered", "partial", "missing"]
+    requirement: str
+    evidence_lines: list[str] = Field(default_factory=list)
+    next_step: str
+
+
+class AnalysisStage(BaseModel):
+    name: str
+    detail: str
+    duration_ms: int
+
+
 class MatchReport(BaseModel):
     overall_score: int
     summary: str
     score_label: str = "Needs work"
+    confidence_score: int = 0
+    confidence_label: str = "Needs manual review"
     components: list[ScoreComponent] = Field(default_factory=list)
     matched_hard_skills: list[str] = Field(default_factory=list)
     missing_hard_skills: list[str] = Field(default_factory=list)
@@ -86,15 +102,23 @@ class MatchReport(BaseModel):
     missing_soft_skills: list[str] = Field(default_factory=list)
     matched_keywords: list[str] = Field(default_factory=list)
     missing_keywords: list[str] = Field(default_factory=list)
+    covered_requirement_count: int = 0
+    partial_requirement_count: int = 0
+    missing_requirement_count: int = 0
+    total_requirement_count: int = 0
     strength_signals: list[str] = Field(default_factory=list)
     risk_signals: list[str] = Field(default_factory=list)
     evidence_highlights: list[str] = Field(default_factory=list)
+    confidence_reasons: list[str] = Field(default_factory=list)
+    requirement_evidence: list[EvidenceCard] = Field(default_factory=list)
     priority_actions: list[str] = Field(default_factory=list)
 
 
 class AnalysisResult(BaseModel):
     analysis_id: str | None = None
     created_at: str | None = None
+    analysis_mode: Literal["standard", "deep"] = "standard"
+    stages: list[AnalysisStage] = Field(default_factory=list)
     resume: ResumeDocument
     jd: JobDescriptionDocument
     ats: AtsReport

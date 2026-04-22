@@ -43,14 +43,14 @@ SECTION_ALIASES: dict[str, tuple[str, ...]] = {
     "awards": ("awards", "honors", "获奖", "荣誉", "在校经历", "校内经历", "获奖荣誉"),
 }
 
-HEADING_STRIP_RE = re.compile(r"[\s:：/\\|·•\-\(\)\[\]【】（）]+")
+HEADING_STRIP_RE = re.compile(r"[\s:：|·•\-()\[\]【】（）+]+")
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 PHONE_RE = re.compile(r"(?<!\d)(?:\+?86[- ]?)?1[3-9]\d{9}(?!\d)")
-BULLET_RE = re.compile(r"^\s*[-*•◦●]")
+BULLET_RE = re.compile(r"^\s*[-*•●▪◦]")
 TOKEN_RE = re.compile(r"[A-Za-z0-9_+#/.%-]+|[\u4e00-\u9fff]{2,}")
 NUMBER_RE = re.compile(r"\d+(?:\.\d+)?%?")
 DATE_RANGE_RE = re.compile(
-    r"(?:19|20)\d{2}(?:[./年-]\d{1,2})?\s*(?:[-~至到]\s*(?:现在|至今|present|current|(?:19|20)\d{2}(?:[./年-]\d{1,2})?))?",
+    r"(?:19|20)\d{2}(?:[./年]\d{1,2})?\s*(?:[-~至到]\s*(?:现在|至今|present|current|(?:19|20)\d{2}(?:[./年]\d{1,2})?))?",
     re.IGNORECASE,
 )
 ACTION_VERBS = (
@@ -87,6 +87,7 @@ ACTION_VERBS = (
 
 
 def parse_resume_bytes(filename: str, file_bytes: bytes) -> ResumeDocument:
+    filename = repair_mojibake(filename)
     extension = Path(filename).suffix.lower()
     if extension == ".pdf":
         raw_text, metrics, warnings = _parse_pdf(file_bytes)

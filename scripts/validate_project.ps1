@@ -21,7 +21,7 @@ if ($LASTEXITCODE -ne 0) {
 if ($ResumePath -and $JdFile) {
     Write-Host ""
     Write-Host "== Step 3: Running local deterministic analysis ==" -ForegroundColor Cyan
-    & $PythonPath scripts\run_local_analysis.py --resume $ResumePath --jd-file $JdFile --output $OutputPath
+    & $PythonPath scripts\run_local_analysis.py --resume $ResumePath --jd-file $JdFile --analysis-mode deep --output $OutputPath
     if ($LASTEXITCODE -ne 0) {
         throw "Local analysis run failed."
     }

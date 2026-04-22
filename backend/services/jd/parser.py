@@ -55,7 +55,7 @@ KEYWORD_STOPWORDS = {
 
 def parse_job_description(raw_text: str) -> JobDescriptionDocument:
     normalized_text = repair_mojibake(_normalize_text(raw_text))
-    lines = [line.strip(" -•◦") for line in normalized_text.splitlines() if line.strip()]
+    lines = [line.strip(" -•●▪") for line in normalized_text.splitlines() if line.strip()]
 
     role_title = _extract_role_title(lines)
     company_name = _extract_company_name(lines)
