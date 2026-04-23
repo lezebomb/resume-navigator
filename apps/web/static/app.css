@@ -553,7 +553,8 @@ textarea {
 .stage-grid,
 .requirement-grid,
 .interview-grid,
-.source-grid {
+.source-grid,
+.rewrite-grid {
   display: grid;
   gap: 18px;
 }
@@ -604,6 +605,11 @@ textarea {
   margin-top: 18px;
 }
 
+.rewrite-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
 .requirement-card.requirement-covered {
   border-color: rgba(22, 101, 52, 0.18);
 }
@@ -628,6 +634,26 @@ textarea {
   border-radius: 22px;
   background: var(--surface-soft);
   border: 1px solid rgba(15, 23, 36, 0.06);
+}
+
+.rewrite-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  border: 1px solid rgba(15, 23, 36, 0.06);
+}
+
+.quote-block {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(15, 23, 36, 0.05);
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+.quote-good {
+  background: rgba(15, 118, 110, 0.08);
+  border: 1px solid rgba(15, 118, 110, 0.12);
 }
 
 .source-snippet {
@@ -1053,6 +1079,7 @@ textarea {
   .requirement-grid,
   .interview-grid,
   .source-grid,
+  .rewrite-grid,
   .score-grid-3 {
     grid-template-columns: 1fr;
   }

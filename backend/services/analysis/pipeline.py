@@ -12,6 +12,7 @@ from backend.services.jd.parser import parse_job_description
 from backend.services.matching.engine import evaluate_resume_match, label_confidence
 from backend.services.research.public_web_search import run_public_web_research
 from backend.services.resume.parser import parse_resume_bytes
+from backend.services.rewrite.planner import build_rewrite_plan
 
 
 def analyze_resume_against_jd(
@@ -117,6 +118,7 @@ def analyze_resume_against_jd(
         ats=ats,
         match=match,
         research=research,
+        rewrite=build_rewrite_plan(resume=resume, jd=jd, match=match),
         interview=build_interview_prep(resume=resume, jd=jd, match=match, research=research),
     )
     if persist:

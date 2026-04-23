@@ -122,6 +122,22 @@ class PublicResearchReport(BaseModel):
     source_cards: list[ResearchSourceCard] = Field(default_factory=list)
 
 
+class RewriteSuggestionCard(BaseModel):
+    title: str
+    target_section: str
+    reason: str
+    original_excerpt: str = ""
+    rewritten_example: str
+    evidence_checklist: list[str] = Field(default_factory=list)
+    caution: str = ""
+
+
+class RewritePlan(BaseModel):
+    summary: str
+    strategy: list[str] = Field(default_factory=list)
+    suggestion_cards: list[RewriteSuggestionCard] = Field(default_factory=list)
+
+
 class MatchReport(BaseModel):
     overall_score: int
     summary: str
@@ -163,4 +179,5 @@ class AnalysisResult(BaseModel):
     ats: AtsReport
     match: MatchReport
     research: PublicResearchReport | None = None
+    rewrite: RewritePlan | None = None
     interview: InterviewPrepReport | None = None

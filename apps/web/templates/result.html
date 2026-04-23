@@ -322,6 +322,63 @@
             </div>
           </section>
 
+          {% if result.rewrite %}
+          <section class="list-card" style="margin-top: 24px;">
+            <div class="section-head">
+              <div>
+                <h2 class="section-title">
+                  {% if current_lang == 'zh' %}按 JD 改写建议{% else %}JD-targeted rewrite suggestions{% endif %}
+                </h2>
+                <p class="section-subtitle">
+                  {% if current_lang == 'zh' %}
+                  这一部分不替你编造内容，而是把当前缺口改写成更像真实投递材料的表达骨架。
+                  {% else %}
+                  This section does not invent achievements for you. It turns the current gaps into stronger application-ready phrasing scaffolds.
+                  {% endif %}
+                </p>
+              </div>
+              <span class="subtle-badge">
+                {{ result.rewrite.suggestion_cards|length }} {% if current_lang == 'zh' %}条建议{% else %}suggestions{% endif %}
+              </span>
+            </div>
+
+            <div class="notice">{{ translate_dynamic(result.rewrite.summary, current_lang) }}</div>
+
+            {% if result.rewrite.strategy %}
+            <ul class="action-list compact-list" style="margin-top: 18px;">
+              {% for item in result.rewrite.strategy %}
+              <li>{{ translate_dynamic(item, current_lang) }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+
+            <div class="rewrite-grid">
+              {% for card in result.rewrite.suggestion_cards %}
+              <article class="rewrite-card">
+                <div class="requirement-head">
+                  <strong>{{ card.title }}</strong>
+                  <span class="chip chip-neutral">{{ card.target_section }}</span>
+                </div>
+                <p><strong>{% if current_lang == 'zh' %}为什么要改{% else %}Why it matters{% endif %}:</strong> {{ translate_dynamic(card.reason, current_lang) }}</p>
+                {% if card.original_excerpt %}
+                <p><strong>{% if current_lang == 'zh' %}当前片段{% else %}Current excerpt{% endif %}:</strong></p>
+                <div class="quote-block">{{ card.original_excerpt }}</div>
+                {% endif %}
+                <p><strong>{% if current_lang == 'zh' %}改写示例{% else %}Rewrite example{% endif %}:</strong></p>
+                <div class="quote-block quote-good">{{ translate_dynamic(card.rewritten_example, current_lang) }}</div>
+                <p><strong>{% if current_lang == 'zh' %}改写检查清单{% else %}Checklist{% endif %}:</strong></p>
+                <ul class="action-list compact-list">
+                  {% for item in card.evidence_checklist %}
+                  <li>{{ translate_dynamic(item, current_lang) }}</li>
+                  {% endfor %}
+                </ul>
+                <p><strong>{% if current_lang == 'zh' %}提醒{% else %}Caution{% endif %}:</strong> {{ translate_dynamic(card.caution, current_lang) }}</p>
+              </article>
+              {% endfor %}
+            </div>
+          </section>
+          {% endif %}
+
           {% if result.interview %}
           <section class="list-card" style="margin-top: 24px;">
             <div class="section-head">
