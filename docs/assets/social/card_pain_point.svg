@@ -1,0 +1,16 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#0B2238"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="36" fill="url(#bg)"/>
+  <rect x="64" y="72" width="1072" height="486" rx="28" fill="#F8F3EA" fill-opacity="0.96"/>
+  <text x="96" y="146" fill="#0F766E" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="700">Resume Navigator</text>
+  <text x="96" y="238" fill="#17212B" font-size="54" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="700">很多简历工具只会给分</text>
+  <text x="96" y="314" fill="#17212B" font-size="54" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="700">但不会先告诉你现在能不能投</text>
+  <text x="96" y="402" fill="#4C5C6D" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif">上传简历 + 目标 JD 后，先看投递判断、缺口和下一步动作</text>
+  <rect x="96" y="456" width="310" height="58" rx="29" fill="#0F766E"/>
+  <text x="132" y="494" fill="#F7FBFA" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="700">不是只会打分的工具</text>
+</svg>

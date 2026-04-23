@@ -1,0 +1,18 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B2238"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="36" fill="url(#bg3)"/>
+  <rect x="72" y="82" width="1056" height="466" rx="30" fill="#F8F3EA" fill-opacity="0.97"/>
+  <text x="104" y="156" fill="#17212B" font-size="52" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="700">隐私优先，不把用户材料当公开样本</text>
+  <text x="104" y="234" fill="#4C5C6D" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif">确定性诊断链本地可跑，后续模型能力优先走用户自带密钥 BYOK</text>
+  <circle cx="126" cy="328" r="10" fill="#0F766E"/>
+  <text x="152" y="338" fill="#17212B" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif">真实简历默认不上传到 GitHub</text>
+  <circle cx="126" cy="392" r="10" fill="#0F766E"/>
+  <text x="152" y="402" fill="#17212B" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif">公开资料搜索只做补充层，不直接改写核心结论</text>
+  <circle cx="126" cy="456" r="10" fill="#0F766E"/>
+  <text x="152" y="466" fill="#17212B" font-size="28" font-family="Microsoft YaHei, PingFang SC, sans-serif">改写建议帮助表达，不替用户编造经历</text>
+</svg>

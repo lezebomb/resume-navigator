@@ -1,11 +1,13 @@
 # Resume Navigator
 
-Resume Navigator 是一个面向中文求职场景的简历诊断系统。它的目标不是“秒出一个看起来很聪明的分数”，而是尽量把下面几件事做扎实：
+Resume Navigator 是一个面向中文求职场景的简历诊断工具。它不是只给一个分数，而是想把求职者最关心的这条链路做完整：
 
-1. 判断简历是否容易被 ATS 正确读取
-2. 判断简历是否真的对齐目标 JD
-3. 给出可执行、可解释、尽量有证据的修改建议
-4. 把诊断自然承接到面试准备，而不是停在打分页
+1. 现在到底能不能投
+2. 为什么还不能投，或者为什么可以投
+3. 先改哪一块最值钱
+4. 面试官接下来最可能追问什么
+
+上传简历和目标 JD 之后，它会先做 ATS 体检，再看和岗位的真实对齐程度，再继续给改写建议和面试承接。重点不是把简历写得更像模板，而是更像招聘方真正想看到的材料。
 
 当前仓库同时保留了两层内容：
 
@@ -154,6 +156,7 @@ tests/
 - `docs/SOCIAL_PLATFORM_API_AND_CONTENT_PLAN_ZH.md`
 - `docs/SOCIAL_PLATFORM_EXECUTION_PACK_ZH.md`
 - `docs/SOCIAL_POST_PACK_V0_5_ZH.md`
+- `docs/PROMOTION_ANGLE_LIBRARY_ZH.md`
 - `docs/BETA_TESTER_OPERATIONS_ZH.md`
 
 ## 隐私与合规

@@ -25,6 +25,10 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Analysis mode", response.text)
         self.assertIn("Deep audit", response.text)
+        self.assertIn("Do not start with the score", response.text)
+        self.assertIn("What you get immediately", response.text)
+        self.assertNotIn("Build note", response.text)
+        self.assertNotIn("API docs", response.text)
 
     def test_translation_helpers_cover_key_labels(self) -> None:
         self.assertEqual(translate_dynamic("Strong", "zh"), "强匹配")
