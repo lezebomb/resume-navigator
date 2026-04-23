@@ -163,6 +163,11 @@ def build_interview_prep(
     return InterviewPrepReport(
         summary="This interview pack prioritizes the questions most likely to surface based on your current resume evidence, visible gaps, and JD requirements.",
         intro_prompt="Practice answering these in spoken language, not written language. Keep each answer concrete, role-specific, and outcome-oriented.",
+        answer_method=[
+            "Use a short structure: context, your action, measurable result, and what decision or lesson came out of it.",
+            "When the question points to a missing skill, answer honestly with the deepest real example you do have.",
+            "When the JD is emphasized, always pull the answer back to that requirement instead of giving a generic story.",
+        ],
         questions=questions,
     )
 

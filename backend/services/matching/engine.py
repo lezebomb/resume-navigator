@@ -139,6 +139,8 @@ def evaluate_resume_match(
         application_risk_level,
         recruiter_takeaway,
         interview_risk_summary,
+        diagnosis_basis,
+        application_checklist,
         must_fix_now,
         can_improve_later,
     ) = _build_application_brief(
@@ -168,6 +170,8 @@ def evaluate_resume_match(
         application_risk_level=application_risk_level,
         recruiter_takeaway=recruiter_takeaway,
         interview_risk_summary=interview_risk_summary,
+        diagnosis_basis=diagnosis_basis,
+        application_checklist=application_checklist,
         must_fix_now=must_fix_now,
         can_improve_later=can_improve_later,
         confidence_score=confidence_score,
@@ -285,9 +289,11 @@ def _build_application_brief(
     missing_requirements: int,
     quantification_score: int,
     missing_keywords: list[str],
-) -> tuple[str, str, str, str, list[str], list[str]]:
+) -> tuple[str, str, str, str, list[str], list[str], list[str], list[str]]:
     must_fix_now: list[str] = []
     can_improve_later: list[str] = []
+    diagnosis_basis: list[str] = []
+    application_checklist: list[str] = []
 
     if any(finding.severity == "error" for finding in ats.findings):
         must_fix_now.append("There are ATS-blocking risks that should be fixed before applying.")
@@ -304,6 +310,31 @@ def _build_application_brief(
         can_improve_later.append(f"Improve natural keyword alignment for: {', '.join(missing_keywords[:3])}.")
     if ats.score < 90 and not any(finding.severity == "error" for finding in ats.findings):
         can_improve_later.append("Keep cleaning ATS presentation details after the core evidence gaps are fixed.")
+
+    if ats.score >= 80:
+        diagnosis_basis.append("The resume is readable enough for ATS-style extraction and deterministic checking.")
+    else:
+        diagnosis_basis.append("ATS readability is not yet stable enough, so some conclusions should be treated cautiously.")
+
+    if missing_requirements > 0:
+        diagnosis_basis.append("The current result is heavily affected by missing proof on the JD must-have lines.")
+    else:
+        diagnosis_basis.append("The current result benefits from direct evidence on the most important JD lines.")
+
+    if missing_hard_skills:
+        diagnosis_basis.append(f"The biggest professional gap is still the proof depth for {', '.join(missing_hard_skills[:3])}.")
+    else:
+        diagnosis_basis.append("No obvious hard-skill blocker was detected in the current JD comparison.")
+
+    application_checklist.append("Before applying, make sure the strongest experience bullet directly answers one JD must-have.")
+    if missing_hard_skills:
+        application_checklist.append(f"Prepare a truthful spoken example for {', '.join(missing_hard_skills[:2])}, because the interview is likely to probe it.")
+    if quantification_score < 75:
+        application_checklist.append("Add at least one quantified outcome so the recruiter can see scope quickly.")
+    else:
+        application_checklist.append("Keep one quantified result ready, because recruiters often scan for business impact first.")
+    if missing_keywords:
+        application_checklist.append("Do one final skim for natural keyword alignment before exporting the final resume.")
 
     if must_fix_now:
         application_recommendation = "Fix core blockers before applying"
@@ -341,6 +372,8 @@ def _build_application_brief(
         application_risk_level,
         recruiter_takeaway,
         interview_risk_summary,
+        diagnosis_basis[:3],
+        application_checklist[:4],
         must_fix_now[:3],
         can_improve_later[:3],
     )

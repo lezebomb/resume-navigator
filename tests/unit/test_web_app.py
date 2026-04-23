@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from apps.web.i18n import translate_dynamic, translate_stage_name
 from apps.web.main import app
+from backend.api.schemas.domain import AnalysisResult, AtsReport, JobDescriptionDocument, MatchReport, ResumeDocument, ResumeMetrics, ResumeSection
 
 
 class WebAppTests(unittest.TestCase):
@@ -95,6 +96,64 @@ class WebAppTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["stages"][0]["display_name"], "深度复核")
         self.assertIn("深度复核检查了已匹配技能", payload["stages"][0]["display_detail"])
+
+
+    @patch("apps.web.main.get_analysis_record")
+    def test_result_page_is_user_facing_and_hides_developer_disclosure(self, get_record_mock) -> None:
+        get_record_mock.return_value = AnalysisResult(
+            analysis_id="demo-1",
+            analysis_mode="deep",
+            resume=ResumeDocument(
+                filename="resume.pdf",
+                file_type="pdf",
+                raw_text="demo",
+                sections=[ResumeSection(section_type="experience", heading="Experience", content="Led reporting workflow.")],
+                metrics=ResumeMetrics(page_count=1, bullet_count=3, numeric_token_count=2, date_range_count=2, action_verb_count=3),
+            ),
+            jd=JobDescriptionDocument(
+                raw_text="Role: Analyst",
+                role_title="Data Analyst",
+                hard_skills=["sql", "excel"],
+                must_have_items=["SQL analysis", "dashboard ownership"],
+            ),
+            ats=AtsReport(score=86, findings=[]),
+            match=MatchReport(
+                overall_score=78,
+                summary="Overall match is promising.",
+                score_label="Promising",
+                application_recommendation="Can apply, but prepare explanations first",
+                application_risk_level="Medium application risk",
+                recruiter_takeaway="A recruiter is likely to see some relevant background, but still ask whether the resume really proves the JD must-haves.",
+                interview_risk_summary="The interview is likely to focus on whether your strongest experience really covers the must-have JD lines.",
+                confidence_score=80,
+                confidence_label="High confidence",
+                diagnosis_basis=[
+                    "The resume is readable enough for ATS-style extraction and deterministic checking.",
+                    "The current result is heavily affected by missing proof on the JD must-have lines.",
+                ],
+                application_checklist=[
+                    "Before applying, make sure the strongest experience bullet directly answers one JD must-have."
+                ],
+                must_fix_now=["Rewrite experience bullets so they directly answer more of the JD must-have lines."],
+                can_improve_later=["Add stronger quantified outcomes so recruiters can see scale and business impact faster."],
+                matched_hard_skills=["excel"],
+                missing_hard_skills=["sql"],
+                missing_keywords=["dashboard"],
+                confidence_reasons=[
+                    "Resume extraction quality looks stable enough for deterministic review.",
+                    "JD contains enough structured requirements to support a meaningful comparison.",
+                ],
+                priority_actions=["Rewrite experience bullets so they directly answer more of the JD must-have lines."],
+            ),
+        )
+
+        response = self.client.get("/analysis/demo-1?lang=en")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("What this conclusion is based on", response.text)
+        self.assertIn("Pre-application checklist", response.text)
+        self.assertNotIn("Developer disclosure", response.text)
+        self.assertNotIn("Analysis process", response.text)
 
 
 if __name__ == "__main__":

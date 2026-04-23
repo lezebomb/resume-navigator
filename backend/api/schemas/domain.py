@@ -100,6 +100,7 @@ class InterviewQuestionCard(BaseModel):
 class InterviewPrepReport(BaseModel):
     summary: str
     intro_prompt: str
+    answer_method: list[str] = Field(default_factory=list)
     questions: list[InterviewQuestionCard] = Field(default_factory=list)
 
 
@@ -146,6 +147,8 @@ class MatchReport(BaseModel):
     application_risk_level: str = ""
     recruiter_takeaway: str = ""
     interview_risk_summary: str = ""
+    diagnosis_basis: list[str] = Field(default_factory=list)
+    application_checklist: list[str] = Field(default_factory=list)
     must_fix_now: list[str] = Field(default_factory=list)
     can_improve_later: list[str] = Field(default_factory=list)
     confidence_score: int = 0

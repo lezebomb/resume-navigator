@@ -60,7 +60,7 @@
             <div class="score-number">{{ result.match.overall_score }}<small> / 100</small></div>
           </div>
           <div class="score-tile">
-            <div class="score-label">{{ ui.judgment_confidence }}</div>
+            <div class="score-label">{{ ui.conclusion_stability }}</div>
             <div class="score-number">{{ result.match.confidence_score }}<small> / 100</small></div>
             <div class="score-label score-label-strong">{{ translate_dynamic(result.match.confidence_label, current_lang) }}</div>
           </div>
@@ -71,42 +71,32 @@
         <div class="results-main">
           <section class="grid-3 user-summary-grid no-top-gap">
             <section class="list-card">
-              <h2 class="section-title">
-                {% if current_lang == 'zh' %}投递判断{% else %}Application call{% endif %}
-              </h2>
+              <h2 class="section-title">{{ ui.application_call }}</h2>
               <div class="notice">
                 <strong>{{ translate_dynamic(result.match.application_recommendation, current_lang) }}</strong>
               </div>
-              <div class="tag-list" style="margin-top: 14px;">
+              <div class="tag-list top-gap-sm">
                 <span class="chip chip-neutral">{{ translate_dynamic(result.match.application_risk_level, current_lang) }}</span>
                 <span class="chip chip-neutral">{{ translate_dynamic(result.match.score_label, current_lang) }}</span>
               </div>
-              <p class="section-subtitle" style="margin-top: 14px;">{{ translate_dynamic(result.match.summary, current_lang) }}</p>
+              <p class="section-subtitle top-gap-sm">{{ translate_dynamic(result.match.summary, current_lang) }}</p>
             </section>
 
             <section class="list-card">
-              <h2 class="section-title">
-                {% if current_lang == 'zh' %}招聘方第一反应{% else %}Recruiter first impression{% endif %}
-              </h2>
+              <h2 class="section-title">{{ ui.recruiter_impression }}</h2>
               <div class="notice">{{ translate_dynamic(result.match.recruiter_takeaway, current_lang) }}</div>
-              <p class="section-subtitle" style="margin-top: 14px;">
-                {{ translate_dynamic(result.match.interview_risk_summary, current_lang) }}
-              </p>
+              <p class="section-subtitle top-gap-sm">{{ translate_dynamic(result.match.interview_risk_summary, current_lang) }}</p>
             </section>
 
             <section class="list-card">
-              <h2 class="section-title">
-                {% if current_lang == 'zh' %}投递前先补什么{% else %}Fix before applying{% endif %}
-              </h2>
+              <h2 class="section-title">{{ ui.fix_before_apply }}</h2>
               <ul class="action-list compact-list">
                 {% for action in result.match.must_fix_now %}
                 <li>{{ translate_dynamic(action, current_lang) }}</li>
                 {% endfor %}
               </ul>
               {% if result.match.can_improve_later %}
-              <h3 class="subheading">
-                {% if current_lang == 'zh' %}之后再优化{% else %}Improve after that{% endif %}
-              </h3>
+              <h3 class="subheading">{{ ui.improve_later }}</h3>
               <ul class="action-list compact-list">
                 {% for action in result.match.can_improve_later %}
                 <li>{{ translate_dynamic(action, current_lang) }}</li>
@@ -116,41 +106,130 @@
             </section>
           </section>
 
-          <section class="list-card">
+          <section class="grid-2 no-top-gap">
+            <section class="list-card">
+              <div class="section-head">
+                <div>
+                  <h2 class="section-title">{{ ui.role_snapshot }}</h2>
+                  <p class="section-subtitle">{{ ui.role_snapshot_copy }}</p>
+                </div>
+              </div>
+
+              <div class="role-snapshot-grid">
+                <div class="mini-stat">
+                  <span>{{ ui.target_role }}</span>
+                  <strong>{{ result.jd.role_title or ui.unknown_role }}</strong>
+                </div>
+                {% if result.jd.company_name %}
+                <div class="mini-stat">
+                  <span>{% if current_lang == 'zh' %}公司{% else %}Company{% endif %}</span>
+                  <strong>{{ result.jd.company_name }}</strong>
+                </div>
+                {% endif %}
+                {% if result.jd.location %}
+                <div class="mini-stat">
+                  <span>{% if current_lang == 'zh' %}地点{% else %}Location{% endif %}</span>
+                  <strong>{{ result.jd.location }}</strong>
+                </div>
+                {% endif %}
+                {% if result.jd.years_experience %}
+                <div class="mini-stat">
+                  <span>{{ ui.experience_expectation }}</span>
+                  <strong>{{ result.jd.years_experience }}</strong>
+                </div>
+                {% endif %}
+                {% if result.jd.education_requirement %}
+                <div class="mini-stat">
+                  <span>{{ ui.education_expectation }}</span>
+                  <strong>{{ result.jd.education_requirement }}</strong>
+                </div>
+                {% endif %}
+              </div>
+
+              {% if result.jd.hard_skills %}
+              <h3 class="subheading">{{ ui.matched_core_skills }}</h3>
+              <div class="tag-list">
+                {% for item in result.jd.hard_skills %}
+                <span class="chip chip-neutral">{{ item }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {% if result.jd.must_have_items %}
+              <h3 class="subheading">{{ ui.must_have_focus }}</h3>
+              <ul class="action-list compact-list">
+                {% for item in result.jd.must_have_items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {% if result.jd.preferred_items %}
+              <h3 class="subheading">{{ ui.preferred_focus }}</h3>
+              <ul class="action-list compact-list">
+                {% for item in result.jd.preferred_items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </section>
+
+            <section class="list-card">
+              <div class="section-head">
+                <div>
+                  <h2 class="section-title">{{ ui.decision_basis }}</h2>
+                  <p class="section-subtitle">{{ ui.decision_basis_copy }}</p>
+                </div>
+              </div>
+
+              <div class="notice">
+                <strong>{{ ui.conclusion_stability }}:</strong>
+                {{ translate_dynamic(result.match.confidence_label, current_lang) }}
+              </div>
+              <p class="section-subtitle top-gap-sm">{{ ui.conclusion_stability_copy }}</p>
+
+              {% if result.match.diagnosis_basis %}
+              <ul class="action-list compact-list">
+                {% for item in result.match.diagnosis_basis %}
+                <li>{{ translate_dynamic(item, current_lang) }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {% if result.match.confidence_reasons %}
+              <h3 class="subheading">{% if current_lang == 'zh' %}为什么这次结论比较稳{% else %}Why this feels stable{% endif %}</h3>
+              <ul class="action-list compact-list">
+                {% for item in result.match.confidence_reasons %}
+                <li>{{ translate_dynamic(item, current_lang) }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </section>
+          </section>
+
+          <section class="list-card" style="margin-top: 24px;">
             <div class="section-head">
               <div>
-                <h2 class="section-title">
-                  {% if current_lang == 'zh' %}为什么这次判断更可信{% else %}Why this result is more trustworthy{% endif %}
-                </h2>
-                <p class="section-subtitle">{{ ui.process_copy }}</p>
+                <h2 class="section-title">{{ ui.application_checklist }}</h2>
+                <p class="section-subtitle">{{ ui.application_checklist_copy }}</p>
               </div>
-              <span class="subtle-badge">
-                {{ result.stages|length }} {% if current_lang == 'zh' %}个阶段{% else %}stages{% endif %}
-              </span>
             </div>
 
             <div class="grid-2 no-top-gap">
               <section class="soft-panel">
-                <h3 class="subheading">{{ ui.process_trace }}</h3>
-                <div class="stage-grid stage-grid-compact">
-                  {% for stage in result.stages %}
-                  <article class="stage-card">
-                    <div class="stage-name">{{ translate_stage_name(stage.name, current_lang) }}</div>
-                    <div class="stage-copy">{{ translate_dynamic(stage.detail, current_lang) }}</div>
-                    <div class="stage-time">{{ stage.duration_ms }} ms</div>
-                  </article>
+                <h3 class="subheading">{{ ui.application_checklist }}</h3>
+                <ul class="action-list compact-list">
+                  {% for item in result.match.application_checklist %}
+                  <li>{{ translate_dynamic(item, current_lang) }}</li>
                   {% endfor %}
-                </div>
+                </ul>
               </section>
 
               <section class="soft-panel">
-                <h3 class="subheading">{{ ui.judgment_confidence }}</h3>
-                <div class="notice">
-                  <strong>{{ translate_dynamic(result.match.confidence_label, current_lang) }}</strong>
-                </div>
+                <h3 class="subheading">{{ ui.priority_actions }}</h3>
                 <ul class="action-list compact-list">
-                  {% for item in result.match.confidence_reasons %}
-                  <li>{{ translate_dynamic(item, current_lang) }}</li>
+                  {% for action in result.match.priority_actions %}
+                  <li>{{ translate_dynamic(action, current_lang) }}</li>
                   {% endfor %}
                 </ul>
               </section>
@@ -166,7 +245,7 @@
                 </h2>
                 <p class="section-subtitle">
                   {% if current_lang == 'zh' %}
-                  这部分只用来补充岗位背景、技能信号和面经风格，不会直接覆盖 ATS 与匹配分数。
+                  这一层只用来补充岗位背景、技能信号和面经风格，不会直接改写 ATS 和匹配分数。
                   {% else %}
                   This layer supplements role context, skill signals, and interview patterns without overwriting the ATS or match score.
                   {% endif %}
@@ -211,7 +290,7 @@
                 </div>
                 <p class="source-snippet">{{ source.snippet }}</p>
                 <div class="source-meta">
-                  <span class="chip {% if source.source_type == 'interview' %}chip-good{% elif source.source_type == 'community' %}chip-neutral{% else %}chip-neutral{% endif %}">
+                  <span class="chip {% if source.source_type == 'interview' %}chip-good{% else %}chip-neutral{% endif %}">
                     {% if current_lang == 'zh' %}
                       {% if source.source_type == 'interview' %}面经/题型{% elif source.source_type == 'community' %}社区讨论{% elif source.source_type == 'career' %}求职内容{% elif source.source_type == 'official' %}官方/文档{% else %}公开来源{% endif %}
                     {% else %}
@@ -233,7 +312,7 @@
 
           <section class="grid-3">
             <section class="list-card">
-              <h2 class="section-title">{{ ui.strength_signals }}</h2>
+              <h2 class="section-title">{{ ui.strengths_for_user }}</h2>
               <ul class="action-list">
                 {% for item in result.match.strength_signals %}
                 <li>{{ translate_dynamic(item, current_lang) }}</li>
@@ -242,7 +321,7 @@
             </section>
 
             <section class="list-card">
-              <h2 class="section-title">{{ ui.risk_signals }}</h2>
+              <h2 class="section-title">{{ ui.risks_for_user }}</h2>
               <ul class="action-list">
                 {% for item in result.match.risk_signals %}
                 <li>{{ translate_dynamic(item, current_lang) }}</li>
@@ -251,7 +330,7 @@
             </section>
 
             <section class="list-card">
-              <h2 class="section-title">{{ ui.evidence_highlights }}</h2>
+              <h2 class="section-title">{{ ui.evidence_for_user }}</h2>
               <ul class="action-list">
                 {% for item in result.match.evidence_highlights %}
                 <li>{{ translate_dynamic(item, current_lang) }}</li>
@@ -301,27 +380,6 @@
           </section>
           {% endif %}
 
-          <section class="list-card" style="margin-top: 24px;">
-            <h2 class="section-title">{{ ui.score_breakdown }}</h2>
-            <div class="component-stack">
-              {% for component in result.match.components %}
-              <div class="component-row">
-                <div class="component-head">
-                  <div>
-                    <strong>{{ translate_dynamic(component.name, current_lang) }}</strong>
-                    <div class="score-label">{{ translate_dynamic(component.reason, current_lang) }}</div>
-                  </div>
-                  <div class="score-badge">{{ component.score }}</div>
-                </div>
-                <div class="component-meter">
-                  <span style="width: {{ component.score }}%;"></span>
-                </div>
-                <div class="component-meta">{{ ui.weight }} {{ component.weight }}</div>
-              </div>
-              {% endfor %}
-            </div>
-          </section>
-
           {% if result.rewrite %}
           <section class="list-card" style="margin-top: 24px;">
             <div class="section-head">
@@ -331,7 +389,7 @@
                 </h2>
                 <p class="section-subtitle">
                   {% if current_lang == 'zh' %}
-                  这一部分不替你编造内容，而是把当前缺口改写成更像真实投递材料的表达骨架。
+                  这一部分不会替你编造内容，而是把当前缺口改写成更像真实投递材料的表达骨架。
                   {% else %}
                   This section does not invent achievements for you. It turns the current gaps into stronger application-ready phrasing scaffolds.
                   {% endif %}
@@ -345,7 +403,7 @@
             <div class="notice">{{ translate_dynamic(result.rewrite.summary, current_lang) }}</div>
 
             {% if result.rewrite.strategy %}
-            <ul class="action-list compact-list" style="margin-top: 18px;">
+            <ul class="action-list compact-list top-gap-sm">
               {% for item in result.rewrite.strategy %}
               <li>{{ translate_dynamic(item, current_lang) }}</li>
               {% endfor %}
@@ -391,7 +449,20 @@
               </span>
             </div>
             <div class="notice">{{ translate_dynamic(result.interview.summary, current_lang) }}</div>
-            <p class="section-subtitle" style="margin-top: 16px;">{{ translate_dynamic(result.interview.intro_prompt, current_lang) }}</p>
+            <p class="section-subtitle top-gap-sm">{{ translate_dynamic(result.interview.intro_prompt, current_lang) }}</p>
+
+            {% if result.interview.answer_method %}
+            <section class="soft-panel top-gap-md">
+              <h3 class="subheading">{{ ui.interview_answer_method }}</h3>
+              <p class="section-subtitle compact-copy">{{ ui.interview_answer_method_copy }}</p>
+              <ul class="action-list compact-list">
+                {% for item in result.interview.answer_method %}
+                <li>{{ translate_dynamic(item, current_lang) }}</li>
+                {% endfor %}
+              </ul>
+            </section>
+            {% endif %}
+
             <div class="interview-grid">
               {% for item in result.interview.questions %}
               <article class="interview-card">
@@ -477,21 +548,6 @@
         </div>
 
         <aside class="results-sidebar">
-          <section class="list-card sidebar-card sticky-card">
-            <h2 class="section-title">{{ ui.priority_actions }}</h2>
-            <ul class="action-list compact-list">
-              {% for action in result.match.priority_actions %}
-              <li>{{ translate_dynamic(action, current_lang) }}</li>
-              {% endfor %}
-            </ul>
-            <div class="tag-list" style="margin-top: 18px;">
-              <span class="chip chip-good">{{ ui.covered }} {{ result.match.covered_requirement_count }}</span>
-              <span class="chip chip-neutral">{{ ui.partial }} {{ result.match.partial_requirement_count }}</span>
-              <span class="chip chip-miss">{{ ui.missing }} {{ result.match.missing_requirement_count }}</span>
-              <span class="chip chip-neutral">{{ ui.requirement_label }} {{ result.match.total_requirement_count }}</span>
-            </div>
-          </section>
-
           <section class="list-card sidebar-card">
             <h2 class="section-title">{{ ui.ats_findings }}</h2>
             <ul class="finding-list">
@@ -544,7 +600,9 @@
           </section>
 
           <section class="list-card sidebar-card">
-            <h2 class="section-title">{{ ui.structure_profile }}</h2>
+            <h2 class="section-title">{{ ui.resume_snapshot }}</h2>
+            <p class="section-subtitle compact-copy">{{ ui.resume_snapshot_copy }}</p>
+
             <div class="tag-list">
               {% for section in result.resume.sections %}
               <span class="chip chip-neutral">{{ section.heading }}</span>
@@ -578,24 +636,6 @@
               </div>
             </div>
           </section>
-
-          <details class="dev-disclosure sidebar-disclosure">
-            <summary>
-              {% if current_lang == 'zh' %}开发者信息披露{% else %}Developer disclosure{% endif %}
-            </summary>
-            <div class="dev-disclosure-body">
-              <div class="notice">
-                <strong>{{ ui.analysis_id }}:</strong> {{ result.analysis_id or "N/A" }}
-                {% if result.created_at %}<br /><strong>{{ ui.created_at }}:</strong> {{ result.created_at }}{% endif %}
-              </div>
-              <div class="notice">
-                <strong>{{ ui.parsed_info }}:</strong><br />
-                {{ result.resume.inferred_name or ui.unknown_name }}
-                {% if result.resume.inferred_email %}<br />{{ result.resume.inferred_email }}{% endif %}
-                {% if result.resume.inferred_phone %}<br />{{ result.resume.inferred_phone }}{% endif %}
-              </div>
-            </div>
-          </details>
         </aside>
       </section>
     </div>

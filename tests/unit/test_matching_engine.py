@@ -74,6 +74,8 @@ class MatchingEngineTests(unittest.TestCase):
         self.assertTrue(report.priority_actions)
         self.assertTrue(report.application_recommendation)
         self.assertTrue(report.recruiter_takeaway)
+        self.assertTrue(report.diagnosis_basis)
+        self.assertTrue(report.application_checklist)
         self.assertTrue(report.must_fix_now or report.can_improve_later)
 
 

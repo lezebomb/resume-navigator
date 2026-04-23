@@ -48,6 +48,7 @@ class InterviewGeneratorTests(unittest.TestCase):
         self.assertTrue(any("SQL" in question for question in questions))
         self.assertTrue(any("supplier delay" in question.lower() for question in questions))
         self.assertTrue(any("The JD emphasizes" in question for question in questions))
+        self.assertTrue(report.answer_method)
 
     def test_analysis_roles_include_metric_definition_question(self) -> None:
         resume = ResumeDocument(

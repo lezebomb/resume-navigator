@@ -543,11 +543,30 @@ textarea {
   color: var(--ink);
 }
 
+.top-gap-sm {
+  margin-top: 14px;
+}
+
+.top-gap-md {
+  margin-top: 18px;
+}
+
+.compact-copy {
+  margin-bottom: 0;
+}
+
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-top: 18px;
+}
+
+.role-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .stage-grid,
@@ -702,6 +721,8 @@ textarea {
   display: block;
   margin-top: 6px;
   font-size: 1.2rem;
+  line-height: 1.45;
+  word-break: break-word;
 }
 
 .component-stack {
@@ -1074,6 +1095,7 @@ textarea {
   .grid-2,
   .grid-3,
   .mini-grid,
+  .role-snapshot-grid,
   .stage-grid,
   .stage-grid-compact,
   .requirement-grid,

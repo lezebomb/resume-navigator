@@ -68,9 +68,33 @@ UI_TRANSLATIONS = {
         "ats_readiness": "ATS 兼容度",
         "role_match": "岗位匹配度",
         "judgment_confidence": "判断置信度",
+        "conclusion_stability": "结论稳定度",
+        "conclusion_stability_copy": "它不是在说你一定能过，而是在说这次自动判断的依据是否足够稳定。",
         "analysis_mode_current": "当前模式",
         "standard_mode_label": "快速诊断",
         "deep_mode_label": "深度诊断",
+        "application_call": "投递判断",
+        "recruiter_impression": "招聘方第一反应",
+        "fix_before_apply": "投递前先补什么",
+        "improve_later": "之后再优化",
+        "role_snapshot": "岗位画像",
+        "role_snapshot_copy": "先看清这份 JD 想招什么人，再决定你的简历应该补什么。",
+        "decision_basis": "这次结论主要基于什么",
+        "decision_basis_copy": "这里展示的是影响判断的核心依据，而不是内部流水线日志。",
+        "application_checklist": "投递前检查清单",
+        "application_checklist_copy": "正式投递前把这些过一遍，能明显减少被动解释。",
+        "matched_core_skills": "岗位核心技能",
+        "must_have_focus": "JD 必选要求",
+        "preferred_focus": "加分项",
+        "experience_expectation": "经验要求",
+        "education_expectation": "学历要求",
+        "strengths_for_user": "你已经具备的优势",
+        "risks_for_user": "还会被追问的点",
+        "evidence_for_user": "简历里已经站得住的证据",
+        "resume_snapshot": "简历概况",
+        "resume_snapshot_copy": "这是给你自己看的简历摘要，不是开发日志。",
+        "interview_answer_method": "回答方法",
+        "interview_answer_method_copy": "先把回答结构练顺，再去润色具体措辞。",
         "strength_signals": "优势信号",
         "risk_signals": "风险信号",
         "evidence_highlights": "证据高亮",
@@ -234,9 +258,33 @@ UI_TRANSLATIONS = {
         "ats_readiness": "ATS Readiness",
         "role_match": "Role Match",
         "judgment_confidence": "Judgment confidence",
+        "conclusion_stability": "Decision stability",
+        "conclusion_stability_copy": "This is not a promise of success. It tells you how stable the basis behind this automated judgment is.",
         "analysis_mode_current": "Current mode",
         "standard_mode_label": "Quick audit",
         "deep_mode_label": "Deep audit",
+        "application_call": "Application call",
+        "recruiter_impression": "Recruiter first impression",
+        "fix_before_apply": "Fix before applying",
+        "improve_later": "Improve later",
+        "role_snapshot": "Role snapshot",
+        "role_snapshot_copy": "Understand what this JD is really asking for before deciding what to strengthen in the resume.",
+        "decision_basis": "What this conclusion is based on",
+        "decision_basis_copy": "This shows the core basis behind the judgment, not internal pipeline logs.",
+        "application_checklist": "Pre-application checklist",
+        "application_checklist_copy": "Run through these before you send the final version so you spend less time explaining gaps later.",
+        "matched_core_skills": "Core role skills",
+        "must_have_focus": "JD must-haves",
+        "preferred_focus": "Preferred items",
+        "experience_expectation": "Experience expectation",
+        "education_expectation": "Education expectation",
+        "strengths_for_user": "What already works",
+        "risks_for_user": "What will still get challenged",
+        "evidence_for_user": "Evidence already working for you",
+        "resume_snapshot": "Resume snapshot",
+        "resume_snapshot_copy": "This is a user-facing resume summary, not a developer log.",
+        "interview_answer_method": "How to answer",
+        "interview_answer_method_copy": "Practice the structure first, then polish the wording.",
         "strength_signals": "Strength signals",
         "risk_signals": "Risk signals",
         "evidence_highlights": "Evidence highlights",
@@ -397,6 +445,54 @@ _DYNAMIC_EXACT = {
     "A recruiter is likely to see a coherent fit quickly, then move into depth and ownership questions.": {
         "zh": "招聘方更可能先快速确认你整体匹配，然后转向深度、ownership 和细节追问。",
         "en": "A recruiter is likely to see a coherent fit quickly, then move into depth and ownership questions.",
+    },
+    "The resume is readable enough for ATS-style extraction and deterministic checking.": {
+        "zh": "这份简历目前的可读性已经足够支持 ATS 风格提取和确定性诊断。",
+        "en": "The resume is readable enough for ATS-style extraction and deterministic checking.",
+    },
+    "ATS readability is not yet stable enough, so some conclusions should be treated cautiously.": {
+        "zh": "这份简历的 ATS 可读性还不够稳定，所以部分结论需要更谨慎看待。",
+        "en": "ATS readability is not yet stable enough, so some conclusions should be treated cautiously.",
+    },
+    "The current result is heavily affected by missing proof on the JD must-have lines.": {
+        "zh": "这次结论很大程度上受制于 JD 必选要求缺少直接证明。",
+        "en": "The current result is heavily affected by missing proof on the JD must-have lines.",
+    },
+    "The current result benefits from direct evidence on the most important JD lines.": {
+        "zh": "这次结论受益于你在关键 JD 要求上已经有了直接证据。",
+        "en": "The current result benefits from direct evidence on the most important JD lines.",
+    },
+    "No obvious hard-skill blocker was detected in the current JD comparison.": {
+        "zh": "当前 JD 对比中没有看到特别明显的硬技能阻塞项。",
+        "en": "No obvious hard-skill blocker was detected in the current JD comparison.",
+    },
+    "Before applying, make sure the strongest experience bullet directly answers one JD must-have.": {
+        "zh": "投递前先确认你最强的一条经历 bullet 能直接回答至少一条 JD 必选要求。",
+        "en": "Before applying, make sure the strongest experience bullet directly answers one JD must-have.",
+    },
+    "Add at least one quantified outcome so the recruiter can see scope quickly.": {
+        "zh": "至少补上一条量化结果，让招聘方更快看到你的业务范围和影响。",
+        "en": "Add at least one quantified outcome so the recruiter can see scope quickly.",
+    },
+    "Keep one quantified result ready, because recruiters often scan for business impact first.": {
+        "zh": "保留一条你最有代表性的量化结果，因为招聘方通常会先看业务影响。",
+        "en": "Keep one quantified result ready, because recruiters often scan for business impact first.",
+    },
+    "Do one final skim for natural keyword alignment before exporting the final resume.": {
+        "zh": "在导出最终简历前，再做一轮关键词自然对齐检查。",
+        "en": "Do one final skim for natural keyword alignment before exporting the final resume.",
+    },
+    "Use a short structure: context, your action, measurable result, and what decision or lesson came out of it.": {
+        "zh": "回答时尽量用短结构：背景、你的动作、量化结果，以及最后带来的决策或经验。",
+        "en": "Use a short structure: context, your action, measurable result, and what decision or lesson came out of it.",
+    },
+    "When the question points to a missing skill, answer honestly with the deepest real example you do have.": {
+        "zh": "如果问题指向缺失技能，就诚实地用你最深、最真实的相关例子来回答。",
+        "en": "When the question points to a missing skill, answer honestly with the deepest real example you do have.",
+    },
+    "When the JD is emphasized, always pull the answer back to that requirement instead of giving a generic story.": {
+        "zh": "当问题明确对应 JD 要求时，回答要始终拉回那条要求，而不是讲一个泛泛的故事。",
+        "en": "When the JD is emphasized, always pull the answer back to that requirement instead of giving a generic story.",
     },
     "The interview is likely to focus on whether your strongest experience really covers the must-have JD lines.": {
         "zh": "面试更可能围绕你的最强经历是否真的覆盖了 JD 的必选要求展开。",
@@ -804,6 +900,22 @@ _DYNAMIC_EXACT = {
 }
 
 _DYNAMIC_PATTERNS = [
+    (
+        re.compile(r"The biggest professional gap is still the proof depth for (.+)\."),
+        lambda match, lang: (
+            f"当前最大的专业缺口仍然是这些能力的证明深度：{match.group(1)}。"
+            if lang == "zh"
+            else f"The biggest professional gap is still the proof depth for {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"Prepare a truthful spoken example for (.+), because the interview is likely to probe it\."),
+        lambda match, lang: (
+            f"提前准备好关于 {match.group(1)} 的真实口头例子，因为面试大概率会继续追问。"
+            if lang == "zh"
+            else f"Prepare a truthful spoken example for {match.group(1)}, because the interview is likely to probe it."
+        ),
+    ),
     (
         re.compile(r"(\d+) must-have JD lines still do not have direct resume proof\."),
         lambda match, lang: (
