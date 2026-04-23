@@ -5,6 +5,7 @@ pydantic
 
 streamlit
 requests
+ddgs
 duckduckgo-search
 
 openai

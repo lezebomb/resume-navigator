@@ -60,6 +60,7 @@ class PublicWebSearchTests(unittest.TestCase):
         self.assertIn("Collected", report.summary)
         self.assertTrue(any(card.source_type == "interview" for card in report.source_cards))
         self.assertTrue(any("Repeated public signals mention" in item for item in report.insights))
+        self.assertTrue(all(card.credibility_score > 0 for card in report.source_cards))
 
 
 if __name__ == "__main__":

@@ -110,6 +110,7 @@ class ResearchSourceCard(BaseModel):
     snippet: str = ""
     query: str = ""
     source_type: Literal["interview", "career", "community", "official", "general"] = "general"
+    credibility_score: int = 0
 
 
 class PublicResearchReport(BaseModel):
@@ -125,6 +126,12 @@ class MatchReport(BaseModel):
     overall_score: int
     summary: str
     score_label: str = "Needs work"
+    application_recommendation: str = ""
+    application_risk_level: str = ""
+    recruiter_takeaway: str = ""
+    interview_risk_summary: str = ""
+    must_fix_now: list[str] = Field(default_factory=list)
+    can_improve_later: list[str] = Field(default_factory=list)
     confidence_score: int = 0
     confidence_label: str = "Needs manual review"
     components: list[ScoreComponent] = Field(default_factory=list)

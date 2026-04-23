@@ -12,10 +12,13 @@ warnings.filterwarnings(
     category=RuntimeWarning,
 )
 
-try:
-    from duckduckgo_search import DDGS
+try:  # pragma: no cover - import safety for local environments
+    from ddgs import DDGS
 except Exception:  # pragma: no cover - import safety for local environments
-    DDGS = None
+    try:
+        from duckduckgo_search import DDGS
+    except Exception:
+        DDGS = None
 
 
 INTERVIEW_HINTS = ("面经", "interview", "question", "behavioral", "case", "mock")
@@ -55,6 +58,11 @@ def run_public_web_research(
                         if not url or url in seen_urls:
                             continue
                         seen_urls.add(url)
+                        source_type = _infer_source_type(
+                            title=row.get("title") or "",
+                            snippet=row.get("body") or "",
+                            url=url,
+                        )
                         cards.append(
                             ResearchSourceCard(
                                 title=(row.get("title") or url).strip(),
@@ -62,10 +70,10 @@ def run_public_web_research(
                                 source_name=_source_name_from_url(url),
                                 snippet=_clean_snippet(row.get("body") or ""),
                                 query=query,
-                                source_type=_infer_source_type(
-                                    title=row.get("title") or "",
-                                    snippet=row.get("body") or "",
+                                source_type=source_type,
+                                credibility_score=_credibility_score(
                                     url=url,
+                                    source_type=source_type,
                                 ),
                             )
                         )
@@ -94,6 +102,7 @@ def run_public_web_research(
             ],
         )
 
+    cards.sort(key=lambda item: item.credibility_score, reverse=True)
     return PublicResearchReport(
         enabled=True,
         queries=queries,
@@ -172,6 +181,20 @@ def _source_name_from_url(url: str) -> str:
     hostname = urlparse(url).hostname or url
     hostname = re.sub(r"^www\.", "", hostname)
     return hostname
+
+
+def _credibility_score(*, url: str, source_type: str) -> int:
+    score_map = {
+        "official": 85,
+        "career": 74,
+        "interview": 68,
+        "community": 60,
+        "general": 55,
+    }
+    score = score_map.get(source_type, 55)
+    if url.startswith("https://"):
+        score += 3
+    return min(100, score)
 
 
 def _clean_snippet(text: str) -> str:

@@ -72,6 +72,9 @@ class MatchingEngineTests(unittest.TestCase):
         self.assertGreater(report.confidence_score, 0)
         self.assertTrue(report.strength_signals)
         self.assertTrue(report.priority_actions)
+        self.assertTrue(report.application_recommendation)
+        self.assertTrue(report.recruiter_takeaway)
+        self.assertTrue(report.must_fix_now or report.can_improve_later)
 
 
 if __name__ == "__main__":

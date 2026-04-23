@@ -357,6 +357,55 @@ _DYNAMIC_EXACT = {
     "High confidence": {"zh": "高可信", "en": "High confidence"},
     "Medium confidence": {"zh": "中等可信", "en": "Medium confidence"},
     "Needs manual review": {"zh": "需人工复核", "en": "Needs manual review"},
+    "Fix core blockers before applying": {"zh": "建议先补齐核心阻塞项，再正式投递", "en": "Fix core blockers before applying"},
+    "Ready to apply": {"zh": "可以进入投递", "en": "Ready to apply"},
+    "Can apply, but prepare explanations first": {
+        "zh": "可以投递，但要先准备好解释口径",
+        "en": "Can apply, but prepare explanations first",
+    },
+    "High application risk": {"zh": "投递风险较高", "en": "High application risk"},
+    "Medium application risk": {"zh": "投递风险中等", "en": "Medium application risk"},
+    "Lower application risk": {"zh": "投递风险较低", "en": "Lower application risk"},
+    "There are ATS-blocking risks that should be fixed before applying.": {
+        "zh": "存在 ATS 阻塞风险，建议在投递前先修掉。",
+        "en": "There are ATS-blocking risks that should be fixed before applying.",
+    },
+    "Judgment confidence is still low enough that a human review is recommended before applying.": {
+        "zh": "当前自动判断的置信度还不够高，建议投递前先做人工复核。",
+        "en": "Judgment confidence is still low enough that a human review is recommended before applying.",
+    },
+    "Add stronger quantified outcomes so recruiters can see scale and business impact faster.": {
+        "zh": "补强量化结果，让招聘方更快看到你的业务规模和影响。",
+        "en": "Add stronger quantified outcomes so recruiters can see scale and business impact faster.",
+    },
+    "Keep cleaning ATS presentation details after the core evidence gaps are fixed.": {
+        "zh": "在补齐核心证据之后，再继续优化 ATS 呈现细节。",
+        "en": "Keep cleaning ATS presentation details after the core evidence gaps are fixed.",
+    },
+    "The later improvements are mostly about polishing phrasing and section-level clarity.": {
+        "zh": "后续更多是做措辞打磨和版块清晰度优化。",
+        "en": "The later improvements are mostly about polishing phrasing and section-level clarity.",
+    },
+    "A recruiter is likely to see some relevant background, but still ask whether the resume really proves the JD must-haves.": {
+        "zh": "招聘方大概率会觉得你有一定相关背景，但仍会追问这份简历是否真的证明了 JD 的核心要求。",
+        "en": "A recruiter is likely to see some relevant background, but still ask whether the resume really proves the JD must-haves.",
+    },
+    "A recruiter may see partial alignment, but will probably probe whether the missing hard skill is a real gap or just underwritten.": {
+        "zh": "招聘方可能会看到部分匹配，但也很可能追问那些缺失硬技能到底是真不会，还是只是没写清楚。",
+        "en": "A recruiter may see partial alignment, but will probably probe whether the missing hard skill is a real gap or just underwritten.",
+    },
+    "A recruiter is likely to see a coherent fit quickly, then move into depth and ownership questions.": {
+        "zh": "招聘方更可能先快速确认你整体匹配，然后转向深度、ownership 和细节追问。",
+        "en": "A recruiter is likely to see a coherent fit quickly, then move into depth and ownership questions.",
+    },
+    "The interview is likely to focus on whether your strongest experience really covers the must-have JD lines.": {
+        "zh": "面试更可能围绕你的最强经历是否真的覆盖了 JD 的必选要求展开。",
+        "en": "The interview is likely to focus on whether your strongest experience really covers the must-have JD lines.",
+    },
+    "The interview is more likely to test depth, trade-offs, and stakeholder handling than basic fit.": {
+        "zh": "面试更可能考你深度、取舍和协同处理，而不是基础匹配度。",
+        "en": "The interview is more likely to test depth, trade-offs, and stakeholder handling than basic fit.",
+    },
     "Public interview write-ups for similar roles often focus on one end-to-end planning or procurement decision. Which decision are you most prepared to defend in detail?": {
         "zh": "类似岗位的公开面经经常会追问一次完整的计划或采购决策。你最能详细讲清楚、也最经得起追问的是哪一次？",
         "en": "Public interview write-ups for similar roles often focus on one end-to-end planning or procurement decision. Which decision are you most prepared to defend in detail?",
@@ -755,6 +804,38 @@ _DYNAMIC_EXACT = {
 }
 
 _DYNAMIC_PATTERNS = [
+    (
+        re.compile(r"(\d+) must-have JD lines still do not have direct resume proof\."),
+        lambda match, lang: (
+            f"仍有 {match.group(1)} 条 JD 必选要求缺少直接的简历证明。"
+            if lang == "zh"
+            else f"{match.group(1)} must-have JD lines still do not have direct resume proof."
+        ),
+    ),
+    (
+        re.compile(r"Core hard-skill proof is still missing for: (.+)\."),
+        lambda match, lang: (
+            f"这些核心硬技能的证明仍然不够：{match.group(1)}。"
+            if lang == "zh"
+            else f"Core hard-skill proof is still missing for: {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"Improve natural keyword alignment for: (.+)\."),
+        lambda match, lang: (
+            f"可以继续补强这些关键词的自然对齐：{match.group(1)}。"
+            if lang == "zh"
+            else f"Improve natural keyword alignment for: {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"The interview is likely to challenge your proof depth for (.+)\."),
+        lambda match, lang: (
+            f"面试更可能追问你在 {match.group(1)} 上的真实证明深度。"
+            if lang == "zh"
+            else f"The interview is likely to challenge your proof depth for {match.group(1)}."
+        ),
+    ),
     (
         re.compile(r"Collected (\d+) public sources about role expectations, interview experience, and skill requirements\."),
         lambda match, lang: (

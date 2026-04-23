@@ -134,6 +134,22 @@ def evaluate_resume_match(
         missing_requirements=missing_requirement_count,
         experience_signal_score=experience_signal_score,
     )
+    (
+        application_recommendation,
+        application_risk_level,
+        recruiter_takeaway,
+        interview_risk_summary,
+        must_fix_now,
+        can_improve_later,
+    ) = _build_application_brief(
+        ats=ats,
+        score_label=score_label,
+        confidence_score=confidence_score,
+        missing_hard_skills=missing_hard_skills,
+        missing_requirements=missing_requirement_count,
+        quantification_score=quantification_score,
+        missing_keywords=missing_keywords,
+    )
     summary = _build_summary(
         overall_score=weighted_score,
         score_label=score_label,
@@ -148,6 +164,12 @@ def evaluate_resume_match(
         overall_score=max(0, min(100, weighted_score)),
         summary=summary,
         score_label=score_label,
+        application_recommendation=application_recommendation,
+        application_risk_level=application_risk_level,
+        recruiter_takeaway=recruiter_takeaway,
+        interview_risk_summary=interview_risk_summary,
+        must_fix_now=must_fix_now,
+        can_improve_later=can_improve_later,
         confidence_score=confidence_score,
         confidence_label=confidence_label,
         components=components,
@@ -251,6 +273,76 @@ def _build_summary(
         f"{len(matched_hard_skills)} hard skills were matched, "
         f"{len(missing_hard_skills)} remain uncovered, and "
         f"{matched_requirements}/{total_requirements or 0} must-have JD lines were covered."
+    )
+
+
+def _build_application_brief(
+    *,
+    ats: AtsReport,
+    score_label: str,
+    confidence_score: int,
+    missing_hard_skills: list[str],
+    missing_requirements: int,
+    quantification_score: int,
+    missing_keywords: list[str],
+) -> tuple[str, str, str, str, list[str], list[str]]:
+    must_fix_now: list[str] = []
+    can_improve_later: list[str] = []
+
+    if any(finding.severity == "error" for finding in ats.findings):
+        must_fix_now.append("There are ATS-blocking risks that should be fixed before applying.")
+    if missing_requirements > 0:
+        must_fix_now.append(f"{missing_requirements} must-have JD lines still do not have direct resume proof.")
+    if missing_hard_skills:
+        must_fix_now.append(f"Core hard-skill proof is still missing for: {', '.join(missing_hard_skills[:3])}.")
+    if confidence_score < 60:
+        must_fix_now.append("Judgment confidence is still low enough that a human review is recommended before applying.")
+
+    if quantification_score < 75:
+        can_improve_later.append("Add stronger quantified outcomes so recruiters can see scale and business impact faster.")
+    if missing_keywords:
+        can_improve_later.append(f"Improve natural keyword alignment for: {', '.join(missing_keywords[:3])}.")
+    if ats.score < 90 and not any(finding.severity == "error" for finding in ats.findings):
+        can_improve_later.append("Keep cleaning ATS presentation details after the core evidence gaps are fixed.")
+
+    if must_fix_now:
+        application_recommendation = "Fix core blockers before applying"
+    elif score_label == "Strong" and confidence_score >= 75:
+        application_recommendation = "Ready to apply"
+    else:
+        application_recommendation = "Can apply, but prepare explanations first"
+
+    if len(must_fix_now) >= 3 or confidence_score < 55:
+        application_risk_level = "High application risk"
+    elif must_fix_now or confidence_score < 75:
+        application_risk_level = "Medium application risk"
+    else:
+        application_risk_level = "Lower application risk"
+
+    if missing_requirements > 0:
+        recruiter_takeaway = "A recruiter is likely to see some relevant background, but still ask whether the resume really proves the JD must-haves."
+    elif missing_hard_skills:
+        recruiter_takeaway = "A recruiter may see partial alignment, but will probably probe whether the missing hard skill is a real gap or just underwritten."
+    else:
+        recruiter_takeaway = "A recruiter is likely to see a coherent fit quickly, then move into depth and ownership questions."
+
+    if missing_hard_skills:
+        interview_risk_summary = f"The interview is likely to challenge your proof depth for {', '.join(missing_hard_skills[:3])}."
+    elif missing_requirements > 0:
+        interview_risk_summary = "The interview is likely to focus on whether your strongest experience really covers the must-have JD lines."
+    else:
+        interview_risk_summary = "The interview is more likely to test depth, trade-offs, and stakeholder handling than basic fit."
+
+    if not can_improve_later:
+        can_improve_later.append("The later improvements are mostly about polishing phrasing and section-level clarity.")
+
+    return (
+        application_recommendation,
+        application_risk_level,
+        recruiter_takeaway,
+        interview_risk_summary,
+        must_fix_now[:3],
+        can_improve_later[:3],
     )
 
 
