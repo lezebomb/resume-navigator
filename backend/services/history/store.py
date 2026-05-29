@@ -15,7 +15,8 @@ HISTORY_PATH = settings.data_dir / "analysis_history.json"
 def save_analysis_result(result: AnalysisResult) -> AnalysisResult:
     analysis_id = result.analysis_id or uuid4().hex[:12]
     created_at = result.created_at or datetime.now(timezone.utc).isoformat()
-    hydrated = result.model_copy(update={"analysis_id": analysis_id, "created_at": created_at})
+    access_token = result.access_token or uuid4().hex
+    hydrated = result.model_copy(update={"analysis_id": analysis_id, "created_at": created_at, "access_token": access_token})
 
     records = _load_all_records()
     records.append(hydrated.model_dump())
@@ -30,6 +31,7 @@ def list_analysis_history() -> list[dict]:
         summaries.append(
             {
                 "analysis_id": record.get("analysis_id"),
+                "access_token": record.get("access_token"),
                 "created_at": record.get("created_at"),
                 "filename": record.get("resume", {}).get("filename"),
                 "role_title": record.get("jd", {}).get("role_title"),
@@ -47,6 +49,14 @@ def get_analysis_record(analysis_id: str) -> AnalysisResult | None:
         if record.get("analysis_id") == analysis_id:
             return AnalysisResult.model_validate(record)
     return None
+
+
+def can_view_analysis_record(result: AnalysisResult, access_token: str | None) -> bool:
+    if not result.access_token:
+        return True
+    if not access_token:
+        return False
+    return access_token == result.access_token
 
 
 def _load_all_records() -> list[dict]:

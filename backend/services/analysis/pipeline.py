@@ -4,11 +4,13 @@ from time import perf_counter
 from typing import Callable
 
 from backend.api.schemas.domain import AnalysisResult, AnalysisStage
+from backend.core.config import settings
 from backend.services.analysis.deep_review import run_deep_review
 from backend.services.ats.engine import evaluate_ats_readiness
 from backend.services.history.store import save_analysis_result
 from backend.services.interview.generator import build_interview_prep
 from backend.services.jd.parser import parse_job_description
+from backend.services.llm.user_copy import maybe_refine_user_copy
 from backend.services.matching.engine import evaluate_resume_match, label_confidence
 from backend.services.research.public_web_search import run_public_web_research
 from backend.services.resume.parser import parse_resume_bytes
@@ -99,12 +101,44 @@ def analyze_resume_against_jd(
     research = None
     if enable_public_research:
         started = perf_counter()
-        research = run_public_web_research(jd=jd, enabled=True)
+        research = run_public_web_research(
+            jd=jd,
+            enabled=True,
+            max_results=settings.public_research_max_results,
+        )
         _record_stage(
             stages,
             AnalysisStage(
                 name="public_research",
                 detail=research.summary,
+                duration_ms=_duration_ms(started),
+            ),
+            stage_callback,
+        )
+
+    started = perf_counter()
+    refined_user_copy = maybe_refine_user_copy(
+        role_title=jd.role_title or "",
+        structured_payload={
+            "overall_score": match.overall_score,
+            "score_label": match.score_label,
+            "application_recommendation": match.application_recommendation,
+            "application_risk_level": match.application_risk_level,
+            "recruiter_takeaway": match.recruiter_takeaway,
+            "must_fix_now": match.must_fix_now,
+            "priority_actions": match.priority_actions,
+            "matched_hard_skills": match.matched_hard_skills,
+            "missing_hard_skills": match.missing_hard_skills,
+            "research_summary": research.summary if research else "",
+        },
+    )
+    if refined_user_copy:
+        match.user_copy.update(refined_user_copy)
+        _record_stage(
+            stages,
+            AnalysisStage(
+                name="llm_polish",
+                detail="Used your connected model to shorten the user-facing summary without changing scores or evidence.",
                 duration_ms=_duration_ms(started),
             ),
             stage_callback,

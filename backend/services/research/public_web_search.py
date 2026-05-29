@@ -5,6 +5,8 @@ import warnings
 from urllib.parse import urlparse
 
 from backend.api.schemas.domain import JobDescriptionDocument, PublicResearchReport, ResearchSourceCard
+from backend.core.config import settings
+import requests
 
 warnings.filterwarnings(
     "ignore",
@@ -21,7 +23,7 @@ except Exception:  # pragma: no cover - import safety for local environments
         DDGS = None
 
 
-INTERVIEW_HINTS = ("面经", "interview", "question", "behavioral", "case", "mock")
+INTERVIEW_HINTS = ("interview", "question", "behavioral", "case", "mock", "面经")
 COMMUNITY_HINTS = ("nowcoder", "牛客", "csdn", "v2ex", "reddit", "知乎", "juejin")
 OFFICIAL_HINTS = ("github.com", "docs.", ".gov", "official")
 
@@ -49,38 +51,32 @@ def run_public_web_research(
     cards: list[ResearchSourceCard] = []
     seen_urls: set[str] = set()
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RuntimeWarning)
-            with DDGS(timeout=8) as ddgs:
-                for query in queries:
-                    for row in ddgs.text(query, max_results=max_results):
-                        url = (row.get("href") or "").strip()
-                        if not url or url in seen_urls:
-                            continue
-                        seen_urls.add(url)
-                        source_type = _infer_source_type(
-                            title=row.get("title") or "",
-                            snippet=row.get("body") or "",
-                            url=url,
-                        )
-                        cards.append(
-                            ResearchSourceCard(
-                                title=(row.get("title") or url).strip(),
-                                url=url,
-                                source_name=_source_name_from_url(url),
-                                snippet=_clean_snippet(row.get("body") or ""),
-                                query=query,
-                                source_type=source_type,
-                                credibility_score=_credibility_score(
-                                    url=url,
-                                    source_type=source_type,
-                                ),
-                            )
-                        )
-                        if len(cards) >= max_results:
-                            break
-                    if len(cards) >= max_results:
-                        break
+        for query in queries:
+            for row in _search_rows(query=query, max_results=max_results):
+                url = (row.get("url") or row.get("href") or "").strip()
+                if not url or url in seen_urls:
+                    continue
+                seen_urls.add(url)
+                source_type = _infer_source_type(
+                    title=row.get("title") or "",
+                    snippet=row.get("content") or row.get("body") or "",
+                    url=url,
+                )
+                cards.append(
+                    ResearchSourceCard(
+                        title=(row.get("title") or url).strip(),
+                        url=url,
+                        source_name=_source_name_from_url(url),
+                        snippet=_clean_snippet(row.get("content") or row.get("body") or ""),
+                        query=query,
+                        source_type=source_type,
+                        credibility_score=_credibility_score(url=url, source_type=source_type),
+                    )
+                )
+                if len(cards) >= max_results:
+                    break
+            if len(cards) >= max_results:
+                break
     except Exception as exc:  # pragma: no cover - network variability
         return PublicResearchReport(
             enabled=True,
@@ -119,10 +115,81 @@ def run_public_web_research(
 def _build_queries(jd: JobDescriptionDocument) -> list[str]:
     role = jd.role_title or "target role"
     skills = [skill.replace("_", " ") for skill in jd.hard_skills[:3]]
-    role_query = f"{role} 面经 interview questions"
-    requirement_query = f"{role} {' '.join(skills)} skill requirements".strip()
-    market_query = f"{role} job requirements resume tips"
-    return _dedupe([role_query, requirement_query, market_query])
+    must_have = [_compress_requirement(item) for item in jd.must_have_items[:2]]
+    role_flags = _detect_role_search_flags(jd)
+
+    queries = [
+        f"{role} interview questions",
+        f"{role} {' '.join(skills)} skill requirements".strip(),
+        f"{role} job requirements resume tips",
+        f"{role} github interview questions",
+        f"{role} nowcoder interview experience",
+    ]
+    if must_have:
+        queries.append(f"{role} {must_have[0]} interview")
+        queries.append(f"{role} {must_have[0]} resume")
+    if role_flags["supply_chain"]:
+        queries.append(f"{role} supplier delay inventory planning interview")
+        queries.append(f"{role} procurement planning github")
+    if role_flags["analysis"]:
+        queries.append(f"{role} sql dashboard metrics interview")
+        queries.append(f"{role} case study metrics root cause analysis")
+    if role_flags["procurement"]:
+        queries.append(f"{role} sourcing supplier negotiation interview")
+        queries.append(f"{role} supplier management resume keywords")
+    return _dedupe(queries)
+
+
+def _search_rows(*, query: str, max_results: int) -> list[dict]:
+    if settings.search_provider in {"auto", "tavily"} and settings.tavily_api_key:
+        try:
+            rows = _search_with_tavily(query=query, max_results=max_results)
+            if rows or settings.search_provider == "tavily":
+                return rows
+        except Exception:
+            if settings.search_provider == "tavily":
+                raise
+    return _search_with_ddgs(query=query, max_results=max_results)
+
+
+def _search_with_tavily(*, query: str, max_results: int) -> list[dict]:
+    response = requests.post(
+        "https://api.tavily.com/search",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.tavily_api_key}",
+        },
+        json={
+            "query": query,
+            "topic": "general",
+            "search_depth": "basic",
+            "max_results": max_results,
+            "include_raw_content": "text",
+            "include_domains": [
+                "github.com",
+                "nowcoder.com",
+                "zhihu.com",
+                "juejin.cn",
+                "csdn.net",
+            ],
+        },
+        timeout=20,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    return payload.get("results", []) or []
+
+
+def _search_with_ddgs(*, query: str, max_results: int) -> list[dict]:
+    if DDGS is None:
+        return []
+    rows: list[dict] = []
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        with DDGS(timeout=8) as ddgs:
+            for row in ddgs.text(query, max_results=max_results):
+                rows.append(row)
+    return rows
 
 
 def _build_insights(jd: JobDescriptionDocument, cards: list[ResearchSourceCard]) -> list[str]:
@@ -143,19 +210,60 @@ def _build_insights(jd: JobDescriptionDocument, cards: list[ResearchSourceCard])
         )
     if repeated_skills:
         insights.append(f"Repeated public signals mention: {', '.join(repeated_skills[:4])}.")
+    strongest_sources = ", ".join(card.source_name for card in cards[:3])
+    if strongest_sources:
+        insights.append(f"The strongest public references in this batch came from: {strongest_sources}.")
+    source_mix = _build_source_mix(cards)
+    if source_mix:
+        insights.append(source_mix)
     return insights
+
+
+def _build_source_mix(cards: list[ResearchSourceCard]) -> str:
+    counts: dict[str, int] = {}
+    for card in cards:
+        counts[card.source_type] = counts.get(card.source_type, 0) + 1
+    if not counts:
+        return ""
+    ordered = ", ".join(f"{source_type} x{count}" for source_type, count in sorted(counts.items()))
+    return f"The current public-research mix is: {ordered}."
+
+
+def _detect_role_search_flags(jd: JobDescriptionDocument) -> dict[str, bool]:
+    haystack = " ".join(
+        filter(
+            None,
+            [jd.role_title or "", jd.raw_text or "", " ".join(jd.keywords), " ".join(jd.must_have_items)],
+        )
+    ).lower()
+    return {
+        "supply_chain": any(
+            token in haystack
+            for token in ("supply", "inventory", "logistics", "planning", "供应链", "库存", "物流", "计划")
+        ),
+        "analysis": any(
+            token in haystack
+            for token in ("analysis", "analyst", "data", "sql", "dashboard", "metrics", "分析", "数据", "指标", "报表")
+        ),
+        "procurement": any(
+            token in haystack
+            for token in ("procurement", "supplier", "sourcing", "vendor", "采购", "供应商", "寻源")
+        ),
+    }
+
+
+def _compress_requirement(text: str) -> str:
+    compact = re.sub(r"\s+", " ", text).strip()
+    compact = re.sub(r"^\d+\s*[\.\)\]:：、]+\s*", "", compact)
+    compact = re.sub(r"^(?:任职要求|requirements?)\s*[:：]?\s*", "", compact, flags=re.IGNORECASE)
+    return compact[:42]
 
 
 def _find_repeated_skill_mentions(
     jd: JobDescriptionDocument,
     cards: list[ResearchSourceCard],
 ) -> list[str]:
-    haystack = " ".join(
-        filter(
-            None,
-            [card.title + " " + card.snippet for card in cards],
-        )
-    ).lower()
+    haystack = " ".join(filter(None, [card.title + " " + card.snippet for card in cards])).lower()
     repeated: list[str] = []
     for skill in jd.hard_skills:
         normalized = skill.replace("_", " ").lower()
@@ -194,6 +302,8 @@ def _credibility_score(*, url: str, source_type: str) -> int:
     score = score_map.get(source_type, 55)
     if url.startswith("https://"):
         score += 3
+    if "github.com" in url or "docs." in url:
+        score += 4
     return min(100, score)
 
 

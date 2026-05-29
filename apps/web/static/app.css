@@ -555,6 +555,10 @@ textarea {
   margin-bottom: 0;
 }
 
+.compact-notice {
+  margin-top: 10px;
+}
+
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -691,6 +695,11 @@ textarea {
 
 .source-link {
   word-break: break-all;
+}
+
+.case-stack {
+  display: grid;
+  gap: 18px;
 }
 
 .requirement-head {
@@ -845,6 +854,13 @@ textarea {
   margin-top: 24px;
 }
 
+.cases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
 .user-summary-grid {
   margin-bottom: 24px;
 }
@@ -996,6 +1012,29 @@ textarea {
   margin-bottom: 24px;
 }
 
+.result-anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 24px;
+}
+
+.result-anchor-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: rgba(248, 241, 229, 0.94);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.result-anchor-nav a:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .result-title-block {
   max-width: 70ch;
 }
@@ -1095,6 +1134,7 @@ textarea {
   .intake-grid,
   .landing-grid,
   .support-grid,
+  .cases-grid,
   .results-layout,
   .grid-2,
   .grid-3,

@@ -11,13 +11,15 @@
       <header class="topbar topbar-links">
         <div class="brand-mark">{{ ui.brand }}</div>
         <div class="topbar-actions">
-          <a class="topbar-link" href="/?lang={{ current_lang }}">{{ ui.continue_analysis }}</a>
-          <a class="topbar-link" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
-          <a class="topbar-link" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
+          <a class="topbar-link" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.continue_analysis }}</a>
+          {% if show_owner_console %}
+          <a class="topbar-link" href="/history?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_history }}</a>
+          <a class="topbar-link" href="/feedback?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_feedback }}</a>
+          {% endif %}
           <div class="lang-switch">
             <span>{{ ui.lang_switch_label }}</span>
-            <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ result_view_path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
-            <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ result_view_path }}?lang=en">{{ ui.lang_switch_en }}</a>
+            <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ result_view_path }}?lang=zh{{ result_query_suffix }}">{{ ui.lang_switch_zh }}</a>
+            <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ result_view_path }}?lang=en{{ result_query_suffix }}">{{ ui.lang_switch_en }}</a>
           </div>
         </div>
       </header>
@@ -31,10 +33,18 @@
           </div>
           <div class="action-cluster">
             <span class="subtle-badge">{{ ui[result.analysis_mode + '_mode_label'] }}</span>
-            {% if result.analysis_id %}
-            <a class="button button-secondary" href="/analysis/{{ result.analysis_id }}/json">{{ ui.export_json }}</a>
+            {% if show_owner_console and result.analysis_id %}
+            <a class="button button-secondary" href="/analysis/{{ result.analysis_id }}/json?view_key={{ result.access_token }}{{ admin_query_suffix }}">{{ ui.export_json }}</a>
             {% endif %}
-            <a class="button button-secondary" href="/?lang={{ current_lang }}">{{ ui.continue_analysis }}</a>
+            <button class="button button-secondary js-copy-trigger" type="button" data-copy-text="{{ analysis_brief_text|e }}">
+              {% if current_lang == 'zh' %}复制投递摘要{% else %}Copy application brief{% endif %}
+            </button>
+            {% if result.interview %}
+            <button class="button button-secondary js-copy-trigger" type="button" data-copy-text="{{ interview_practice_text|e }}">
+              {% if current_lang == 'zh' %}复制面试练习卡{% else %}Copy interview sheet{% endif %}
+            </button>
+            {% endif %}
+            <a class="button button-secondary" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.continue_analysis }}</a>
           </div>
         </div>
 
@@ -67,13 +77,20 @@
         </div>
       </section>
 
+      <nav class="result-anchor-nav">
+        <a href="#apply-call">{% if current_lang == 'zh' %}先看结论{% else %}Start with the call{% endif %}</a>
+        <a href="#role-snapshot">{% if current_lang == 'zh' %}岗位画像{% else %}Role snapshot{% endif %}</a>
+        <a href="#rewrite-plan">{% if current_lang == 'zh' %}怎么改{% else %}Rewrite plan{% endif %}</a>
+        <a href="#interview-pack">{% if current_lang == 'zh' %}怎么准备面试{% else %}Interview prep{% endif %}</a>
+      </nav>
+
       <section class="results-layout">
         <div class="results-main">
-          <section class="grid-3 user-summary-grid no-top-gap">
+          <section class="grid-3 user-summary-grid no-top-gap" id="apply-call">
             <section class="list-card">
               <h2 class="section-title">{{ ui.application_call }}</h2>
               <div class="notice">
-                <strong>{{ translate_dynamic(result.match.application_recommendation, current_lang) }}</strong>
+                <strong>{{ result.match.user_copy.get('headline_' ~ current_lang) or translate_dynamic(result.match.application_recommendation, current_lang) }}</strong>
               </div>
               <div class="tag-list top-gap-sm">
                 <span class="chip chip-neutral">{{ translate_dynamic(result.match.application_risk_level, current_lang) }}</span>
@@ -84,12 +101,13 @@
 
             <section class="list-card">
               <h2 class="section-title">{{ ui.recruiter_impression }}</h2>
-              <div class="notice">{{ translate_dynamic(result.match.recruiter_takeaway, current_lang) }}</div>
+              <div class="notice">{{ result.match.user_copy.get('recruiter_' ~ current_lang) or translate_dynamic(result.match.recruiter_takeaway, current_lang) }}</div>
               <p class="section-subtitle top-gap-sm">{{ translate_dynamic(result.match.interview_risk_summary, current_lang) }}</p>
             </section>
 
             <section class="list-card">
               <h2 class="section-title">{{ ui.fix_before_apply }}</h2>
+              <div class="notice">{{ result.match.user_copy.get('next_move_' ~ current_lang) }}</div>
               <ul class="action-list compact-list">
                 {% for action in result.match.must_fix_now %}
                 <li>{{ translate_dynamic(action, current_lang) }}</li>
@@ -106,12 +124,12 @@
             </section>
           </section>
 
-          <section class="grid-2 no-top-gap">
+          <section class="grid-2 no-top-gap" id="role-snapshot">
             <section class="list-card">
               <div class="section-head">
                 <div>
                   <h2 class="section-title">{{ ui.role_snapshot }}</h2>
-                  <p class="section-subtitle">{{ ui.role_snapshot_copy }}</p>
+                  <p class="section-subtitle">{% if current_lang == 'zh' %}先看清这个岗位到底在招什么人。{% else %}See what this role is really asking for.{% endif %}</p>
                 </div>
               </div>
 
@@ -178,7 +196,7 @@
               <div class="section-head">
                 <div>
                   <h2 class="section-title">{{ ui.decision_basis }}</h2>
-                  <p class="section-subtitle">{{ ui.decision_basis_copy }}</p>
+                  <p class="section-subtitle">{% if current_lang == 'zh' %}这里只保留会影响判断的核心依据。{% else %}Only the evidence that materially shaped the call is shown here.{% endif %}</p>
                 </div>
               </div>
 
@@ -211,7 +229,7 @@
             <div class="section-head">
               <div>
                 <h2 class="section-title">{{ ui.application_checklist }}</h2>
-                <p class="section-subtitle">{{ ui.application_checklist_copy }}</p>
+                <p class="section-subtitle">{% if current_lang == 'zh' %}投递前最后过一遍，能少很多被动解释。{% else %}One last pass before sending helps cut avoidable interview friction.{% endif %}</p>
               </div>
             </div>
 
@@ -381,7 +399,7 @@
           {% endif %}
 
           {% if result.rewrite %}
-          <section class="list-card" style="margin-top: 24px;">
+          <section class="list-card" style="margin-top: 24px;" id="rewrite-plan">
             <div class="section-head">
               <div>
                 <h2 class="section-title">
@@ -414,8 +432,8 @@
               {% for card in result.rewrite.suggestion_cards %}
               <article class="rewrite-card">
                 <div class="requirement-head">
-                  <strong>{{ card.title }}</strong>
-                  <span class="chip chip-neutral">{{ card.target_section }}</span>
+                  <strong>{{ translate_dynamic(card.title, current_lang) }}</strong>
+                  <span class="chip chip-neutral">{{ translate_dynamic(card.target_section, current_lang) }}</span>
                 </div>
                 <p><strong>{% if current_lang == 'zh' %}为什么要改{% else %}Why it matters{% endif %}:</strong> {{ translate_dynamic(card.reason, current_lang) }}</p>
                 {% if card.original_excerpt %}
@@ -438,11 +456,11 @@
           {% endif %}
 
           {% if result.interview %}
-          <section class="list-card" style="margin-top: 24px;">
+          <section class="list-card" style="margin-top: 24px;" id="interview-pack">
             <div class="section-head">
               <div>
                 <h2 class="section-title">{{ ui.interview_handoff }}</h2>
-                <p class="section-subtitle">{{ ui.interview_copy }}</p>
+                <p class="section-subtitle">{% if current_lang == 'zh' %}这些不是通用题库，而是最可能追着你问的地方。{% else %}These are not generic prompts. They are the places an interviewer is most likely to press you on.{% endif %}</p>
               </div>
               <span class="subtle-badge">
                 {% if current_lang == 'zh' %}真实追问风格{% else %}Real interview style{% endif %}
@@ -463,6 +481,13 @@
             </section>
             {% endif %}
 
+            {% if result.interview.reference_summary %}
+            <section class="soft-panel top-gap-md">
+              <h3 class="subheading">{{ ui.reference_summary_label }}</h3>
+              <p class="section-subtitle compact-copy">{{ translate_dynamic(result.interview.reference_summary, current_lang) }}</p>
+            </section>
+            {% endif %}
+
             <div class="interview-grid">
               {% for item in result.interview.questions %}
               <article class="interview-card">
@@ -479,6 +504,31 @@
                   <li>{{ translate_dynamic(focus, current_lang) }}</li>
                   {% endfor %}
                 </ul>
+                {% if item.answer_outline %}
+                <p><strong>{{ ui.answer_outline }}:</strong></p>
+                <ul class="action-list compact-list">
+                  {% for step in item.answer_outline %}
+                  <li>{{ translate_dynamic(step, current_lang) }}</li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+                {% if item.pitfall_to_avoid %}
+                <p><strong>{{ ui.pitfall_to_avoid }}:</strong> {{ translate_dynamic(item.pitfall_to_avoid, current_lang) }}</p>
+                {% endif %}
+                {% if item.practice_prompt %}
+                <p><strong>{{ ui.practice_prompt }}:</strong> {{ translate_dynamic(item.practice_prompt, current_lang) }}</p>
+                {% endif %}
+                {% if item.related_links %}
+                <p><strong>{{ ui.related_links }}:</strong></p>
+                <ul class="action-list compact-list">
+                  {% for link in item.related_links %}
+                  <li>
+                    <a class="source-link" href="{{ link.url }}" target="_blank" rel="noreferrer noopener">{{ link.title }}</a>
+                    <div class="score-label">{{ link.source_name }}{% if link.note %} · {{ link.note }}{% endif %}</div>
+                  </li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
               </article>
               {% endfor %}
             </div>
@@ -490,6 +540,7 @@
             <p class="section-subtitle">{{ ui.feedback_copy }}</p>
             <form action="/feedback/browser" method="post" class="stack feedback-form">
               <input type="hidden" name="analysis_id" value="{{ result.analysis_id or '' }}" />
+              <input type="hidden" name="analysis_access_token" value="{{ result.access_token or '' }}" />
               <input type="hidden" name="lang" value="{{ current_lang }}" />
 
               <div class="mini-grid">
@@ -639,5 +690,26 @@
         </aside>
       </section>
     </div>
+
+    <script>
+      (function () {
+        const buttons = document.querySelectorAll(".js-copy-trigger");
+        if (!buttons.length || !navigator.clipboard) {
+          return;
+        }
+
+        buttons.forEach(function (button) {
+          button.addEventListener("click", function () {
+            navigator.clipboard.writeText(button.dataset.copyText || "").then(function () {
+              const original = button.textContent;
+              button.textContent = "{{ '已复制' if current_lang == 'zh' else 'Copied' }}";
+              window.setTimeout(function () {
+                button.textContent = original;
+              }, 1400);
+            });
+          });
+        });
+      })();
+    </script>
   </body>
 </html>

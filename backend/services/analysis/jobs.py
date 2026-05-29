@@ -27,6 +27,7 @@ class AnalysisJob:
     current_stage_detail: str | None = None
     stages: list[dict] = field(default_factory=list)
     result_analysis_id: str | None = None
+    result_access_token: str | None = None
     error_message: str | None = None
 
     def to_dict(self) -> dict:
@@ -42,6 +43,7 @@ class AnalysisJob:
             "current_stage_detail": self.current_stage_detail,
             "stages": list(self.stages),
             "result_analysis_id": self.result_analysis_id,
+            "result_access_token": self.result_access_token,
             "error_message": self.error_message,
         }
 
@@ -111,7 +113,7 @@ def _run_job(
             enable_public_research=enable_public_research,
             stage_callback=lambda stage: _append_stage(job_id, stage),
         )
-        _mark_job_completed(job_id, result.analysis_id)
+        _mark_job_completed(job_id, result.analysis_id, result.access_token)
     except Exception as exc:
         _mark_job_failed(job_id, str(exc) or exc.__class__.__name__)
 
@@ -136,13 +138,14 @@ def _set_job_status(job_id: str, status: JobStatus) -> None:
         job.updated_at = _utc_now()
 
 
-def _mark_job_completed(job_id: str, analysis_id: str | None) -> None:
+def _mark_job_completed(job_id: str, analysis_id: str | None, access_token: str | None) -> None:
     with _lock:
         job = _jobs.get(job_id)
         if job is None:
             return
         job.status = "completed"
         job.result_analysis_id = analysis_id
+        job.result_access_token = access_token
         job.updated_at = _utc_now()
 
 

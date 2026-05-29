@@ -161,11 +161,18 @@ def evaluate_resume_match(
         matched_requirements=evidence_requirement_count,
         total_requirements=total_requirement_count,
     )
+    user_copy = _build_user_copy(
+        score_label=score_label,
+        missing_hard_skills=missing_hard_skills,
+        missing_requirements=missing_requirement_count,
+        confidence_score=confidence_score,
+    )
 
     return MatchReport(
         overall_score=max(0, min(100, weighted_score)),
         summary=summary,
         score_label=score_label,
+        user_copy=user_copy,
         application_recommendation=application_recommendation,
         application_risk_level=application_risk_level,
         recruiter_takeaway=recruiter_takeaway,
@@ -278,6 +285,52 @@ def _build_summary(
         f"{len(missing_hard_skills)} remain uncovered, and "
         f"{matched_requirements}/{total_requirements or 0} must-have JD lines were covered."
     )
+
+
+def _build_user_copy(
+    *,
+    score_label: str,
+    missing_hard_skills: list[str],
+    missing_requirements: int,
+    confidence_score: int,
+) -> dict[str, str]:
+    if missing_requirements >= 2 or confidence_score < 55:
+        headline_en = "Do not rush to apply yet."
+        headline_zh = "先别急着投。"
+        recruiter_en = "The recruiter will question whether the core JD proof is really there."
+        recruiter_zh = "招聘方会先怀疑核心 JD 证据够不够。"
+        next_move_en = "Patch the proof first, then polish wording."
+        next_move_zh = "先补证据，再修措辞。"
+    elif missing_hard_skills:
+        headline_en = "You can apply, but be ready to explain the gaps."
+        headline_zh = "可以投，但要准备解释缺口。"
+        recruiter_en = "The resume looks related, but the interview will probe skill depth."
+        recruiter_zh = "简历看起来相关，但面试会追问技能深度。"
+        next_move_en = "Turn the missing skill into a real scenario you can defend."
+        next_move_zh = "把缺失技能写成你能讲清的真实场景。"
+    elif score_label == "Strong":
+        headline_en = "This version is ready to send."
+        headline_zh = "这版已经可以投。"
+        recruiter_en = "The recruiter should see a coherent fit quickly."
+        recruiter_zh = "招聘方大概率会很快看出匹配度。"
+        next_move_en = "Keep the strongest story crisp and measurable."
+        next_move_zh = "把最强经历再压得更清楚、更量化。"
+    else:
+        headline_en = "This version is close, but not fully convincing yet."
+        headline_zh = "这版已经接近能投，但说服力还差一点。"
+        recruiter_en = "The recruiter can see potential, but the proof still feels uneven."
+        recruiter_zh = "招聘方能看出潜力，但证据还不够均匀。"
+        next_move_en = "Strengthen one or two JD-facing bullets before sending."
+        next_move_zh = "正式投递前，先补强一到两条最贴 JD 的要点。"
+
+    return {
+        "headline_en": headline_en,
+        "headline_zh": headline_zh,
+        "recruiter_en": recruiter_en,
+        "recruiter_zh": recruiter_zh,
+        "next_move_en": next_move_en,
+        "next_move_zh": next_move_zh,
+    }
 
 
 def _build_application_brief(

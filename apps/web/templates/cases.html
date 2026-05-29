@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} - {{ ui.cases_title }}</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='app.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar topbar-links">
+        <div class="brand-mark">{{ ui.brand }}</div>
+        <div class="topbar-actions">
+          <a class="topbar-link" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.continue_analysis }}</a>
+          <div class="lang-switch">
+            <span>{{ ui.lang_switch_label }}</span>
+            <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh{{ admin_query_suffix }}">{{ ui.lang_switch_zh }}</a>
+            <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en{{ admin_query_suffix }}">{{ ui.lang_switch_en }}</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="result-card">
+        <div class="result-head">
+          <div>
+            <div class="panel-kicker">{{ ui.cases_title }}</div>
+            <h1 class="result-headline">{{ ui.cases_title }}</h1>
+            <p class="section-subtitle">{{ ui.cases_copy }}</p>
+          </div>
+          <div class="button-row">
+            <a class="button button-primary" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.start_analysis }}</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="cases-grid">
+        {% for case in cases %}
+        <article class="list-card case-card">
+          <div class="panel-kicker">{{ loop.index }}</div>
+          <h2 class="section-title">{{ case.title }}</h2>
+
+          <div class="case-stack">
+            <div>
+              <strong>{{ ui.case_target_role }}</strong>
+              <p class="section-subtitle compact-copy">{{ case.target_role }}</p>
+            </div>
+
+            <div>
+              <strong>{{ ui.case_problem }}</strong>
+              <p class="section-subtitle compact-copy">{{ case.problem }}</p>
+            </div>
+
+            <div>
+              <strong>{{ ui.case_tool_output }}</strong>
+              <div class="notice compact-notice">{{ case.tool_output }}</div>
+            </div>
+
+            <div>
+              <strong>{{ ui.case_top_actions }}</strong>
+              <ul class="action-list compact-list">
+                {% for item in case.top_actions %}
+                <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div>
+              <strong>{{ ui.case_interview_risk }}</strong>
+              <p class="section-subtitle compact-copy">{{ case.interview_risk }}</p>
+            </div>
+
+            <div>
+              <strong>{{ ui.case_why_useful }}</strong>
+              <p class="section-subtitle compact-copy">{{ case.why_useful }}</p>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </section>
+    </div>
+  </body>
+</html>

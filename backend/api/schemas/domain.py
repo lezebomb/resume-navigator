@@ -89,18 +89,30 @@ class AnalysisStage(BaseModel):
     duration_ms: int
 
 
+class ReferenceLink(BaseModel):
+    title: str
+    url: str
+    source_name: str = ""
+    note: str = ""
+
+
 class InterviewQuestionCard(BaseModel):
     category: str
     priority: Literal["high", "medium"]
     question: str
     why_asked: str
     answer_focus: list[str] = Field(default_factory=list)
+    answer_outline: list[str] = Field(default_factory=list)
+    pitfall_to_avoid: str = ""
+    practice_prompt: str = ""
+    related_links: list[ReferenceLink] = Field(default_factory=list)
 
 
 class InterviewPrepReport(BaseModel):
     summary: str
     intro_prompt: str
     answer_method: list[str] = Field(default_factory=list)
+    reference_summary: str = ""
     questions: list[InterviewQuestionCard] = Field(default_factory=list)
 
 
@@ -143,6 +155,7 @@ class MatchReport(BaseModel):
     overall_score: int
     summary: str
     score_label: str = "Needs work"
+    user_copy: dict[str, str] = Field(default_factory=dict)
     application_recommendation: str = ""
     application_risk_level: str = ""
     recruiter_takeaway: str = ""
@@ -175,6 +188,7 @@ class MatchReport(BaseModel):
 class AnalysisResult(BaseModel):
     analysis_id: str | None = None
     created_at: str | None = None
+    access_token: str | None = None
     analysis_mode: Literal["standard", "deep"] = "standard"
     stages: list[AnalysisStage] = Field(default_factory=list)
     resume: ResumeDocument

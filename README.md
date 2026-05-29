@@ -1,174 +1,280 @@
 # Resume Navigator
 
-Resume Navigator 是一个面向中文求职场景的简历诊断工具。它不是只给一个分数，而是想把求职者最关心的这条链路做完整：
+Resume Navigator 是一个面向中文求职场景的简历诊断系统。它不是只给一个“AI 打分”，而是帮助求职者回答更实际的几个问题：
 
-1. 现在到底能不能投
-2. 为什么还不能投，或者为什么可以投
-3. 先改哪一块最值钱
-4. 面试官接下来最可能追问什么
+- 这份简历现在能不能投？
+- 为什么能投，或者为什么还不够稳？
+- 投递前最应该先补哪一块？
+- 面试时最可能被追问哪里？
+- 如何把简历改得更贴近目标 JD，同时不编造经历？
 
-上传简历和目标 JD 之后，它会先做 ATS 体检，再看和岗位的真实对齐程度，再继续给改写建议和面试承接。重点不是把简历写得更像模板，而是更像招聘方真正想看到的材料。
+项目默认使用确定性规则进行 ATS 体检、JD 对齐和证据判断；大模型和公开搜索都作为可选增强层，用户可以自行配置 API Key。
 
-当前仓库同时保留了两层内容：
+## 主要功能
 
-- 旧版 `Streamlit` 原型：`app.py`
-- 新版可扩展架构：`backend/` + `apps/`
-
-## 现在已经能做什么
-
-- 结构化解析 PDF / DOCX 简历
-- 结构化解析 JD
-- 基于确定性规则的 ATS 体检
-- 基于技能、要求、量化结果和经历信号的匹配分析
-- 深度复核模式：要求级证据卡片、置信度、过程追踪
-- 可选的公开资料补充：搜索公开岗位要求、面经和技能资料，用来丰富报告
-- 面试承接：根据当前简历缺口和岗位要求生成更像真实面试的追问
-- Web 界面：默认简体中文，可切换英文
-- 结果页默认面向求职者展示，不再把内部阶段耗时、开发者披露信息放在主视图里
-- 本地历史记录、反馈收集、JSON 导出
+- PDF / DOCX 简历解析
+- JD 岗位描述结构化解析
+- ATS 兼容性检查
+- 简历与 JD 的硬技能、关键词、必选要求、量化结果和经历证据匹配
+- 深度诊断模式：要求级证据卡片、结论稳定度、优先动作
+- 可选公开资料补充：支持 Tavily API，未配置时可回退公开搜索
+- 可选大模型增强：支持用户自带 Gemini / OpenAI Key，用于润色用户可见摘要
+- JD 定向改写建议：只基于真实经历表达，不鼓励编造
+- 面试承接：根据当前缺口生成更像真实面试的追问、回答骨架和练习提示
+- 中文优先 Web 界面，并支持英文切换
+- 本地历史记录、反馈收集和 JSON 导出
 
 ## 产品原则
 
-- 评分核心优先走确定性链路，不把总分完全交给大模型
-- 公开资料补充只做辅助证据，不直接覆盖 ATS 与匹配分数
-- 大模型默认走“用户自带密钥 BYOK”路线，不要求把私钥写进仓库
-- 隐私优先，用户简历、导出文件、运行时数据默认不提交到 GitHub
-- 最终产品优先展示用户需要的结论、缺口、改写建议和面试承接，不展示开发调试信息
+- 分数不完全交给大模型，核心判断优先走可解释规则。
+- 大模型只做增强，不负责改写事实、不接管总分。
+- 公开资料只做补充背景，不直接覆盖 ATS 和匹配结论。
+- 默认隐私优先，真实简历、`.env`、运行数据、导出文件不会提交到 GitHub。
+- 面向用户展示“能不能投、为什么、先改什么、面试会问什么”，不在主界面展示开发调试信息。
 
 ## 快速开始
 
-### 1. 创建虚拟环境
+下面以 Windows PowerShell 为例。
 
-在 Windows PowerShell 中运行：
+### 1. 克隆项目
+
+```powershell
+git clone https://github.com/lezebomb/resume-navigator.git
+cd resume-navigator
+```
+
+如果你已经在本地打开了这个项目，可以直接进入项目目录：
+
+```powershell
+cd C:\Users\24981\Desktop\Resume_ATS_Project
+```
+
+### 2. 创建虚拟环境
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 2. 安装依赖
+如果 PowerShell 提示脚本无法运行，可以先执行：
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+然后重新运行：
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### 3. 安装依赖
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-### 3. 配置环境变量
+### 4. 配置环境变量
 
-把 `.env.example` 复制成 `.env`，然后按需填写。
+复制示例配置：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+默认不配置任何 API Key 也能运行确定性诊断。
+
+如果想开启可选大模型增强，在 `.env` 中填写：
+
+```env
+ENABLE_OPTIONAL_LLM=true
+
+# 二选一即可
+GOOGLE_API_KEY=你的 Gemini Key
+GEMINI_MODEL=gemini-2.5-flash
+
+OPENAI_API_KEY=你的 OpenAI Key
+OPENAI_MODEL=gpt-4o-mini
+```
+
+如果想开启 Tavily 搜索增强，在 `.env` 中填写：
+
+```env
+TAVILY_API_KEY=你的 Tavily Key
+SEARCH_PROVIDER=auto
+PUBLIC_RESEARCH_MAX_RESULTS=5
+```
 
 说明：
 
-- 当前确定性分析链不依赖大模型密钥也能运行
-- 如果要启用后续改写 / 解释类大模型能力，建议采用本地自带密钥方式
-- 是否开启公开资料补充可以通过环境变量或页面勾选来控制
+- `SEARCH_PROVIDER=auto`：有 Tavily Key 时优先使用 Tavily，没有结果时回退公开搜索。
+- `SEARCH_PROVIDER=tavily`：只使用 Tavily。
+- 公开搜索只作为补充资料，不会直接改写核心分数。
 
-### 4. 启动新版 Web 应用
+### 5. 启动 Web 应用
 
 ```powershell
 uvicorn apps.web.main:app --reload
 ```
 
-打开：
+浏览器打开：
 
-- `http://127.0.0.1:8000/`
-- `http://127.0.0.1:8000/history`
-- `http://127.0.0.1:8000/feedback`
-- `http://127.0.0.1:8000/docs`
-
-### 5. 启动旧版 Streamlit 原型
-
-```powershell
-streamlit run app.py
+```text
+http://127.0.0.1:8000/
 ```
 
-### 6. 命令行跑一次本地分析
+示例案例页：
+
+```text
+http://127.0.0.1:8000/cases
+```
+
+英文界面：
+
+```text
+http://127.0.0.1:8000/?lang=en
+```
+
+## 如何使用
+
+1. 打开首页。
+2. 上传一份 PDF 或 DOCX 简历。
+3. 粘贴目标岗位 JD。
+4. 建议保留默认的“深度诊断”模式。
+5. 如果你想参考公开面经和岗位资料，可以勾选“补充公开资料搜索”。
+6. 点击开始分析。
+7. 等待系统跳转到结果页。
+8. 重点查看“投递判断”“招聘方第一反应”“投递前先补什么”“改写建议”“面试承接”。
+
+结果页里的“复制投递摘要”和“复制面试练习卡”可以直接用于后续修改和练习。
+
+## 本地命令行分析
+
+如果不想打开网页，也可以用命令行运行：
 
 ```powershell
 python scripts\run_local_analysis.py --resume "your_resume.pdf" --jd-file "target_jd.txt" --analysis-mode deep
 ```
 
-如果想顺手开启公开资料补充：
+开启公开资料补充：
 
 ```powershell
 python scripts\run_local_analysis.py --resume "your_resume.pdf" --jd-file "target_jd.txt" --analysis-mode deep --enable-public-research
 ```
 
-## 本地验证
+## 验证项目是否正常
 
-### 快速验证
+运行完整验证：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\validate_project.ps1
 ```
 
-### 用真实简历和 JD 验证
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\validate_project.ps1 -ResumePath "your_resume.pdf" -JdFile "data\samples\sample_supply_chain_jd.txt"
-```
-
-如果想一起验证公开资料补充：
+用自己的简历和示例 JD 验证：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\validate_project.ps1 -ResumePath "your_resume.pdf" -JdFile "data\samples\sample_supply_chain_jd.txt" -EnablePublicResearch
 ```
 
-### 发布前检查
+验证内容包括：
+
+- 单元测试
+- Web 入口导入
+- 本地诊断链路
+- 可选公开资料补充链路
+
+## 发布前隐私检查
+
+在上传 GitHub 前建议运行：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\check_publish_readiness.ps1
 ```
 
-这会同时检查：
+这个脚本会检查：
 
-- Git 远程和用户配置
-- GitHub CLI 状态
+- Git 远程仓库配置
+- GitHub CLI 登录状态
 - 工作区变更
-- 隐私安全风险
+- `.env`、PDF、DOCX、运行数据等隐私风险
 
-## 仓库结构
+## 目录结构
 
 ```text
 apps/
-  web/
+  web/                 Web 页面、模板、静态样式
 backend/
-  api/
-  core/
-  providers/
-  services/
-docs/
-scripts/
-tests/
+  api/                 API 数据结构与路由
+  core/                配置与日志
+  providers/           可插拔外部提供方
+  services/            简历解析、ATS、JD、匹配、搜索、改写、面试承接
+docs/                  产品文档、发布文案、推广素材
+scripts/               本地运行与验证脚本
+tests/                 单元测试
+utils/                 旧版原型复用工具
+app.py                 旧版 Streamlit 原型
 ```
+
+## 可选 API 配置说明
+
+### 大模型
+
+大模型是可选功能。默认情况下，系统不需要大模型也能完成核心诊断。
+
+当前大模型只用于：
+
+- 压缩和润色用户看到的摘要
+- 后续可扩展为更自然的改写建议
+- 后续可扩展为更强的面试回答反馈
+
+它不会用于：
+
+- 直接决定总分
+- 编造经历
+- 覆盖确定性证据判断
+
+### Tavily
+
+Tavily 用于搜索公开岗位资料、面经和技能要求。
+
+它不会用于：
+
+- 抓取用户隐私数据
+- 绕过平台限制
+- 直接改写核心评分
+
+## 常见问题
+
+### 1. 没有 API Key 能用吗？
+
+可以。核心诊断链路不依赖 API Key。
+
+### 2. 为什么分析不是只出一个分数？
+
+因为求职者真正需要的是“能不能投、为什么、先改什么、面试会问什么”。分数只是辅助，不应该成为唯一结论。
+
+### 3. 会不会把我的简历上传到 GitHub？
+
+不会。`.gitignore` 默认忽略 `.env`、PDF、DOCX、上传文件、导出文件和运行时数据。
+
+### 4. 可以用于英文岗位吗？
+
+可以。当前界面支持中文和英文切换，但产品体验优先围绕中文求职场景设计。
+
+### 5. 为什么不让大模型直接打分？
+
+因为单次模型打分不稳定，也难以复核。这个项目把评分核心放在确定性规则和证据链上，大模型只做增强。
 
 ## 重要文档
 
-- `docs/PRD.md`
-- `docs/ARCHITECTURE_BLUEPRINT.md`
-- `docs/FRONTEND_UI_REDESIGN_PLAN_ZH.md`
-- `docs/LOCAL_VALIDATION_GUIDE_ZH.md`
-- `docs/GITHUB_UPLOAD_GUIDE_ZH.md`
-- `docs/GROWTH_PLAYBOOK_ZH.md`
-- `docs/LLM_INTEGRATION_DECISION_ZH.md`
-- `docs/BYOK_LLM_SETUP_ZH.md`
-- `docs/INTERVIEW_SOURCE_STRATEGY_ZH.md`
-- `docs/SEARCH_INTERVIEW_GTM_STRATEGY_ZH.md`
-- `docs/SOCIAL_PLATFORM_API_AND_CONTENT_PLAN_ZH.md`
-- `docs/SOCIAL_PLATFORM_EXECUTION_PACK_ZH.md`
-- `docs/SOCIAL_POST_PACK_V0_5_ZH.md`
-- `docs/PROMOTION_ANGLE_LIBRARY_ZH.md`
-- `docs/BETA_TESTER_OPERATIONS_ZH.md`
+- [产品需求文档](docs/PRD.md)
+- [架构蓝图](docs/ARCHITECTURE_BLUEPRINT.md)
+- [本地验证指南](docs/LOCAL_VALIDATION_GUIDE_ZH.md)
+- [GitHub 上传指南](docs/GITHUB_UPLOAD_GUIDE_ZH.md)
+- [BYOK 大模型配置说明](docs/BYOK_LLM_SETUP_ZH.md)
+- [最终发布内容包](docs/FINAL_LAUNCH_CONTENT_ZH.md)
+- [v0.5.0 版本说明](docs/RELEASE_v0.5.0_ZH.md)
 
-## 隐私与合规
+## License
 
-- `.gitignore` 默认忽略 `.env`、运行时数据库、上传文件、导出文件、PDF / DOCX、浏览器 profile / cookies 等内容
-- 公开版产品不依赖未授权抓取的受保护招聘平台数据
-- 如果以后保留本地研究型连接器，也必须默认关闭、只在私有环境里使用
-
-## 下一步重点
-
-1. 按 JD 改写简历
-2. 继续把结果页做得更偏用户视角
-3. 导出优化版简历
-4. 面试承接继续专业化
-5. 扩充公开来源并做更强的证据化表达
+如果你准备公开给更多人使用，建议补充明确的开源许可证，例如 MIT License。

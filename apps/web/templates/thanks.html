@@ -12,8 +12,8 @@
         <div class="brand-mark">{{ ui.brand }}</div>
         <div class="lang-switch">
           <span>{{ ui.lang_switch_label }}</span>
-          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
-          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh{{ admin_query_suffix }}">{{ ui.lang_switch_zh }}</a>
+          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en{{ admin_query_suffix }}">{{ ui.lang_switch_en }}</a>
         </div>
       </div>
 
@@ -26,10 +26,12 @@
           <strong>{{ ui.created_at }}:</strong> {{ feedback.created_at }}
         </div>
         <div class="button-row">
-          <a class="button button-primary" href="/?lang={{ current_lang }}">{{ ui.continue_after_feedback }}</a>
-          <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback_list }}</a>
+          <a class="button button-primary" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.continue_after_feedback }}</a>
+          {% if show_owner_console %}
+          <a class="button button-secondary" href="/feedback?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_feedback_list }}</a>
+          {% endif %}
           {% if feedback.analysis_id %}
-          <a class="button button-secondary" href="/analysis/{{ feedback.analysis_id }}?lang={{ current_lang }}">{{ ui.back_to_result }}</a>
+          <a class="button button-secondary" href="/analysis/{{ feedback.analysis_id }}?lang={{ current_lang }}{% if feedback.analysis_access_token %}&view_key={{ feedback.analysis_access_token }}{% endif %}{{ admin_query_suffix }}">{{ ui.back_to_result }}</a>
           {% endif %}
         </div>
       </section>

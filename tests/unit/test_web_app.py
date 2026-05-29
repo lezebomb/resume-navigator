@@ -27,8 +27,16 @@ class WebAppTests(unittest.TestCase):
         self.assertIn("Deep audit", response.text)
         self.assertIn("Do not start with the score", response.text)
         self.assertIn("What you get immediately", response.text)
+        self.assertIn("See two typical cases first", response.text)
         self.assertNotIn("Build note", response.text)
         self.assertNotIn("API docs", response.text)
+
+    def test_cases_page_is_public_and_user_facing(self) -> None:
+        response = self.client.get("/cases?lang=en")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Sample cases", response.text)
+        self.assertIn("Supply chain: relevant background", response.text)
+        self.assertIn("Operations or supply-chain collaboration", response.text)
 
     def test_translation_helpers_cover_key_labels(self) -> None:
         self.assertEqual(translate_dynamic("Strong", "zh"), "强匹配")
@@ -156,6 +164,7 @@ class WebAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("What this conclusion is based on", response.text)
         self.assertIn("Pre-application checklist", response.text)
+        self.assertIn("Copy application brief", response.text)
         self.assertNotIn("Developer disclosure", response.text)
         self.assertNotIn("Analysis process", response.text)
 

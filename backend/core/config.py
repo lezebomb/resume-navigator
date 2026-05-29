@@ -13,6 +13,7 @@ class Settings:
     app_name: str = os.getenv("APP_NAME", "Resume Navigator")
     app_env: str = os.getenv("APP_ENV", "development")
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
+    owner_admin_token: str = os.getenv("OWNER_ADMIN_TOKEN", "")
     data_dir: Path = PROJECT_ROOT / os.getenv("DATA_DIR", "data/runtime")
     upload_dir: Path = PROJECT_ROOT / os.getenv("UPLOAD_DIR", "data/uploads")
     export_dir: Path = PROJECT_ROOT / os.getenv("EXPORT_DIR", "data/exports")
@@ -21,6 +22,8 @@ class Settings:
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    tavily_api_key: str = os.getenv("TAVILY_API_KEY", "")
+    search_provider: str = os.getenv("SEARCH_PROVIDER", "auto")
     llm_access_mode: str = os.getenv("LLM_ACCESS_MODE", "byok")
     enable_optional_llm: bool = os.getenv("ENABLE_OPTIONAL_LLM", "false").lower() == "true"
     enable_external_enrichment: bool = os.getenv("ENABLE_EXTERNAL_ENRICHMENT", "false").lower() == "true"

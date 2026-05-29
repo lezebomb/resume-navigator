@@ -46,7 +46,6 @@
             {% if job.enable_public_research %}
             <span>{% if current_lang == 'zh' %}公开资料补充已开启{% else %}Public research enabled{% endif %}</span>
             {% endif %}
-            <span id="jobIdLabel">{{ job.job_id }}</span>
           </div>
         </div>
 
@@ -130,7 +129,6 @@
                 <article class="stage-card">
                   <div class="stage-name">${stage.display_name || stageLabels[stage.name] || stage.name}</div>
                   <div class="stage-copy">${stage.display_detail || stage.detail}</div>
-                  <div class="stage-time">${stage.duration_ms} ms</div>
                 </article>
               `;
             })
@@ -150,7 +148,8 @@
               renderStages(data.stages);
 
               if (data.status === "completed" && data.result_analysis_id) {
-                window.location.href = `/analysis/${data.result_analysis_id}?lang=${currentLang}`;
+                const viewKey = data.result_access_token ? `&view_key=${encodeURIComponent(data.result_access_token)}` : "";
+                window.location.href = `/analysis/${data.result_analysis_id}?lang=${currentLang}${viewKey}`;
                 return;
               }
 

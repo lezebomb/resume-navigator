@@ -143,6 +143,8 @@ UI_TRANSLATIONS = {
         "resume_snapshot_copy": "这是给你自己看的简历摘要，不是开发日志。",
         "interview_answer_method": "回答方法",
         "interview_answer_method_copy": "先把回答结构练顺，再去润色具体措辞。",
+        "related_links": "相关链接",
+        "reference_summary_label": "参考来源说明",
         "strength_signals": "优势信号",
         "risk_signals": "风险信号",
         "evidence_highlights": "证据高亮",
@@ -176,6 +178,9 @@ UI_TRANSLATIONS = {
         "interview_copy": "这些问题不是通用题库，而是根据当前简历证据、缺口和 JD 要求生成的高概率追问。",
         "why_asked": "为什么会被问",
         "answer_focus": "回答重点",
+        "answer_outline": "回答骨架",
+        "pitfall_to_avoid": "最容易答偏的点",
+        "practice_prompt": "练习提示",
         "priority_high": "高优先级",
         "priority_medium": "中优先级",
         "covered": "已覆盖",
@@ -211,6 +216,15 @@ UI_TRANSLATIONS = {
         "history_kicker": "历史记录",
         "history_title": "分析历史",
         "history_copy": "这里展示通过新 Web 入口保存下来的分析结果，方便你回看分数变化、分享案例，以及做早期用户访谈。",
+        "view_cases": "查看示例案例",
+        "cases_title": "示例案例",
+        "cases_copy": "这些案例是为了演示产品如何诊断问题、给出动作和承接面试，不使用真实用户隐私数据。",
+        "case_target_role": "目标岗位",
+        "case_problem": "典型问题",
+        "case_tool_output": "工具会先告诉你什么",
+        "case_top_actions": "优先动作",
+        "case_interview_risk": "高概率面试追问",
+        "case_why_useful": "为什么这个案例有代表性",
         "back_to_upload": "回到上传页",
         "recent_results": "最近分析结果",
         "time": "时间",
@@ -381,6 +395,8 @@ UI_TRANSLATIONS = {
         "resume_snapshot_copy": "This is a user-facing resume summary, not a developer log.",
         "interview_answer_method": "How to answer",
         "interview_answer_method_copy": "Practice the structure first, then polish the wording.",
+        "related_links": "Related links",
+        "reference_summary_label": "Reference notes",
         "strength_signals": "Strength signals",
         "risk_signals": "Risk signals",
         "evidence_highlights": "Evidence highlights",
@@ -414,6 +430,9 @@ UI_TRANSLATIONS = {
         "interview_copy": "These are not generic interview questions. They are prioritized from your current resume evidence, visible gaps, and JD requirements.",
         "why_asked": "Why this gets asked",
         "answer_focus": "Answer focus",
+        "answer_outline": "Answer outline",
+        "pitfall_to_avoid": "Common pitfall",
+        "practice_prompt": "Practice prompt",
         "priority_high": "High priority",
         "priority_medium": "Medium priority",
         "covered": "Covered",
@@ -449,6 +468,15 @@ UI_TRANSLATIONS = {
         "history_kicker": "History",
         "history_title": "Analysis History",
         "history_copy": "This page lists the results saved through the new web entrypoint so you can review score changes, share cases, and run early user interviews.",
+        "view_cases": "View sample cases",
+        "cases_title": "Sample cases",
+        "cases_copy": "These cases are designed to show how the product diagnoses gaps, recommends actions, and hands off into interview prep without using real user-private data.",
+        "case_target_role": "Target role",
+        "case_problem": "Typical problem",
+        "case_tool_output": "What the tool would say first",
+        "case_top_actions": "Priority actions",
+        "case_interview_risk": "Likely interview challenge",
+        "case_why_useful": "Why this case matters",
         "back_to_upload": "Back to upload",
         "recent_results": "Recent analyses",
         "time": "Time",
@@ -491,6 +519,7 @@ STAGE_TRANSLATIONS = {
     "match_audit": {"zh": "匹配审核", "en": "Match audit"},
     "deep_review": {"zh": "深度复核", "en": "Deep review"},
     "public_research": {"zh": "公开资料补充", "en": "Public research"},
+    "llm_polish": {"zh": "文案润色", "en": "Copy polish"},
 }
 
 _DYNAMIC_EXACT = {
@@ -498,9 +527,15 @@ _DYNAMIC_EXACT = {
     "Promising": {"zh": "有潜力", "en": "Promising"},
     "Needs focus": {"zh": "需重点优化", "en": "Needs focus"},
     "Needs rebuild": {"zh": "需重构表达", "en": "Needs rebuild"},
+    "experience": {"zh": "经历", "en": "experience"},
+    "projects": {"zh": "项目", "en": "projects"},
     "High confidence": {"zh": "高可信", "en": "High confidence"},
     "Medium confidence": {"zh": "中等可信", "en": "Medium confidence"},
     "Needs manual review": {"zh": "需人工复核", "en": "Needs manual review"},
+    "Used your connected model to shorten the user-facing summary without changing scores or evidence.": {
+        "zh": "已用你接入的模型把用户看到的摘要压短，但没有改动分数和证据。",
+        "en": "Used your connected model to shorten the user-facing summary without changing scores or evidence.",
+    },
     "Fix core blockers before applying": {"zh": "建议先补齐核心阻塞项，再正式投递", "en": "Fix core blockers before applying"},
     "Ready to apply": {"zh": "可以进入投递", "en": "Ready to apply"},
     "Can apply, but prepare explanations first": {
@@ -589,6 +624,110 @@ _DYNAMIC_EXACT = {
     "When the JD is emphasized, always pull the answer back to that requirement instead of giving a generic story.": {
         "zh": "当问题明确对应 JD 要求时，回答要始终拉回那条要求，而不是讲一个泛泛的故事。",
         "en": "When the JD is emphasized, always pull the answer back to that requirement instead of giving a generic story.",
+    },
+    "Open with who you are now and the role direction you are targeting.": {
+        "zh": "先用一句话说清你现在是谁、正在往哪个岗位方向走。",
+        "en": "Open with who you are now and the role direction you are targeting.",
+    },
+    "Name the one or two experiences that map most directly to this role.": {
+        "zh": "点出最能直接对应这个岗位的一到两段经历。",
+        "en": "Name the one or two experiences that map most directly to this role.",
+    },
+    "Close with one measurable result that proves why you are ready now.": {
+        "zh": "最后用一个可量化结果收尾，证明你为什么现在已经能上手。",
+        "en": "Close with one measurable result that proves why you are ready now.",
+    },
+    "Start with the exact business context and why the task mattered.": {
+        "zh": "先交代清楚具体业务场景，以及这件事为什么重要。",
+        "en": "Start with the exact business context and why the task mattered.",
+    },
+    "Make your ownership explicit before describing tools, coordination, or process.": {
+        "zh": "先讲清你的职责和 ownership，再讲工具、协同或流程。",
+        "en": "Make your ownership explicit before describing tools, coordination, or process.",
+    },
+    "End with the outcome, metric, or business decision that changed because of your work.": {
+        "zh": "最后落到结果、指标变化，或你推动了什么业务决策。",
+        "en": "End with the outcome, metric, or business decision that changed because of your work.",
+    },
+    "Define the business question and the metric or signal you were trying to explain.": {
+        "zh": "先定义清楚业务问题，以及你当时要解释的指标或信号。",
+        "en": "Define the business question and the metric or signal you were trying to explain.",
+    },
+    "Walk through your data logic, analysis steps, and how you narrowed the hypotheses.": {
+        "zh": "再讲你的数据逻辑、分析步骤，以及你是怎么一步步缩小假设范围的。",
+        "en": "Walk through your data logic, analysis steps, and how you narrowed the hypotheses.",
+    },
+    "End with the decision, recommendation, or operational change that followed.": {
+        "zh": "最后说明这次分析带来了什么决策、建议或执行变化。",
+        "en": "End with the decision, recommendation, or operational change that followed.",
+    },
+    "State the disagreement clearly and why it mattered to the business.": {
+        "zh": "先说清冲突点是什么，以及它为什么会影响业务。",
+        "en": "State the disagreement clearly and why it mattered to the business.",
+    },
+    "Explain how you aligned people using evidence instead of only opinion.": {
+        "zh": "说明你是如何用证据而不是单纯观点去推动对齐的。",
+        "en": "Explain how you aligned people using evidence instead of only opinion.",
+    },
+    "Finish with the agreement reached and what execution result followed.": {
+        "zh": "最后补上最终达成了什么一致，以及执行结果如何。",
+        "en": "Finish with the agreement reached and what execution result followed.",
+    },
+    "Say why this role fits your current direction right now.": {
+        "zh": "先说这个岗位为什么和你当前阶段的方向匹配。",
+        "en": "Say why this role fits your current direction right now.",
+    },
+    "Explain what has changed in your experience that makes you more ready than before.": {
+        "zh": "再说最近哪些经历变化，让你比以前更适合这个岗位。",
+        "en": "Explain what has changed in your experience that makes you more ready than before.",
+    },
+    "Close with the value you believe you can create early in the role.": {
+        "zh": "最后说明你入职后最有可能最早创造什么价值。",
+        "en": "Close with the value you believe you can create early in the role.",
+    },
+    "Answer with one real example instead of a definition or a generic opinion.": {
+        "zh": "尽量用一个真实例子回答，而不是给定义或泛泛表态。",
+        "en": "Answer with one real example instead of a definition or a generic opinion.",
+    },
+    "Keep your ownership, action, and result in the same answer.": {
+        "zh": "在同一个回答里把你的职责、动作和结果讲完整。",
+        "en": "Keep your ownership, action, and result in the same answer.",
+    },
+    "End by tying the story back to the role requirement behind the question.": {
+        "zh": "最后把故事收回到这道题背后的岗位要求上。",
+        "en": "End by tying the story back to the role requirement behind the question.",
+    },
+    "Do not turn this into a full life story. Keep it role-specific and business-relevant.": {
+        "zh": "不要把它答成完整人生经历，要尽量贴着岗位和业务相关性来讲。",
+        "en": "Do not turn this into a full life story. Keep it role-specific and business-relevant.",
+    },
+    "Do not answer like a textbook. Use one real, dated example instead of only explaining concepts.": {
+        "zh": "不要答成教材解释，尽量给一个带时间和场景的真实例子。",
+        "en": "Do not answer like a textbook. Use one real, dated example instead of only explaining concepts.",
+    },
+    "Do not list tools first. Start from the business question and only then explain the analysis.": {
+        "zh": "不要上来先报工具名，要先从业务问题讲起，再解释分析过程。",
+        "en": "Do not list tools first. Start from the business question and only then explain the analysis.",
+    },
+    "Do not frame the story as other people being wrong. Show how you created alignment and kept execution moving.": {
+        "zh": "不要把故事讲成别人都错了，重点是你如何推动对齐并保证执行继续推进。",
+        "en": "Do not frame the story as other people being wrong. Show how you created alignment and kept execution moving.",
+    },
+    "Do not give a generic passion answer. Tie your motivation back to this role and your recent trajectory.": {
+        "zh": "不要给泛泛的热爱型回答，要把动机和这个岗位、以及你最近的成长轨迹连起来。",
+        "en": "Do not give a generic passion answer. Tie your motivation back to this role and your recent trajectory.",
+    },
+    "Do not stay abstract. Give a concrete example with ownership and outcome.": {
+        "zh": "不要停留在抽象层，尽量给一个有职责和结果的具体例子。",
+        "en": "Do not stay abstract. Give a concrete example with ownership and outcome.",
+    },
+    "Practice this answer aloud in 60 to 90 seconds first, then prepare a deeper 2-minute version.": {
+        "zh": "先把这题练到 60 到 90 秒能顺畅说清，再准备一个 2 分钟的展开版本。",
+        "en": "Practice this answer aloud in 60 to 90 seconds first, then prepare a deeper 2-minute version.",
+    },
+    "Practice this answer aloud once in under 90 seconds so it sounds natural instead of memorized.": {
+        "zh": "先把这题练到 90 秒内能自然说出来，而不是像背稿。",
+        "en": "Practice this answer aloud once in under 90 seconds so it sounds natural instead of memorized.",
     },
     "The interview is likely to focus on whether your strongest experience really covers the must-have JD lines.": {
         "zh": "面试更可能围绕你的最强经历是否真的覆盖了 JD 的必选要求展开。",
@@ -1285,7 +1424,159 @@ _DYNAMIC_PATTERNS = [
             )
         ),
     ),
-]
+    (
+        re.compile(r"The current public-research mix is: (.+)\."),
+        lambda match, lang: (
+            f"这次公开资料补充的来源结构是：{match.group(1)}。"
+            if lang == "zh"
+            else f"The current public-research mix is: {match.group(1)}."
+        ),
+    ),
+    (
+        re.compile(r"Turn one JD must-have into proof: (.+)"),
+        lambda match, lang: (
+            f"把一条 JD 必选要求改成可证明的经历：{match.group(1)}"
+            if lang == "zh"
+            else f"Turn one JD must-have into proof: {match.group(1)}"
+        ),
+    ),
+    (
+        re.compile(r"Turn a missing skill into experience proof: (.+)"),
+        lambda match, lang: (
+            f"把缺失技能改写成真实经历证明：{match.group(1)}"
+            if lang == "zh"
+            else f"Turn a missing skill into experience proof: {match.group(1)}"
+        ),
+    ),
+    (
+        re.compile(r"Resume bullets are stronger when they answer a JD line directly instead of only naming a tool or task\."),
+        lambda _match, lang: (
+            "当简历要点能直接回应 JD 要求时，会比只写工具名或任务名更有说服力。"
+            if lang == "zh"
+            else "Resume bullets are stronger when they answer a JD line directly instead of only naming a tool or task."
+        ),
+    ),
+    (
+        re.compile(r"Hiring teams do not trust a skill name by itself\. They trust a real scenario that shows how you used it\."),
+        lambda _match, lang: (
+            "招聘方不会因为你写了一个技能名就相信你，更看重你是否能讲出真实使用场景。"
+            if lang == "zh"
+            else "Hiring teams do not trust a skill name by itself. They trust a real scenario that shows how you used it."
+        ),
+    ),
+    (
+        re.compile(r"Keywords work best when they are attached to real business action, not stacked in a separate list\."),
+        lambda _match, lang: (
+            "关键词最好落在真实业务动作里，而不是单独堆在一个列表中。"
+            if lang == "zh"
+            else "Keywords work best when they are attached to real business action, not stacked in a separate list."
+        ),
+    ),
+    (
+        re.compile(r"The base match is already decent, so the next gain usually comes from making one or two strong experiences easier to trust and easier to retell in interviews\."),
+        lambda _match, lang: (
+            "当前基础匹配已经不差，下一步通常是把一到两段最强经历写得更可信、更容易在面试里讲清。"
+            if lang == "zh"
+            else "The base match is already decent, so the next gain usually comes from making one or two strong experiences easier to trust and easier to retell in interviews."
+        ),
+    ),
+    (
+        re.compile(r"These rewrite suggestions focus on the places where the recruiter is most likely to think the resume still does not prove the JD strongly enough\."),
+        lambda _match, lang: (
+            "这些改写建议优先处理招聘方最容易觉得“这份简历还没有把 JD 证明够”的地方。"
+            if lang == "zh"
+            else "These rewrite suggestions focus on the places where the recruiter is most likely to think the resume still does not prove the JD strongly enough."
+        ),
+    ),
+    (
+        re.compile(r"Rewrite the experience that is closest to the JD so it is easier to trust and easier to retell\."),
+        lambda _match, lang: (
+            "先把最接近 JD 的那段经历重写得更可信、更容易复述。"
+            if lang == "zh"
+            else "Rewrite the experience that is closest to the JD so it is easier to trust and easier to retell."
+        ),
+    ),
+    (
+        re.compile(r"Make the missing keywords appear naturally"),
+        lambda _match, lang: (
+            "让缺失关键词自然出现"
+            if lang == "zh"
+            else "Make the missing keywords appear naturally"
+        ),
+    ),
+    (
+        re.compile(r"Sharpen the strongest experience first"),
+        lambda _match, lang: (
+            "先把最强经历打磨清楚"
+            if lang == "zh"
+            else "Sharpen the strongest experience first"
+        ),
+    ),
+    (
+        re.compile(r"Name the real business context and goal\."),
+        lambda _match, lang: ("写清真实业务背景和目标。" if lang == "zh" else "Name the real business context and goal."),
+    ),
+    (
+        re.compile(r"Make your own action and ownership explicit\."),
+        lambda _match, lang: ("把你的动作和责任边界写清楚。" if lang == "zh" else "Make your own action and ownership explicit."),
+    ),
+    (
+        re.compile(r"Add one measurable result, efficiency gain, or business impact\."),
+        lambda _match, lang: ("补上一条可量化结果、效率提升或业务影响。" if lang == "zh" else "Add one measurable result, efficiency gain, or business impact."),
+    ),
+    (
+        re.compile(r"Add the real task or analysis problem\."),
+        lambda _match, lang: ("补上真实任务或分析问题。" if lang == "zh" else "Add the real task or analysis problem."),
+    ),
+    (
+        re.compile(r"Explain how you actually used the skill, not just that you know it\."),
+        lambda _match, lang: ("说明你是怎么用这个技能的，而不是只写你会它。" if lang == "zh" else "Explain how you actually used the skill, not just that you know it."),
+    ),
+    (
+        re.compile(r"Close with the output, decision, or result created from that work\."),
+        lambda _match, lang: ("最后落到产出、决策或结果上。" if lang == "zh" else "Close with the output, decision, or result created from that work."),
+    ),
+    (
+        re.compile(r"Keep the keyword in the same sentence as the business action\."),
+        lambda _match, lang: ("让关键词和业务动作出现在同一句里。" if lang == "zh" else "Keep the keyword in the same sentence as the business action."),
+    ),
+    (
+        re.compile(r"Pair the line with one clear outcome if possible\."),
+        lambda _match, lang: ("尽量给这句话配上一个明确结果。" if lang == "zh" else "Pair the line with one clear outcome if possible."),
+    ),
+    (
+        re.compile(r"Avoid repeating the same words in a detached skills block only\."),
+        lambda _match, lang: ("避免只在独立技能栏里重复堆词。" if lang == "zh" else "Avoid repeating the same words in a detached skills block only."),
+    ),
+    (
+        re.compile(r"Add the context\."),
+        lambda _match, lang: ("补上背景。" if lang == "zh" else "Add the context."),
+    ),
+    (
+        re.compile(r"Add your action\."),
+        lambda _match, lang: ("补上你的动作。" if lang == "zh" else "Add your action."),
+    ),
+    (
+        re.compile(r"Add the result\."),
+        lambda _match, lang: ("补上结果。" if lang == "zh" else "Add the result."),
+    ),
+    (
+        re.compile(r"Do not invent tools, projects, or results that you did not actually own\."),
+        lambda _match, lang: ("不要编造自己没有真实参与过的工具、项目或结果。" if lang == "zh" else "Do not invent tools, projects, or results that you did not actually own."),
+    ),
+    (
+        re.compile(r"If you do not have real evidence for this skill yet, say so honestly and focus on adjacent proof instead of pretending\."),
+        lambda _match, lang: ("如果你还没有这项技能的真实证据，就如实表达，并改为强调相邻能力，而不是硬装会。" if lang == "zh" else "If you do not have real evidence for this skill yet, say so honestly and focus on adjacent proof instead of pretending."),
+    ),
+    (
+        re.compile(r"Keyword optimization should improve clarity, not turn the resume into a list of hot terms\."),
+        lambda _match, lang: ("关键词优化的目标是提高可读性，而不是把简历写成热词列表。" if lang == "zh" else "Keyword optimization should improve clarity, not turn the resume into a list of hot terms."),
+    ),
+    (
+        re.compile(r"Improve the strongest one or two stories first instead of spreading attention evenly across every section\."),
+        lambda _match, lang: ("优先强化最强的一到两段经历，不要平均用力到每个版块。" if lang == "zh" else "Improve the strongest one or two stories first instead of spreading attention evenly across every section."),
+    ),
+] 
 
 
 def resolve_lang(raw_lang: str | None) -> str:

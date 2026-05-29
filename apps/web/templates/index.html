@@ -11,7 +11,10 @@
       <header class="topbar topbar-links">
         <div class="brand-mark">{{ ui.brand }}</div>
         <div class="topbar-actions">
-          <a class="topbar-link" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
+          <a class="topbar-link" href="/cases?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_cases }}</a>
+          {% if show_owner_console %}
+          <a class="topbar-link" href="/history?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_history }}</a>
+          {% endif %}
           <div class="lang-switch">
             <span>{{ ui.lang_switch_label }}</span>
             <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
@@ -24,7 +27,7 @@
         <section class="hero-card hero-card-clean">
           <div class="hero-eyebrow">{{ ui.brand }}</div>
           <h1>{{ ui.home_title }}</h1>
-          <p>{{ ui.home_subtitle }}</p>
+          <p>{% if current_lang == 'zh' %}上传简历和 JD 后，它会先告诉你能不能投、为什么、先补什么、面试最可能问哪里。{% else %}Upload a resume and JD, then get a direct call on whether to apply, why, what to fix first, and what the interview is likely to probe.{% endif %}</p>
 
           <div class="trust-strip">
             <article class="trust-pill">
@@ -43,16 +46,16 @@
 
           <div class="hero-metrics hero-metrics-tight">
             <div class="hero-metric">
-              <strong>{{ analysis_count }}</strong>
-              <span>{{ ui.home_metric_analysis_count }}</span>
+              <strong>{% if current_lang == 'zh' %}JD 优先{% else %}JD-first{% endif %}</strong>
+              <span>{% if current_lang == 'zh' %}先判断能不能投，再解释为什么{% else %}Apply-or-fix first, then explain why{% endif %}</span>
             </div>
             <div class="hero-metric">
-              <strong>{{ recent_feedback_count }}</strong>
-              <span>{{ ui.home_metric_feedback_count }}</span>
+              <strong>{% if current_lang == 'zh' %}深度版{% else %}Deep mode{% endif %}</strong>
+              <span>{% if current_lang == 'zh' %}默认给出证据、动作和面试承接{% else %}Evidence, actions, and interview follow-through by default{% endif %}</span>
             </div>
             <div class="hero-metric">
-              <strong>{{ ui.home_metric_privacy_first }}</strong>
-              <span>{{ ui.home_metric_chinese_first }}</span>
+              <strong>{% if current_lang == 'zh' %}隐私优先{% else %}Privacy-first{% endif %}</strong>
+              <span>{% if current_lang == 'zh' %}真实简历默认不公开上传{% else %}Real resumes stay private by default{% endif %}</span>
             </div>
           </div>
         </section>
@@ -65,7 +68,7 @@
             </div>
             <span class="subtle-badge">{{ ui.deep_default_badge }}</span>
           </div>
-          <p class="section-subtitle">{{ ui.intake_subtitle }}</p>
+          <p class="section-subtitle">{% if current_lang == 'zh' %}上传一份 PDF 或 DOCX 简历，再粘贴目标 JD。{% else %}Upload one PDF or DOCX resume, then paste the target JD.{% endif %}</p>
 
           <form action="/analyze/browser" method="post" enctype="multipart/form-data" class="stack js-analysis-form">
             <input type="hidden" name="lang" value="{{ current_lang }}" />
@@ -88,7 +91,7 @@
                 <option value="deep" selected>{{ ui.analysis_mode_deep }} - {{ ui.analysis_mode_deep_note }}</option>
                 <option value="standard">{{ ui.analysis_mode_standard }} - {{ ui.analysis_mode_standard_note }}</option>
               </select>
-              <div class="field-note">{{ ui.analysis_mode_deep_field_note }}</div>
+              <div class="field-note">{% if current_lang == 'zh' %}默认推荐深度版，正式投递前更稳。{% else %}Deep mode is the recommended default before a real application.{% endif %}</div>
             </div>
 
             <div class="toggle-card">
@@ -96,20 +99,37 @@
                 <input id="enable_public_research" name="enable_public_research" type="checkbox" checked />
                 <span>{{ ui.public_research_toggle_label }}</span>
               </label>
-              <div class="field-note">{{ ui.public_research_note }}</div>
+              <div class="field-note">{% if current_lang == 'zh' %}补充公开岗位要求、面经和技能信号，不直接改分。{% else %}Adds public role, interview, and skill signals without overwriting the core score.{% endif %}</div>
             </div>
 
-            <div class="field-note">{{ ui.llm_privacy_note }}</div>
+            <div class="field-note">{% if current_lang == 'zh' %}如果本地配置了模型密钥，系统会只把它当增强层使用，不接管总分。{% else %}If a model key is configured locally, it stays an optional enhancer instead of taking over the score.{% endif %}</div>
 
             <div class="button-row">
               <button class="button button-primary js-submit-button" type="submit">{{ ui.start_analysis }}</button>
-              <a class="button button-secondary" href="/history?lang={{ current_lang }}">{{ ui.view_history }}</a>
+              <a class="button button-secondary" href="/cases?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_cases }}</a>
             </div>
           </form>
         </section>
       </section>
 
       <section class="support-grid">
+        <section class="list-card compact-card">
+          <h2 class="section-title">{% if current_lang == 'zh' %}先看两个典型案例{% else %}See two typical cases first{% endif %}</h2>
+          <ul class="guide-list compact-lines">
+            <li>
+              <strong>{% if current_lang == 'zh' %}相关经历有，但证据不够硬{% else %}Relevant background, weak proof{% endif %}</strong>
+              {% if current_lang == 'zh' %}最常见的问题不是完全没经历，而是经历没有被写成能经得起追问的证据。{% else %}A common problem is not missing experience, but failing to present it as proof that survives follow-up questions.{% endif %}
+            </li>
+            <li>
+              <strong>{% if current_lang == 'zh' %}关键词不少，但招聘方还是不放心{% else %}Keywords are present, but trust is still low{% endif %}</strong>
+              {% if current_lang == 'zh' %}很多简历不是缺词，而是缺“业务问题、分析动作、结果影响”这条完整链路。{% else %}Many resumes do not miss keywords. They miss a full chain from business problem to analysis action to outcome.{% endif %}
+            </li>
+          </ul>
+          <div class="button-row">
+            <a class="button button-secondary" href="/cases?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_cases }}</a>
+          </div>
+        </section>
+
         <section class="list-card compact-card">
           <h2 class="section-title">{{ ui.home_get_title }}</h2>
           <ul class="guide-list compact-lines">

@@ -22,17 +22,17 @@ def build_rewrite_plan(
         for card in match.requirement_evidence[:2]:
             cards.append(
                 RewriteSuggestionCard(
-                    title=f"用经历直接回答 JD：{_shorten(card.requirement, 28)}",
+                    title=f"Turn one JD must-have into proof: {_shorten(card.requirement, 32)}",
                     target_section="experience",
-                    reason="把 JD 的必选要求直接改写成经历证明，比只在技能栏列工具更有说服力。",
+                    reason="Resume bullets are stronger when they answer a JD line directly instead of only naming a tool or task.",
                     original_excerpt=_pick_section_excerpt(resume, "experience"),
                     rewritten_example=_build_requirement_example(requirement=card.requirement, role_name=role_name),
                     evidence_checklist=[
-                        "写清楚场景和业务目标",
-                        "写清楚你本人做了什么",
-                        "补一个结果、效率提升或业务影响",
+                        "Name the real business context and goal.",
+                        "Make your own action and ownership explicit.",
+                        "Add one measurable result, efficiency gain, or business impact.",
                     ],
-                    caution="不要编造自己没有做过的工具、项目或结果。",
+                    caution="Do not invent tools, projects, or results that you did not actually own.",
                 )
             )
 
@@ -40,59 +40,60 @@ def build_rewrite_plan(
         missing_skill = match.missing_hard_skills[0]
         cards.append(
             RewriteSuggestionCard(
-                title=f"把缺失技能写成可追问的经历：{missing_skill}",
+                title=f"Turn a missing skill into experience proof: {missing_skill}",
                 target_section="projects",
-                reason="招聘方不会因为你写了一个技能名就相信你，会继续追问你在哪个场景里真正用过它。",
+                reason="Hiring teams do not trust a skill name by itself. They trust a real scenario that shows how you used it.",
                 original_excerpt=_pick_section_excerpt(resume, "projects"),
                 rewritten_example=_build_skill_example(skill=missing_skill, role_name=role_name),
                 evidence_checklist=[
-                    "补充具体任务",
-                    "补充使用方式而不是只写工具名",
-                    "补充输出结果或决策支持",
+                    "Add the real task or analysis problem.",
+                    "Explain how you actually used the skill, not just that you know it.",
+                    "Close with the output, decision, or result created from that work.",
                 ],
-                caution="如果你没有真实用过这个技能，应该如实补学习计划，而不是冒充有项目经验。",
+                caution="If you do not have real evidence for this skill yet, say so honestly and focus on adjacent proof instead of pretending.",
             )
         )
 
     if match.missing_keywords:
         cards.append(
             RewriteSuggestionCard(
-                title="把关键词改成自然出现，而不是堆砌",
+                title="Make the missing keywords appear naturally",
                 target_section="experience",
-                reason="关键词应该落在动作、项目、结果里，而不是独立堆在一行。",
+                reason="Keywords work best when they are attached to real business action, not stacked in a separate list.",
                 original_excerpt=_pick_section_excerpt(resume, "experience"),
                 rewritten_example=_build_keyword_example(match.missing_keywords[:3]),
                 evidence_checklist=[
-                    "让关键词和业务动作放在同一句",
-                    "尽量配一个量化结果",
-                    "避免只在技能栏重复堆词",
+                    "Keep the keyword in the same sentence as the business action.",
+                    "Pair the line with one clear outcome if possible.",
+                    "Avoid repeating the same words in a detached skills block only.",
                 ],
-                caution="关键词优化是为了提升可读性，不是为了堆砌热词。",
+                caution="Keyword optimization should improve clarity, not turn the resume into a list of hot terms.",
             )
         )
 
     if not cards:
         cards.append(
             RewriteSuggestionCard(
-                title="继续细化最强经历",
+                title="Sharpen the strongest experience first",
                 target_section="experience",
-                reason="当前基础匹配已经不错，下一步主要是让最强经历更像真实面试里的高分回答。",
+                reason="The base match is already decent, so the next gain usually comes from making one or two strong experiences easier to trust and easier to retell in interviews.",
                 original_excerpt=_pick_section_excerpt(resume, "experience"),
                 rewritten_example=(
-                    "负责某核心项目/分析任务，围绕业务目标拆解问题，推动跨部门执行，并在限定周期内交付可量化结果。"
+                    "Owned a core analysis or execution task tied to a real business goal, aligned the right stakeholders, "
+                    "and delivered a measurable outcome within a clear timeline."
                 ),
                 evidence_checklist=[
-                    "补上背景",
-                    "补上动作",
-                    "补上结果",
+                    "Add the context.",
+                    "Add your action.",
+                    "Add the result.",
                 ],
-                caution="优先强化你最强的一到两段经历，不要平均用力。",
+                caution="Improve the strongest one or two stories first instead of spreading attention evenly across every section.",
             )
         )
 
     strategy = _build_strategy(match)
     return RewritePlan(
-        summary="这些改写建议优先解决“招聘方看不出来你是否真的满足 JD”的问题，再处理措辞优化。",
+        summary="These rewrite suggestions focus on the places where the recruiter is most likely to think the resume still does not prove the JD strongly enough.",
         strategy=strategy,
         suggestion_cards=cards[:4],
     )
@@ -105,35 +106,34 @@ def _build_strategy(match: MatchReport) -> list[str]:
     if match.can_improve_later:
         strategy.append(match.can_improve_later[0])
     if not strategy:
-        strategy.append("先把最贴近 JD 的经历改成可直接被招聘方理解和追问的表达。")
+        strategy.append("Rewrite the experience that is closest to the JD so it is easier to trust and easier to retell.")
     return strategy
 
 
 def _build_requirement_example(*, requirement: str, role_name: str) -> str:
     compact_requirement = _shorten(requirement, 34)
     return (
-        f"围绕 {role_name} 的核心要求“{compact_requirement}”，我在某次真实项目/实习中负责整理业务数据、推进跨团队协同，"
-        "输出可执行分析或推进结果，并最终支撑了更快的交付、决策或流程优化。"
+        f"For a {role_name}-relevant task tied to “{compact_requirement},” I organized the needed inputs, "
+        "coordinated execution across the right people, and delivered a result that improved speed, clarity, or business decision quality."
     )
 
 
 def _build_skill_example(*, skill: str, role_name: str) -> str:
     if skill.lower() == "sql":
         return (
-            f"在一段与 {role_name} 相关的分析任务中，我使用 SQL 对多来源业务数据进行清洗、关联和汇总，"
-            "定位关键异常并输出报表/分析结论，帮助团队更快做出采购、计划或运营判断。"
+            f"In a {role_name}-relevant analysis task, I used SQL to clean, join, and summarize business data, "
+            "surface the key exception or trend, and turn that analysis into a report or decision input for the team."
         )
     return (
-        f"在一段与 {role_name} 相关的项目中，我实际使用 {skill} 完成数据处理、分析支持或流程推进，"
-        "并把结果落到了具体的业务动作或交付结果上。"
+        f"In a {role_name}-relevant project, I used {skill} to complete a real analysis, process, or execution task, "
+        "then turned the output into a concrete business action or delivery result."
     )
 
 
 def _build_keyword_example(keywords: list[str]) -> str:
-    compact = "、".join(keywords)
+    compact = ", ".join(keywords)
     return (
-        f"负责与 {compact} 相关的分析/执行任务，围绕业务目标推进问题定位、信息整理和结果输出，"
-        "并通过更清晰的数据与沟通支持后续决策。"
+        f"Owned work related to {compact}, tied the task to a clear business goal, and translated the analysis or execution into a concrete next step."
     )
 
 

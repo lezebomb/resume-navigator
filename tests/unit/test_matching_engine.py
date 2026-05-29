@@ -77,6 +77,8 @@ class MatchingEngineTests(unittest.TestCase):
         self.assertTrue(report.diagnosis_basis)
         self.assertTrue(report.application_checklist)
         self.assertTrue(report.must_fix_now or report.can_improve_later)
+        self.assertIn("headline_zh", report.user_copy)
+        self.assertIn("headline_en", report.user_copy)
 
 
 if __name__ == "__main__":

@@ -12,8 +12,8 @@
         <div class="brand-mark">{{ ui.brand }}</div>
         <div class="lang-switch">
           <span>{{ ui.lang_switch_label }}</span>
-          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh">{{ ui.lang_switch_zh }}</a>
-          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en">{{ ui.lang_switch_en }}</a>
+          <a class="{% if current_lang == 'zh' %}active{% endif %}" href="{{ request.url.path }}?lang=zh{{ admin_query_suffix }}">{{ ui.lang_switch_zh }}</a>
+          <a class="{% if current_lang == 'en' %}active{% endif %}" href="{{ request.url.path }}?lang=en{{ admin_query_suffix }}">{{ ui.lang_switch_en }}</a>
         </div>
       </div>
 
@@ -25,8 +25,8 @@
             <p class="section-subtitle">{{ ui.history_copy }}</p>
           </div>
           <div class="button-row">
-            <a class="button button-secondary" href="/?lang={{ current_lang }}">{{ ui.back_to_upload }}</a>
-            <a class="button button-secondary" href="/feedback?lang={{ current_lang }}">{{ ui.view_feedback }}</a>
+            <a class="button button-secondary" href="/?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.back_to_upload }}</a>
+            <a class="button button-secondary" href="/feedback?lang={{ current_lang }}{{ admin_query_suffix }}">{{ ui.view_feedback }}</a>
           </div>
         </div>
       </section>
@@ -57,8 +57,8 @@
               <td>{{ record.ats_score }}</td>
               <td>{{ record.match_score }}</td>
               <td>
-                <a href="/analysis/{{ record.analysis_id }}?lang={{ current_lang }}">{{ ui.view_result }}</a><br />
-                <a href="/analysis/{{ record.analysis_id }}/json">{{ ui.view_json }}</a>
+                <a href="/analysis/{{ record.analysis_id }}?lang={{ current_lang }}&view_key={{ record.access_token }}{{ admin_query_suffix }}">{{ ui.view_result }}</a><br />
+                <a href="/analysis/{{ record.analysis_id }}/json?view_key={{ record.access_token }}{{ admin_query_suffix }}">{{ ui.view_json }}</a>
               </td>
             </tr>
             {% endfor %}
