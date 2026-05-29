@@ -183,21 +183,6 @@ powershell -ExecutionPolicy Bypass -File .\scripts\validate_project.ps1 -ResumeP
 - 本地诊断链路
 - 可选公开资料补充链路
 
-## 发布前隐私检查
-
-在上传 GitHub 前建议运行：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\check_publish_readiness.ps1
-```
-
-这个脚本会检查：
-
-- Git 远程仓库配置
-- GitHub CLI 登录状态
-- 工作区变更
-- `.env`、PDF、DOCX、运行数据等隐私风险
-
 ## 目录结构
 
 ```text
